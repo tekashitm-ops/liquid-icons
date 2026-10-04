@@ -22,6 +22,19 @@ gNc = su pareja clara (cristal morado sobre blanco, para un futuro modo día/noc
   tema oscuro, la cara deja ver el fondo), cortado en tres franjas: la del medio, delante y
   corrida 36 px a la derecha, es una barra de cristal que dobla con su bisel los bordes de las
   franjas que pisa y deja a la izquierda el hueco del glitch.
+- g4 «glitch en franjas, con luz»: g3 con los arreglos del juez. Fondo en diagonal más rico; el
+  logo entero sin cortes, de cristal morado más transparente, con la franja que pisa la barra más
+  clara (el hueco del glitch, a la izquierda); detrás, la cara iluminada (blanco esmerilado)
+  corrida 24 px abajo a la derecha, que asoma lila por el marco de la derecha; ventanas de cristal
+  claro en los ojos. Delante, la barra de cristal lila casi transparente con brillo de su color,
+  esquinas redondeadas y punta derecha en vertical; su cara se corre con ella y brilla (la luz de
+  detrás se corre también), y por su marco se ve la franja sin correr: doble imagen del borde de
+  la cara y de la muesca. En claro, morado que se multiplica sobre una cara morado profundo.
+- g5 «fantasma»: g1 de verdad transparente. Detrás, el logo de cristal morado profundo con la cara
+  iluminada, arriba a la derecha; delante, un fantasma del logo en cristal violeta casi incoloro
+  (plus-lighter, sin refracción), 40 px abajo a la izquierda: deja ver el logo de detrás y, a la
+  izquierda y abajo, una franja de fondo. Los ojos del fantasma son ventanas de cristal claro que
+  doblan los ojos de detrás. En claro, el fantasma se multiplica.
 Los conceptos c (logo casi opaco, rechazados: «no tiene Liquid Glass») siguen en el historial.
 """
 import re
@@ -295,7 +308,10 @@ def g4_pieces(outer, inner, eyes):
         "g4-barra-marco": shift(frame.intersection(band), BAR_SHIFT, 0).intersection(bar),
         "g4-barra-cara": shift(face.intersection(band), BAR_SHIFT, 0).intersection(bar),
         "g4-marco": frame.difference(band),
-        "g4-marco-franja": frame.intersection(band),
+        # la franja sin correr sigue bajo la punta de la barra que sobresale del logo (2 px dentro
+        # de su borde): ahí no queda otro borde paralelo bajo el bisel de la barra (salía una astilla
+        # a lo largo de la diagonal y un rizo oscuro arriba a la derecha)
+        "g4-marco-franja": frame.intersection(band).union(bar.buffer(-2).difference(body)),
         "g4-cara": face,
         "g4-ventanas": soften(grow(eyes, PANE), 4),
         "g4-luz": lit.union(shift(face.intersection(band), BAR_SHIFT, 0)),
