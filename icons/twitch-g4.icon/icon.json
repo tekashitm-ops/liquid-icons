@@ -40,7 +40,7 @@
           "image-name": "g4-barra-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.45000"
+            "solid": "extended-srgb:0.66275,0.43922,1.00000,0.50000"
           }
         },
         {
@@ -55,7 +55,7 @@
       "refractivity": {
         "enabled": true,
         "strength": 0.3,
-        "depth": 0.06
+        "depth": 0.04
       },
       "blend-mode": "plus-lighter"
     },
@@ -67,7 +67,7 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.3
+        "opacity": 0.0
       },
       "translucency": {
         "enabled": true,
@@ -79,7 +79,7 @@
           "image-name": "g4-ventanas.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.14000"
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.22000"
           }
         }
       ],
@@ -91,7 +91,7 @@
     },
     {
       "name": "logo",
-      "lighting": "combined",
+      "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
       "blur-material": 0.05,
@@ -109,7 +109,7 @@
           "image-name": "g4-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.55000"
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.38000"
           }
         },
         {
@@ -117,7 +117,7 @@
           "image-name": "g4-marco-franja.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.40000"
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.30000"
           }
         },
         {
@@ -156,6 +156,30 @@
           "glass": true,
           "fill": {
             "solid": "extended-srgb:1.00000,1.00000,1.00000,0.90000"
+          }
+        },
+        {
+          "name": "g4-luz-barra",
+          "image-name": "g4-luz-barra.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.55000"
+          }
+        },
+        {
+          "name": "g4-luz-chaflan",
+          "image-name": "g4-luz-chaflan.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.70000"
+          }
+        },
+        {
+          "name": "g4-luz-cola",
+          "image-name": "g4-luz-cola.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.60000"
           }
         }
       ]

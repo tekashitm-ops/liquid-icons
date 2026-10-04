@@ -5,7 +5,7 @@
   ],
   "fill": {
     "linear-gradient": [
-      "extended-srgb:1.00000,1.00000,1.00000,1.00000",
+      "extended-srgb:0.95294,0.92941,1.00000,1.00000",
       "extended-srgb:0.89412,0.83922,1.00000,1.00000"
     ],
     "orientation": {
@@ -28,11 +28,11 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.35
+        "opacity": 0.2
       },
       "translucency": {
         "enabled": true,
-        "value": 0.85
+        "value": 0.8
       },
       "layers": [
         {
@@ -40,7 +40,7 @@
           "image-name": "g5-fantasma-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.50000"
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.75000"
           }
         },
         {
@@ -52,6 +52,11 @@
           }
         }
       ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.2,
+        "depth": 0.04
+      },
       "blend-mode": "multiply"
     },
     {
@@ -62,7 +67,7 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.3
+        "opacity": 0.0
       },
       "translucency": {
         "enabled": true,
@@ -81,7 +86,7 @@
       "refractivity": {
         "enabled": true,
         "strength": 0.3,
-        "depth": 0.1
+        "depth": 0.06
       }
     },
     {
@@ -138,6 +143,14 @@
           "glass": true,
           "fill": {
             "solid": "extended-srgb:1.00000,1.00000,1.00000,0.90000"
+          }
+        },
+        {
+          "name": "g5-luz-cola",
+          "image-name": "g5-luz-cola.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.46667,0.17255,0.90980,0.60000"
           }
         }
       ]
