@@ -7,7 +7,14 @@ ROOT = Path(__file__).resolve().parent.parent
 WHITE = "#FFFFFF"
 
 
-def svg(geom) -> str:
+# Cuatro puntos casi transparentes en las esquinas del lienzo (fuera del icono redondeado, que
+# los recorta). Hacen que la capa ocupe todo el lienzo: ictool recorta la sombra de cada capa a
+# la caja de su contenido y, si no, deja costuras rectas de 1 px donde la corta.
+CORNERS = ('<path fill="#FFFFFF" fill-opacity="0.01" '
+           'd="M0 0h1v1h-1Z M1023 0h1v1h-1Z M0 1023h1v1h-1Z M1023 1023h1v1h-1Z"/>')
+
+
+def svg(geom, full_bounds: bool = False) -> str:
     """Una pieza del logo como SVG de 1024x1024 en blanco (Icon Composer le pone el color)."""
     d = []
     for poly in getattr(geom, "geoms", [geom]):
@@ -15,7 +22,7 @@ def svg(geom) -> str:
             d.append("M" + " L".join(f"{x:.2f} {y:.2f}" for x, y in ring.coords) + "Z")
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">'
-        f'<path fill="#FFFFFF" fill-rule="evenodd" d="{"".join(d)}"/></svg>\n'
+        f'<path fill="#FFFFFF" fill-rule="evenodd" d="{"".join(d)}"/>{CORNERS if full_bounds else ""}</svg>\n'
     )
 
 
@@ -52,15 +59,19 @@ def glass(name, fill=WHITE, alpha=1.0, translucency=0.2, blur=0.5, refraction=No
     return g
 
 
-def write_icon(name: str, fill, groups: list, pieces: dict) -> Path:
-    """Escribe icons/<name>.icon con icon.json y las piezas que usan sus grupos."""
+def write_icon(name: str, fill, groups: list, pieces: dict, full_bounds: bool = False) -> Path:
+    """Escribe icons/<name>.icon con icon.json y las piezas que usan sus grupos.
+
+    full_bounds: capas a lienzo completo (evita las costuras de sombra de ictool); los iconos
+    aprobados antes de añadirlo se quedan como se aprobaron.
+    """
     icon = ROOT / "icons" / f"{name}.icon"
     if icon.exists():
         shutil.rmtree(icon)
     (icon / "Assets").mkdir(parents=True)
     used = {layer["image-name"][:-4] for g in groups for layer in g["layers"]}
     for piece in sorted(used):
-        (icon / "Assets" / f"{piece}.svg").write_text(svg(pieces[piece]), encoding="utf-8")
+        (icon / "Assets" / f"{piece}.svg").write_text(svg(pieces[piece], full_bounds), encoding="utf-8")
     doc = {
         "features": ["refractivity", "specular-location"],
         "fill": fill,

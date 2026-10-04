@@ -9,11 +9,11 @@
       "name": "nota",
       "lighting": "individual",
       "specular": true,
-      "specular-highlight-placement": "automatic",
-      "blur-material": 0.3,
+      "specular-highlight-placement": "inside",
+      "blur-material": 0.2,
       "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.5
+        "kind": "neutral",
+        "opacity": 0.3
       },
       "translucency": {
         "enabled": true,
@@ -31,8 +31,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.3
+        "strength": 0.2,
+        "depth": 0.6
       }
     }
   ],

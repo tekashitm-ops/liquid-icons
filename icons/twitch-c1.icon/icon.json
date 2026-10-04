@@ -49,7 +49,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.25
+        "value": 0.35
       },
       "layers": [
         {
@@ -57,7 +57,7 @@
           "image-name": "glitch.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.00000,0.00000,0.00000,1.00000"
+            "solid": "extended-srgb:0.00000,0.00000,0.00000,0.90000"
           }
         }
       ],

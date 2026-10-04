@@ -42,8 +42,8 @@
       "specular-highlight-placement": "automatic",
       "blur-material": 0.3,
       "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.5
+        "kind": "neutral",
+        "opacity": 0.35
       },
       "translucency": {
         "enabled": true,

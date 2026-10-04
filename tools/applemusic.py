@@ -19,6 +19,12 @@ Fondos: c1 usa el degradado oficial; c2 y c3 el fondo oscuro de Apple (como los 
 Apple en modo oscuro), porque sobre el rojo de marca solo el blanco casi opaco llega a 3:1
 y el cristal claro o de color desaparecería en la tecla. Las parejas claras (cNc) usan el
 fondo claro de Apple con cristal rojo de marca.
+Ronda 2: el jurado eligió c1/c1c. Cambios tras la revisión del render (detalle junto a
+nota_blanca): c1c tenía costuras rectas de 1 px de la sombra de color de ictool, que ahora es
+neutra y con capas a lienzo completo; c1 era cristal plano (sin bisel y con un anillo rojo
+oscuro fuera de la silueta) y ahora lleva un bisel hondo con brillo "inside", menos esmerilado
+y menos sombra. c4/c4c = c1/c1c con la profundidad de refracción de la ronda 1 (0.3), para
+comparar. La geometría oficial no cambia.
 """
 import re
 
@@ -102,18 +108,48 @@ def pieces():
 
 
 # --- c1: el icono de Apple tal cual -------------------------------------------------------
-def nota_blanca():
-    """Como el icono oficial: nota de cristal blanco esmerilado (el rojo se trasluce un poco).
+# Ronda 2 (revisión del escéptico sobre el render de ictool):
+#   - c1 era una pegatina blanca plana con un filo rojo: sin bisel (G constante, 221, hasta el
+#     borde) y con un anillo de ~4 px de rojo más oscuro y saturado (230,0,34) justo fuera de la
+#     silueta. El icono de Apple tiene un bisel blanco puro de ~10 px y un filo exterior rosa.
+#     Ahora: refracción más suave y más honda (0.2, 0.6): menos fuerza deja de arrastrar el rojo
+#     saturado al filo y más profundidad ensancha el bisel; brillo especular "inside" (como el eje
+#     aprobado de Steam); esmerilado 0.2 (antes 0.5) para que el bisel se vea nítido; sombra
+#     neutra 0.25 (antes 0.5) contra el anillo oscuro; translucidez 0.2 (antes 0.25) para que el
+#     cuerpo no baje de G 221 y el mínimo siga en >= 3.19:1 (la cabeza izquierda sobre el rojo de
+#     abajo); el cuerpo más rosa de Apple solo llega a 2.88:1, así que no se copia.
+#     La profundidad 0.6 es mucho más honda que lo aprendido en el proyecto (con 0.1-0.15 el bisel
+#     ya toma lo que hay a 50-100 px) y las plicas miden 39 px. Aquí detrás solo está el degradado
+#     vertical: la refracción no puede traer piezas ajenas, y en las plicas (verticales) el
+#     desplazamiento horizontal toma el mismo rojo. Pero por si el sombreado del bisel oscurece
+#     las plicas o baja el contraste, c4 es lo mismo con la profundidad de antes (0.3): es el
+#     único parámetro que cambia.
+#   - c1c tenía costuras rectas de 1 px (columna x=767, y 189-740; fila y=857, x 220-392) justo en
+#     la caja de la nota + 7 px: el borde de la textura de la sombra de color de ictool. Ahora la
+#     sombra es neutra (0.3) y las capas ocupan todo el lienzo (write_icon(full_bounds=True)).
+#     Lleva el mismo cristal que c1 (bisel hondo, brillo "inside", esmerilado 0.2 en vez de 0.3)
+#     para que la pareja siga siendo pareja; sobre el fondo claro casi liso la refracción no
+#     cambia el color, solo se ve el brillo del bisel.
+NOTE_REFRACTION = (0.2, 0.6)   # fuerza, profundidad (c1 y c1c)
+NOTE_REFRACTION_C4 = (0.2, 0.3)  # c4/c4c: solo cambia la profundidad (la de la ronda 1)
 
-    Translucidez baja para llegar a 3:1 contra la parte alta del degradado, que es clara.
+
+def nota_blanca(refraction=NOTE_REFRACTION):
+    """Como el icono oficial: nota de cristal blanco poco esmerilado con bisel brillante.
+
+    Translucidez baja (0.2) para seguir por encima de 3:1 sobre todo el degradado.
     """
-    return glass("nota", alpha=1.0, translucency=0.25, blur=0.5, refraction=(0.35, 0.3))
+    return glass("nota", alpha=1.0, translucency=0.2, blur=0.2, refraction=refraction,
+                 shadow="neutral", shadow_opacity=0.25, specular="inside")
 
 
-def nota_roja():
-    """Pareja clara: la nota en cristal rojo de marca con sombra de color."""
-    return glass("nota", fill=MUSIC_RED, alpha=1.0, translucency=0.25, blur=0.3,
-                 refraction=(0.35, 0.3), shadow="layer-color")
+def nota_roja(refraction=NOTE_REFRACTION):
+    """Pareja clara: la nota en cristal rojo de marca, con el mismo bisel que c1.
+
+    Sombra neutra (no de color): la sombra de color de ictool dejaba costuras rectas de 1 px.
+    """
+    return glass("nota", fill=MUSIC_RED, alpha=1.0, translucency=0.25, blur=0.2,
+                 refraction=refraction, shadow="neutral", shadow_opacity=0.3, specular="inside")
 
 
 # --- c2: lentes ---------------------------------------------------------------------------
@@ -157,6 +193,9 @@ CONCEPTS = {
     # c1 (fiel): el icono de iOS de Apple, nota de cristal blanco sobre su degradado rojo
     "applemusic-c1": {"fill": MUSIC_BG, "groups": [nota_blanca()]},
     "applemusic-c1c": {"fill": "system-light", "groups": [nota_roja()]},
+    # c4: c1 con el bisel de la ronda 1 (profundidad 0.3 en vez de 0.6); todo lo demás igual
+    "applemusic-c4": {"fill": MUSIC_BG, "groups": [nota_blanca(NOTE_REFRACTION_C4)]},
+    "applemusic-c4c": {"fill": "system-light", "groups": [nota_roja(NOTE_REFRACTION_C4)]},
     # c2 (lentes, Vista Previa): cabezas de cristal claro sobre el armazón rojo, fondo oscuro de Apple
     "applemusic-c2": {"fill": "system-dark", "groups": [lentes(), armazon()]},
     "applemusic-c2c": {"fill": "system-light", "groups": [
@@ -169,13 +208,17 @@ CONCEPTS = {
 
 
 def main(names=None):
-    """Escribe los aprobados; con nombres de concepto, escribe esos para renderizarlos."""
+    """Escribe los aprobados; con nombres de concepto, escribe esos para renderizarlos.
+
+    Capas a lienzo completo (full_bounds): ictool recortaba la sombra de cada capa a una caja
+    de ~7-12 px alrededor de la nota y dejaba costuras rectas de 1 px (c1c, ronda 1).
+    """
     geo = pieces()
     clean("applemusic")
     targets = {n: n for n in names} if names else APPROVED
     for name, concept in targets.items():
         spec = CONCEPTS[concept]
-        write_icon(name, spec["fill"], spec["groups"], geo)
+        write_icon(name, spec["fill"], spec["groups"], geo, full_bounds=True)
 
 
 if __name__ == "__main__":

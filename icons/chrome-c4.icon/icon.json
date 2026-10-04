@@ -1,0 +1,187 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": "system-dark",
+  "groups": [
+    {
+      "name": "azul",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.3,
+      "shadow": {
+        "kind": "none",
+        "opacity": 0.0
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.5
+      },
+      "layers": [
+        {
+          "name": "azul",
+          "image-name": "azul.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.00000,0.47059,0.95294,0.90000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.15
+      }
+    },
+    {
+      "name": "fondo-azul",
+      "lighting": "individual",
+      "specular": false,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.5,
+      "shadow": {
+        "kind": "none",
+        "opacity": 0.0
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0.0
+      },
+      "layers": [
+        {
+          "name": "fondo-azul",
+          "image-name": "fondo-azul.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.00000,0.47059,0.95294,1.00000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "segmentos",
+      "lighting": "combined",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.3,
+      "shadow": {
+        "kind": "none",
+        "opacity": 0.0
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.5
+      },
+      "layers": [
+        {
+          "name": "rojo",
+          "image-name": "rojo.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.96863,0.10980,0.10980,0.92000"
+          }
+        },
+        {
+          "name": "amarillo",
+          "image-name": "amarillo.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,0.75686,0.00000,0.92000"
+          }
+        },
+        {
+          "name": "verde",
+          "image-name": "verde.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.00000,0.63137,0.25490,0.92000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.3,
+        "depth": 0.1
+      }
+    },
+    {
+      "name": "base",
+      "lighting": "individual",
+      "specular": false,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.5,
+      "shadow": {
+        "kind": "none",
+        "opacity": 0.0
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0.0
+      },
+      "layers": [
+        {
+          "name": "fondo-rojo",
+          "image-name": "fondo-rojo.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.96863,0.10980,0.10980,1.00000"
+          }
+        },
+        {
+          "name": "fondo-amarillo",
+          "image-name": "fondo-amarillo.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,0.75686,0.00000,1.00000"
+          }
+        },
+        {
+          "name": "fondo-verde",
+          "image-name": "fondo-verde.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.00000,0.63137,0.25490,1.00000"
+          }
+        },
+        {
+          "name": "base",
+          "image-name": "base-fiel.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,1.00000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "sombra",
+      "lighting": "individual",
+      "specular": false,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.5,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.35
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0.0
+      },
+      "layers": [
+        {
+          "name": "sombra",
+          "image-name": "sombra.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,1.00000"
+          }
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
