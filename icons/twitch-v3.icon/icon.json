@@ -5,20 +5,20 @@
   ],
   "fill": {
     "linear-gradient": [
-      "extended-srgb:0.10196,0.07843,0.14902,1.00000",
-      "extended-srgb:0.05490,0.05490,0.06275,1.00000"
+      "extended-srgb:1.00000,1.00000,1.00000,1.00000",
+      "extended-srgb:0.94510,0.91765,1.00000,1.00000"
     ]
   },
   "groups": [
     {
-      "name": "losa",
+      "name": "glitch-delante",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
       "blur-material": 0.0,
       "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.65
+        "kind": "none",
+        "opacity": 0.0
       },
       "translucency": {
         "enabled": true,
@@ -26,48 +26,49 @@
       },
       "layers": [
         {
-          "name": "losa",
-          "image-name": "losa.svg",
+          "name": "glitch-delante",
+          "image-name": "glitch-delante.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.55000"
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.62000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.12
-      }
+        "strength": 0.3,
+        "depth": 0.1
+      },
+      "blend-mode": "normal"
     },
     {
-      "name": "cara",
+      "name": "glitch-detras",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.5,
+      "blur-material": 0.15,
       "shadow": {
-        "kind": "neutral",
-        "opacity": 0.3
+        "kind": "layer-color",
+        "opacity": 0.45
       },
       "translucency": {
         "enabled": true,
-        "value": 0.25
+        "value": 0.45
       },
       "layers": [
         {
-          "name": "cara",
-          "image-name": "cara.svg",
+          "name": "glitch-detras",
+          "image-name": "glitch-detras.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.95000"
+            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.75000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.2,
-        "depth": 0.06
+        "strength": 0.3,
+        "depth": 0.1
       }
     }
   ],

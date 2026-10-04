@@ -17,12 +17,12 @@
       "specular-highlight-placement": "automatic",
       "blur-material": 0.0,
       "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.5
+        "kind": "none",
+        "opacity": 0.0
       },
       "translucency": {
         "enabled": true,
-        "value": 0.55
+        "value": 0.65
       },
       "layers": [
         {
@@ -30,22 +30,23 @@
           "image-name": "glitch-delante.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.62000"
+            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.50000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.12
-      }
+        "strength": 0.3,
+        "depth": 0.1
+      },
+      "blend-mode": "plus-lighter"
     },
     {
       "name": "glitch-detras",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.2,
+      "blur-material": 0.15,
       "shadow": {
         "kind": "layer-color",
         "opacity": 0.75

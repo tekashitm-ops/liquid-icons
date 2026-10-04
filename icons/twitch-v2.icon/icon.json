@@ -11,14 +11,44 @@
   },
   "groups": [
     {
-      "name": "glitch-delante",
+      "name": "lente",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
       "blur-material": 0.0,
       "shadow": {
+        "kind": "neutral",
+        "opacity": 0.3
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.88
+      },
+      "layers": [
+        {
+          "name": "lente",
+          "image-name": "lente.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.14000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.15
+      }
+    },
+    {
+      "name": "glitch",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.05,
+      "shadow": {
         "kind": "layer-color",
-        "opacity": 0.5
+        "opacity": 0.7
       },
       "translucency": {
         "enabled": true,
@@ -26,49 +56,44 @@
       },
       "layers": [
         {
-          "name": "glitch-delante",
-          "image-name": "glitch-delante.svg",
+          "name": "glitch",
+          "image-name": "glitch.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.62000"
+            "solid": "extended-srgb:0.66275,0.43922,1.00000,0.72000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.45,
-        "depth": 0.2
+        "strength": 0.25,
+        "depth": 0.06
       }
     },
     {
-      "name": "glitch-detras",
+      "name": "cara-fondo",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.2,
+      "blur-material": 0.5,
       "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.75
+        "kind": "neutral",
+        "opacity": 0.3
       },
       "translucency": {
         "enabled": true,
-        "value": 0.4
+        "value": 0.3
       },
       "layers": [
         {
-          "name": "glitch-detras",
-          "image-name": "glitch-detras.svg",
+          "name": "cara-fondo",
+          "image-name": "cara-fondo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.46667,0.17255,0.90980,0.85000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.95000"
           }
         }
-      ],
-      "refractivity": {
-        "enabled": true,
-        "strength": 0.3,
-        "depth": 0.1
-      }
+      ]
     }
   ],
   "supported-platforms": {
