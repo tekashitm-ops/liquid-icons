@@ -30,14 +30,14 @@
           "image-name": "x.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.12000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.10000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.45,
-        "depth": 0.2
+        "strength": 0.4,
+        "depth": 0.14
       }
     },
     {
@@ -52,7 +52,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.6
+        "value": 0.55
       },
       "layers": [
         {
@@ -60,7 +60,7 @@
           "image-name": "logo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.60000"
+            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.65000"
           }
         }
       ],
@@ -86,13 +86,13 @@
       },
       "layers": [
         {
-          "name": "luz",
+          "name": "luz-0",
           "image-name": "logo.svg",
           "glass": false,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:0.18039,0.61961,0.07059,0.50000",
-              "extended-srgb:0.04314,0.36863,0.04314,0.50000"
+              "extended-srgb:0.04314,0.36863,0.04314,0.25000",
+              "extended-srgb:0.04314,0.36863,0.04314,0.25000"
             ]
           }
         }
@@ -106,11 +106,11 @@
       "blur-material": 0.6,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.4
+        "opacity": 0.35
       },
       "translucency": {
         "enabled": true,
-        "value": 0.35
+        "value": 0.4
       },
       "layers": [
         {
@@ -119,8 +119,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:0.04314,0.30196,0.04314,0.85000",
-              "extended-srgb:0.07843,0.42353,0.07843,0.85000"
+              "extended-srgb:0.81176,0.93725,0.76863,0.70000",
+              "extended-srgb:0.66275,0.86667,0.59608,0.70000"
             ]
           }
         }

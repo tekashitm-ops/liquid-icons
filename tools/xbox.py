@@ -52,13 +52,14 @@ MARBLE_RIM = 6       # px que la canica sobresale de la esfera: la canica ES la 
 GLOW_CENTER = (0.0, 0.5)  # desplazamiento del centro, en radios de la esfera
 GLOW_RADIUS = 0.85        # en radios de la esfera
 # g2: la copia lima de detrás, desplazada hacia abajo (la luz de iOS viene de arriba)
-BACK_SHIFT = (0.0, 16.0)
+BACK_SHIFT = (0.0, 18.0)
 # g3: la X gruesa: el hueco entre las piezas engordado; pisa cada pieza X_GROW px
 X_GROW = 20
 X_FILLET = 16      # px: redondea las esquinas cóncavas (si no, la refracción se arruga)
-X_END_ROUND = 18   # px: redondea las esquinas de los extremos
-X_INSET = 40       # px: la X acaba dentro de la esfera; si llega al borde, su bisel recoge el fondo
-                   # oscuro de fuera y deja cuñas grises en las puntas
+X_END_ROUND = 30   # px: extremos redondos
+X_INSET = 70       # px: la X acaba dentro de la esfera, donde sus brazos aún son anchos. Si llega
+                   # al borde (o a 40 px), su bisel recoge el fondo gris de fuera y deja cuñas
+                   # grises junto a las puntas finas de las piezas
 
 
 def disk(r, c=CENTER):
@@ -112,7 +113,6 @@ def pieces():
         "logo-canica": small,                                    # g1: piezas y su luz
         "canica": disk(RADIUS * MARBLE_SCALE + MARBLE_RIM),      # g1: la esfera de cristal
         "logo-detras": affinity.translate(logo, *BACK_SHIFT),    # g2: la copia lima
-        "logo-detras2": affinity.translate(logo, 10.0, 22.0),
         "x": x_thick(logo),                                      # g3: la X de cristal
         "esfera": disk(RADIUS),                                  # g3: la esfera de detrás
     }
@@ -153,76 +153,93 @@ def group(name, image, paint, *, glass=True, translucency=0.5, blur=0.0, refract
     return g
 
 
+def light(name, layers):
+    """Luz plana detrás del cristal: varias capas sin cristal (delante → detrás), (pieza, relleno)."""
+    g = group(name, layers[0][0], layers[0][1], glass=False, translucency=0)
+    g["layers"] = [{"name": f"{name}-{i}", "image-name": f"{img}.svg", "glass": False, "fill": paint}
+                   for i, (img, paint) in enumerate(layers)]
+    return g
+
+
 DARK_BG = {"linear-gradient": [color("#26282C"), color("#111214")]}   # el #1A1B1E con algo de relieve
 LIGHT_BG = {"linear-gradient": [color("#FFFFFF"), color("#E4E9E1")]}
 
 
 # --- g1: la canica ---
-def marble(tint=WHITE, alpha=0.06, refraction=(0.5, 0.2)):
+def marble(tint=WHITE, alpha=0.08, refraction=(0.5, 0.2)):
     """La esfera de cristal transparente delante de todo: sin esmerilar, su borde dobla las piezas."""
     return group("canica", "canica", fill(tint, alpha), translucency=0.9, blur=0.0,
                  refraction=refraction, shadow="neutral", shadow_opacity=0.4)
 
 
-def g1(light=False, core=True, refraction=(0.5, 0.2)):
-    if light:
-        groups = [
+def g1(light_bg=False, refraction=(0.5, 0.2)):
+    """Canica: esfera de cristal transparente / piezas de cristal verde esmerilado / luz / corazón.
+
+    La luz llega a todas las piezas (tenue arriba) y tiene un círculo más fuerte abajo; el cristal
+    esmerilado de las piezas suaviza su borde y se ve a través de ellas.
+    """
+    if light_bg:
+        return {"fill": LIGHT_BG, "groups": [
             marble(XBOX_GREEN, 0.05, refraction),
             group("piezas", "logo-canica", fill("#1E9A12", 0.6), translucency=0.6, blur=0.35,
                   refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.5),
-            group("luz", "luz-canica", fill(XBOX_GREEN, 0.5, "#0B5E0B"), glass=False, translucency=0),
-        ]
-        if core:
-            groups.append(group("nucleo", "nucleo", fill("#0B4D0B", 0.25), translucency=0.5, blur=0.6,
-                                shadow="neutral", shadow_opacity=0.3))
-        return {"fill": LIGHT_BG, "groups": groups}
-    groups = [
-        marble(WHITE, 0.06, refraction),
+            light("luz", [("luz-canica", fill("#0B5E0B", 0.55)),
+                          ("logo-canica", fill(XBOX_GREEN, 0.25, "#0B5E0B"))]),
+            group("nucleo", "nucleo", fill("#0B4D0B", 0.2), translucency=0.5, blur=0.6,
+                  shadow="neutral", shadow_opacity=0.3),
+        ]}
+    return {"fill": DARK_BG, "groups": [
+        marble(WHITE, 0.08, refraction),
         group("piezas", "logo-canica", fill("#2FA012", 0.55), translucency=0.65, blur=0.35,
-              refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.7),
-        group("luz", "luz-canica", fill(XBOX_LIME, 0.5, XBOX_GLOW), glass=False, translucency=0),
-    ]
-    if core:
-        groups.append(group("nucleo", "nucleo", fill("#0B3A0B", 0.8), translucency=0.4, blur=0.6,
-                            shadow="neutral", shadow_opacity=0.4))
-    return {"fill": DARK_BG, "groups": groups}
+              refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.8),
+        light("luz", [("luz-canica", fill(XBOX_GLOW, 0.55)),
+                      ("logo-canica", fill(XBOX_LIME, 0.3))]),
+        group("nucleo", "nucleo", fill("#0B3A0B", 0.8), translucency=0.4, blur=0.6,
+              shadow="neutral", shadow_opacity=0.4),
+    ]}
 
 
 # --- g2: doble cristal ---
-def g2(light=False, back="logo-detras"):
-    if light:
+def g2(light_bg=False):
+    """Piezas de cristal verde transparente delante de su copia de cristal lima, más abajo."""
+    if light_bg:
         return {"fill": LIGHT_BG, "groups": [
-            group("piezas", "logo", fill(XBOX_GREEN, 0.55), translucency=0.65, blur=0.0,
-                  refraction=(0.4, 0.14), shadow="layer-color", shadow_opacity=0.5),
-            group("detras", back, fill("#5DB80A", 0.9), translucency=0.3, blur=0.6,
+            group("piezas", "logo", fill(XBOX_GREEN, 0.55), translucency=0.7, blur=0.0,
+                  refraction=(0.4, 0.14), shadow="layer-color", shadow_opacity=0.6),
+            group("detras", "logo-detras", fill("#5DB80A", 0.9), translucency=0.3, blur=0.6,
                   shadow="neutral", shadow_opacity=0.4),
         ]}
     return {"fill": DARK_BG, "groups": [
-        group("piezas", "logo", fill(XBOX_GREEN, 0.5), translucency=0.7, blur=0.0,
-              refraction=(0.4, 0.14), shadow="layer-color", shadow_opacity=0.8),
-        group("detras", back, fill(XBOX_LIME, 0.85, XBOX_GLOW), translucency=0.3, blur=0.6,
+        group("piezas", "logo", fill(XBOX_GREEN, 0.45), translucency=0.75, blur=0.0,
+              refraction=(0.4, 0.14), shadow="layer-color", shadow_opacity=1.0),
+        group("detras", "logo-detras", fill(XBOX_LIME, 0.85, XBOX_GLOW), translucency=0.3, blur=0.6,
               shadow="neutral", shadow_opacity=0.5),
     ]}
 
 
 # --- g3: la X de cristal ---
-def g3(light=False, x_tint=WHITE, x_alpha=0.12):
-    if light:
+def g3(light_bg=False, x_tint=XBOX_LIME, x_alpha=0.14):
+    """X gruesa de cristal transparente / piezas de cristal verde / su luz / esfera de cristal.
+
+    La X lleva un tinte lima muy leve: con blanco, el verde hondo de detrás se veía gris humo.
+    En claro, la esfera de detrás es menta claro: la X se lee clara, como el logo sobre blanco.
+    """
+    if light_bg:
         return {"fill": LIGHT_BG, "groups": [
-            group("x", "x", fill(x_tint, x_alpha), translucency=0.9, blur=0.0, refraction=(0.45, 0.2),
+            group("x", "x", fill(WHITE, 0.1), translucency=0.9, blur=0.0, refraction=(0.4, 0.14),
                   shadow="neutral", shadow_opacity=0.35),
-            group("piezas", "logo", fill(XBOX_GREEN, 0.6), translucency=0.6, blur=0.25,
+            group("piezas", "logo", fill(XBOX_GREEN, 0.65), translucency=0.55, blur=0.25,
                   refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.5),
-            group("luz", "logo", fill("#2E9E12", 0.5, "#0B5E0B"), glass=False, translucency=0),
-            group("esfera", "esfera", fill("#0B4D0B", 0.85, "#146C14"), translucency=0.35, blur=0.6,
-                  shadow="neutral", shadow_opacity=0.4),
+            light("luz", [("logo", fill("#0B5E0B", 0.25, "#0B5E0B"))]),
+            group("esfera", "esfera", fill("#CFEFC4", 0.7, "#A9DD98"), translucency=0.4, blur=0.6,
+                  shadow="neutral", shadow_opacity=0.35),
         ]}
     return {"fill": DARK_BG, "groups": [
-        group("x", "x", fill(x_tint, x_alpha), translucency=0.9, blur=0.0, refraction=(0.45, 0.2),
+        group("x", "x", fill(x_tint, x_alpha), translucency=0.9, blur=0.0, refraction=(0.4, 0.14),
               shadow="neutral", shadow_opacity=0.4),
         group("piezas", "logo", fill("#2FA012", 0.55), translucency=0.65, blur=0.25,
-              refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.7),
-        group("luz", "logo", fill(XBOX_LIME, 0.35, XBOX_GLOW), glass=False, translucency=0),
+              refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.8),
+        light("luz", [("logo", fill(XBOX_LIME, 0.4, XBOX_GLOW))]),
         group("esfera", "esfera", fill("#082E08", 0.85, "#0E4A0E"), translucency=0.35, blur=0.6,
               shadow="neutral", shadow_opacity=0.5),
     ]}
@@ -231,13 +248,12 @@ def g3(light=False, x_tint=WHITE, x_alpha=0.12):
 APPROVED = {}
 
 CONCEPTS = {
-    "xbox-g1": g1(), "xbox-g1c": g1(light=True),
-    "xbox-g2": g2(), "xbox-g2c": g2(light=True),
-    "xbox-g3": g3(), "xbox-g3c": g3(light=True),
-    # exploración, ronda 2
-    "xbox-e1": g1(core=False, refraction=(0.4, 0.15)),
-    "xbox-e2": g2(back="logo-detras2"),
-    "xbox-e3": g3(x_tint=XBOX_LIME, x_alpha=0.15),
+    "xbox-g1": g1(), "xbox-g1c": g1(light_bg=True),
+    "xbox-g2": g2(), "xbox-g2c": g2(light_bg=True),
+    "xbox-g3": g3(), "xbox-g3c": g3(light_bg=True),
+    # exploración, ronda 3
+    "xbox-e1": g1(refraction=(0.4, 0.15)),
+    "xbox-e3": g3(x_tint=WHITE, x_alpha=0.04),
 }
 
 

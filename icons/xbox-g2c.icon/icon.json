@@ -18,11 +18,11 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.5
+        "opacity": 0.6
       },
       "translucency": {
         "enabled": true,
-        "value": 0.65
+        "value": 0.7
       },
       "layers": [
         {

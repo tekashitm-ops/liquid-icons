@@ -86,13 +86,21 @@
       },
       "layers": [
         {
-          "name": "luz",
+          "name": "luz-0",
           "image-name": "luz-canica.svg",
           "glass": false,
           "fill": {
+            "solid": "extended-srgb:0.04314,0.36863,0.04314,0.55000"
+          }
+        },
+        {
+          "name": "luz-1",
+          "image-name": "logo-canica.svg",
+          "glass": false,
+          "fill": {
             "linear-gradient": [
-              "extended-srgb:0.06275,0.48627,0.06275,0.50000",
-              "extended-srgb:0.04314,0.36863,0.04314,0.50000"
+              "extended-srgb:0.06275,0.48627,0.06275,0.25000",
+              "extended-srgb:0.04314,0.36863,0.04314,0.25000"
             ]
           }
         }
@@ -118,7 +126,7 @@
           "image-name": "nucleo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.04314,0.30196,0.04314,0.25000"
+            "solid": "extended-srgb:0.04314,0.30196,0.04314,0.20000"
           }
         }
       ]

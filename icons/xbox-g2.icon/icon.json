@@ -18,11 +18,11 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.8
+        "opacity": 1.0
       },
       "translucency": {
         "enabled": true,
-        "value": 0.7
+        "value": 0.75
       },
       "layers": [
         {
@@ -30,7 +30,7 @@
           "image-name": "logo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.50000"
+            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.45000"
           }
         }
       ],
