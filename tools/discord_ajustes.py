@@ -45,6 +45,23 @@ def gear(cx, cy, r_tip, r_root, teeth=8, hole=0.0, fillet=10.0, root_frac=0.55, 
     return g
 
 
+def smooth_gear(cx, cy, r_mid, depth, teeth=8, sharpness=2.5, hole=0.0, steps=2048):
+    """Engranaje de perfil continuo: r(θ) = r_mid + depth·tanh(s·cos(nθ))/tanh(s).
+
+    Sin esquinas vivas ni hendiduras: la normal del borde cambia con suavidad, así la refracción
+    de Liquid Glass se dobla limpia (los dientes con esquinas traían trozos de Clyde de lejos).
+    """
+    pts = []
+    for i in range(steps):
+        t = 2 * math.pi * i / steps
+        r = r_mid + depth * math.tanh(sharpness * math.cos(teeth * (t + math.pi / 2))) / math.tanh(sharpness)
+        pts.append((cx + r * math.cos(t), cy + r * math.sin(t)))
+    g = Polygon(pts).buffer(0)
+    if hole:
+        g = g.difference(Point(cx, cy).buffer(hole, quad_segs=RES))
+    return g
+
+
 def clyde_at(scale, cx, cy):
     """Clyde oficial escalado (sin deformar) con su centro en (cx, cy)."""
     c = discord.pieces()["clyde"]
@@ -75,6 +92,9 @@ def pieces():
         # la refracción deforma a Clyde con suavidad (los dientes finos lo rompían en trozos)
         "lente-p2": gear(678, 644, 215, 184, teeth=10, hole=70, fillet=12, root_frac=0.6, tip_frac=0.46),
         "lente-p3": gear(664, 604, 215, 184, teeth=10, hole=70, fillet=12, root_frac=0.6, tip_frac=0.46),
+        # Ronda 4: perfil continuo (sin esquinas) y el trapecio de siempre con esquinas muy suaves
+        "suave-p2": smooth_gear(678, 644, 194, 22, teeth=8, sharpness=2.5, hole=66),
+        "redondo-p2": gear(678, 644, 215, 174, teeth=8, hole=66, fillet=20),
     }
 
 
@@ -152,14 +172,28 @@ LENS_VARIANTS.update({
     "v11": ("p2", {**FINO, "refraction": (0.75, 0.5)}, "lente"),
     "v12": ("p3", {**FINO, "refraction": (0.75, 0.3)}, "lente"),
 })
+# (Ronda 3 descartada por el panel de jueces: esquirlas en las esquinas hendidas entre dientes,
+# costuras en la base de los dientes y una pareja clara casi invisible, 1.07:1.)
+# Ronda 4: perfil sin esquinas, refracción algo menor, borde y sombra más marcados, y en claro
+# un cristal gris con más cuerpo para que el engranaje se lea sobre el fondo claro.
+SUAVE = {"alpha": 0.22, "translucency": 0.85, "shadow_opacity": 0.45}
+LIGHT_BODY = {"alpha": 0.34, "shadow_opacity": 0.55}
+LENS_VARIANTS.update({
+    "v13": ("p2", {**SUAVE, "refraction": (0.55, 0.25)}, "suave"),
+    "v14": ("p2", {**SUAVE, "refraction": (0.7, 0.3)}, "suave"),
+    "v15": ("p2", {**SUAVE, "refraction": (0.55, 0.4)}, "suave"),
+    "v16": ("p2", {**SUAVE, "refraction": (0.6, 0.25)}, "redondo"),
+})
+ROUND4 = {"v13", "v14", "v15", "v16"}
 for v, (pos, grade, *shape) in LENS_VARIANTS.items():
     gear_piece = f"{shape[0] if shape else 'engranaje'}-{pos}"
     CONCEPTS[f"discord-ajustes-{v}"] = {"fill": BG, "groups": [
         lens(gear_piece, **grade),
         clyde_glass(f"clyde-{pos}"),
     ]}
+    light_grade = {**grade, **LIGHT_BODY} if v in ROUND4 else grade
     CONCEPTS[f"discord-ajustes-{v}c"] = {"fill": "system-light", "groups": [
-        lens(gear_piece, fill=GRAY_ON_LIGHT, **grade),
+        lens(gear_piece, fill=GRAY_ON_LIGHT, **light_grade),
         clyde_glass(f"clyde-{pos}", light=True),
     ]}
 
