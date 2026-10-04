@@ -1,6 +1,6 @@
 """Hoja de comparación de conceptos: render grande de Icon Composer y, debajo, a tamaño de tecla.
 
-Uso:  python tools/sheet.py salida.png youtube-c1 youtube-c2 ...  (lee renders/)
+Uso:  python tools/sheet.py salida.png youtube-c1 "youtube-c2=Etiqueta" ...  (lee renders/)
 """
 import sys
 from pathlib import Path
@@ -26,9 +26,10 @@ def main(out: str, names: list[str]) -> None:
     sheet = Image.new("RGB", (w, h), (28, 28, 30))
     draw = ImageDraw.Draw(sheet)
     title, small = font(22), font(15)
-    for i, name in enumerate(names):
+    for i, arg in enumerate(names):
+        name, _, label = arg.partition("=")
         x = PAD + i * (BIG + PAD)
-        draw.text((x, PAD), name, fill=(242, 242, 247), font=title)
+        draw.text((x, PAD), label or name, fill=(242, 242, 247), font=title)
         big = Image.open(ROOT / "renders" / f"{name}-Default.png").convert("RGBA").resize((BIG, BIG), Image.LANCZOS)
         sheet.paste(big, (x, PAD + 34), big)
         # Tecla de Stream Deck: LCD negro con el render a tamaño de tecla (144 px)

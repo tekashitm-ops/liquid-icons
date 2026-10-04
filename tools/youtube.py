@@ -46,7 +46,12 @@ def play_prism():
     return glass("play", alpha=0.82, translucency=0.45, blur=0.0, refraction=(0.65, 0.5), specular="inside")
 
 
-APPROVED = {}
+APPROVED = {
+    # c1 (aprobado): fondo oscuro de Apple, pastilla roja y triángulo blanco de cristal
+    "youtube-oscuro": "youtube-c1",
+    # c5 (guardado para el modo claro): fondo blanco como el oficial
+    "youtube-claro": "youtube-c5",
+}
 
 CONCEPTS = {
     # Oscuro: fondo oscuro estándar de Apple, triángulo blanco sobre su hueco

@@ -5,12 +5,67 @@
       "id": "steam",
       "name": "Steam",
       "match": {
-        "names": ["Steam"],
-        "appIdSuffixes": ["\\Steam\\Steam.exe"]
+        "names": [
+          "Steam"
+        ],
+        "appIdSuffixes": [
+          "\\Steam\\Steam.exe"
+        ],
+        "domains": [
+          "steampowered.com",
+          "steamcommunity.com"
+        ],
+        "schemes": [
+          "steam"
+        ]
       },
       "variants": {
         "oscuro": "steam-oscuro",
         "claro": "steam-claro"
+      }
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "match": {
+        "names": [
+          "YouTube"
+        ],
+        "appIdSuffixes": [
+          "_crx_agimnkijcamfeangaknmldooml"
+        ],
+        "domains": [
+          "youtube.com",
+          "youtu.be"
+        ]
+      },
+      "variants": {
+        "oscuro": "youtube-oscuro",
+        "claro": "youtube-claro"
+      }
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "match": {
+        "names": [
+          "Discord"
+        ],
+        "appIdSuffixes": [
+          "com.squirrel.Discord.Discord"
+        ],
+        "domains": [
+          "discord.com",
+          "discord.gg",
+          "discordapp.com"
+        ],
+        "schemes": [
+          "discord"
+        ]
+      },
+      "variants": {
+        "oscuro": "discord-oscuro",
+        "claro": "discord-claro"
       }
     }
   ]

@@ -51,7 +51,12 @@ def eyes(fill=BLURPLE):
                  shadow="layer-color", specular="inside")
 
 
-APPROVED = {}
+APPROVED = {
+    # Opción A (aprobada): como el icono oficial, Clyde de cristal blanco sobre su degradado
+    "discord-oscuro": "discord-c1",
+    # Su pareja clara (guardada para el modo claro): Clyde de cristal morado
+    "discord-claro": "discord-c5",
+}
 
 CONCEPTS = {
     # Oscuro (marca), fiel al icono oficial
