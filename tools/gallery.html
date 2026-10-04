@@ -12,7 +12,7 @@
 <div id="root"></div>
 <script>
   const q = new URLSearchParams(location.search);
-  const names = (q.get('icons') || 'steam').split(',');
+  const names = (q.get('icons') || 'steam-oscuro,steam-claro').split(',');
   const R = (q.get('r') || 'Default,Dark,TintedLight,TintedDark,ClearLight,ClearDark').split(',');
   if (q.get('size')) document.head.insertAdjacentHTML('beforeend', `<style>img{width:${q.get('size')}px;height:${q.get('size')}px}</style>`);
   const L = { Default: 'Por defecto', Dark: 'Oscuro', TintedLight: 'Tintado claro', TintedDark: 'Tintado oscuro', ClearLight: 'Transparente claro', ClearDark: 'Transparente oscuro' };

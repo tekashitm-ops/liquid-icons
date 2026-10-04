@@ -2,7 +2,7 @@ name: Render icons
 
 on:
   push:
-    paths: ["icons/**", ".github/workflows/render.yml"]
+    paths: ["icons/**", "tools/to_srgb.swift", ".github/workflows/render.yml"]
   workflow_dispatch:
 
 jobs:
@@ -26,6 +26,7 @@ jobs:
       - name: Renderizar con Icon Composer (generación 27)
         run: |
           mkdir -p renders
+          key_failed=
           for icon in icons/*.icon; do
             name="$(basename "$icon" .icon)"
             for r in Default Dark TintedLight TintedDark ClearLight ClearDark; do
@@ -45,11 +46,20 @@ jobs:
                    --design-generation 27; then
                 echo "ok $name $r key"
               else
-                echo "::warning::fallo $name $r key"
+                # Sin el render de tecla no se puede exportar a Stream Deck: el job falla
+                echo "::error::fallo $name $r key"
+                key_failed=1
               fi
             done
           done
           ls -la renders
+          [ -z "${key_failed:-}" ]
+
+      - name: Pasar a sRGB de 8 bits (ColorSync)
+        # ictool exporta en Display P3 a 16 bits; Stream Deck no gestiona color y necesita sRGB
+        run: |
+          swift tools/to_srgb.swift renders/*.png
+          sips -g bitsPerSample -g space -g profile renders/*-key.png
 
       - uses: actions/upload-artifact@v4
         with:

@@ -14,8 +14,8 @@
 <figure><div class="stack" id="flat"></div><figcaption>Capas juntas (plano)</figcaption></figure>
 <figure><div class="stack tint" id="sep"></div><figcaption>Cada capa en un color</figcaption></figure>
 <script>
-  const icon = new URLSearchParams(location.search).get('icon') || 'steam';
-  for (const id of ['flat', 'sep']) for (const f of ['1-manivela', '2-eje', '3-biela']) {
+  const icon = new URLSearchParams(location.search).get('icon') || 'steam-oscuro';
+  for (const id of ['flat', 'sep']) for (const f of ['manivela', 'eje', 'biela']) {
     const i = new Image(); i.src = `../icons/${icon}.icon/Assets/${f}.svg`; document.getElementById(id).appendChild(i);
   }
 </script>
