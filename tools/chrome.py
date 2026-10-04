@@ -67,9 +67,24 @@ LIGHT_INSET = 1.5     # px: la luz llega casi al borde (dentro del cristal: sin 
 # borde exterior), verde 16° (57 px en el anillo, 21° en el borde)
 PETAL_RED, PETAL_GREEN = 22.0, 16.0
 FILLET = 16           # px de redondeo de las esquinas libres de los pétalos
+# g4/g5: vitral abierto
+GAP4 = 20.0           # px de rendija abierta, del centro hasta pasado el borde exterior
+FILLET4 = 20.0        # px de redondeo de las esquinas de los vidrios (en el borde y en el centro)
+LIGHT_R4 = 0.62 * R   # radio de la luz de detrás (oscuro) y de la placa esmerilada (claro)
+SPOKE4 = 56.0         # px de ancho de los rayos de luz bajo cada frontera
+SPOKE_END4 = 20.0     # px antes del borde exterior donde acaba cada rayo
+OVER5 = 32.0          # px de ancho de los solapes de g5 (rojo sobre amarillo, amarillo sobre verde)
+HUB5 = R_BLUE + 15    # g5: dentro de este radio (bajo la lente) las tres fronteras son rendijas
+# De cada frontera (por su punto de tangencia): el color del casquete, más allá de la recta, y el
+# de la esquina, del lado del centro
+CAP_OF = {270.0: "rojo", 30.0: "amarillo", 150.0: "verde"}
+CORNER_OF = {270.0: "amarillo", 30.0: "verde", 150.0: "rojo"}
 
 # Colores del icono oficial de iOS (mediana del interior de cada pieza): tintes del cristal
 RED, YELLOW, GREEN, BLUE = "#F71C1C", "#FFC100", "#00A141", "#0078F3"
+# g4/g5: amarillo más limpio (sobre lo oscuro, ámbar y no mostaza) y azul más claro (los lóbulos
+# de debajo de la lente se ven más claros: el amarillo bajo el azul salía gris verdoso)
+YELLOW4, BLUE4 = "#FFD23F", "#2E8BFF"
 
 
 def circle(c, r):
@@ -200,6 +215,55 @@ def overlap(t, side, base, straight=0.7):
     return _polygons(Polygon(pts).buffer(0)).intersection(circle(CENTER, R))
 
 
+def strip(sw, t, width):
+    """Franja de width px a lo largo de toda la frontera t (el arco bajo el anillo y la recta, del
+    centro hasta pasado el borde exterior), solo del lado de la esquina. El arco va por dentro del
+    círculo blanco (le es tangente por dentro), así que la franja no asoma por fuera del anillo:
+    sale de debajo de él en el punto de tangencia."""
+    line = LineString(boundary(t + ROTATION, reach=R))
+    return _polygons(line.buffer(width, quad_segs=32).intersection(sw[CORNER_OF[t]]))
+
+
+def spokes(dist):
+    """Tres rayos de luz de SPOKE4 px a lo largo de las rectas de las fronteras, con el eje a dist
+    px del centro (el de la rendija o el del solape), hasta SPOKE_END4 px antes del borde (fin redondo)."""
+    out = []
+    for t in TANGENTS:
+        (ux, uy), (dx, dy) = _u(t + ROTATION), _u(t + ROTATION + 90)
+        ox, oy = CENTER[0] + ux * dist, CENTER[1] + uy * dist
+        s = math.sqrt((R - SPOKE_END4) ** 2 - dist ** 2) - SPOKE4 / 2
+        out.append(LineString([(ox, oy), (ox + dx * s, oy + dy * s)]).buffer(SPOKE4 / 2, quad_segs=32))
+    return unary_union(out)
+
+
+def light_shape(dist):
+    """g4/g5: la luz de detrás, un disco de LIGHT_R4 con los tres rayos; las juntas, redondeadas."""
+    return _polygons(fillet(unary_union([circle(CENTER, LIGHT_R4), spokes(dist)]), 24))
+
+
+def panes4(sw):
+    """g4: tres vidrios sueltos. Cada frontera es una rendija abierta de GAP4 px, del centro hasta
+    pasado el borde exterior, que se come el color de la esquina; el del casquete guarda el borde
+    oficial. Bajo la lente, las tres rendijas hacen una Y de luz con un cubo en el centro."""
+    gaps = unary_union([strip(sw, t, GAP4) for t in TANGENTS])
+    return {k: _polygons(fillet(v.difference(gaps), FILLET4)) for k, v in sw.items()}
+
+
+def panes5(sw):
+    """g5: el rojo se monta OVER5 px sobre el amarillo (naranja) y el amarillo sobre el verde (lima),
+    en franjas de ancho constante del anillo al borde; la frontera rojo-verde es una rendija abierta
+    (el rojo sobre el verde saldría marrón). Bajo la lente (dentro de HUB5) las tres son rendijas."""
+    hub = circle(CENTER, HUB5)
+    gap = {t: strip(sw, t, GAP4) for t in TANGENTS}
+    band = {t: strip(sw, t, OVER5).difference(hub) for t in (270.0, 30.0)}
+    out = {
+        "rojo": unary_union([sw["rojo"].difference(gap[150.0]), band[270.0]]),
+        "amarillo": unary_union([sw["amarillo"].difference(gap[270.0].intersection(hub)), band[30.0]]),
+        "verde": sw["verde"].difference(gap[30.0].intersection(hub)),
+    }
+    return {k: _polygons(fillet(v, FILLET4)) for k, v in out.items()}
+
+
 def pieces():
     sw = swirl()
     disk = circle(CENTER, R)
@@ -224,6 +288,12 @@ def pieces():
         "azul": circle(CENTER, R_BLUE),
         "aro": annulus(R_BLUE, R_RING),              # el anillo blanco solo
         "luz": circle(CENTER, R - LIGHT_INSET),      # la luz de detrás del cristal de color
+        # g4: vidrios sueltos con rendijas abiertas; g5: dos solapes y una rendija
+        **{f"panel-{k}": v for k, v in panes4(sw).items()},
+        **{f"panel5-{k}": v for k, v in panes5(sw).items()},
+        "luz4": light_shape(R_RING - GAP4 / 2),      # rayos en el eje de las rendijas
+        "luz5": light_shape(R_RING - OVER5 / 2),     # rayos en el eje de los solapes
+        "placa": circle(CENTER, LIGHT_R4),           # claro: la placa esmerilada de detrás
     }
 
 
@@ -322,6 +392,31 @@ def petalos(dark):
     return spec(dark, [center, front, back])
 
 
+# --- g4 vitral abierto (g5: con solapes) ----------------------------------------------------------
+def abierto(dark, overlap=False):
+    """g1 con todo el cristal: vidrios sueltos (individual: bisel y brillo propios en cada uno) con
+    rendijas abiertas hasta el borde, sobre una luz más pequeña (disco de 0.62 R y tres rayos bajo
+    las fronteras): cada vidrio se ve claro sobre la luz y hondo sobre lo oscuro, y su bisel dobla
+    el borde de la luz. Lente azul más honda y más clara, que tiñe de azul lo de alrededor.
+    En claro, detrás, una placa de cristal esmerilado blanco (su canto y su sombra se ven a través)."""
+    img = "panel5-{}" if overlap else "panel-{}"
+    lens = group("lente", [layer("azul", "azul", BLUE4, 0.62)], translucency=0.65, blur=0.0,
+                 refraction=(0.85, 0.6), shadow=("layer-color", 0.5), placement="inside")
+    ring = group("anillo", [layer("aro", "aro", WHITE, 0.7)], translucency=0.55, blur=0.15 if overlap else 0.35,
+                 refraction=(0.45, 0.2) if overlap else (0.3, 0.1), shadow=NONE)
+    panes = group("vidrios", [layer(k, img.format(k), c, 0.72)
+                              for k, c in zip(("rojo", "amarillo", "verde"), (RED, YELLOW4, GREEN))],
+                  translucency=0.6, blur=0.0, refraction=(0.45, 0.2),
+                  shadow=(("layer-color", 0.4) if overlap else NONE) if dark else BACK_SHADOW)
+    if dark:
+        back = group("luz", [layer("luz", "luz5" if overlap else "luz4", WHITE, glass=False)], translucency=0.0,
+                     blur=0.0, shadow=NONE, specular=False)
+        return {"fill": "system-dark", "groups": [lens, ring, panes, back]}
+    plate = group("placa", [layer("placa", "placa", WHITE, 0.55)], translucency=0.5, blur=0.6,
+                  shadow=("neutral", 0.35))
+    return {"fill": "system-light", "groups": [lens, ring, panes, plate]}
+
+
 APPROVED = {}
 
 CONCEPTS = {
@@ -331,6 +426,10 @@ CONCEPTS = {
     "chrome-g2c": lupa(dark=False),
     "chrome-g3": petalos(dark=True),
     "chrome-g3c": petalos(dark=False),
+    "chrome-g4": abierto(dark=True),
+    "chrome-g4c": abierto(dark=False),
+    "chrome-g5": abierto(dark=True, overlap=True),
+    "chrome-g5c": abierto(dark=False, overlap=True),
 }
 
 
