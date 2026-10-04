@@ -45,11 +45,12 @@ TANGENTS = (270.0, 30.0, 150.0)  # dónde tocan las fronteras el círculo blanco
 RES = 256             # segmentos por cuarto de círculo: curvas suaves a cualquier tamaño
 
 # Cristal
-GAP = 14              # px de rendija de luz entre los vidrios de g1 (2 px en la tecla)
-FILLET = 10           # px de redondeo de las esquinas de los vidrios y pétalos (sin esquirlas)
-LIGHT_INSET = 18      # px antes del borde donde acaba la luz: el bisel exterior la dobla
-PETAL = 11.0          # grados que el rojo y el verde se montan sobre el amarillo en g3 (~79 px fuera)
-R_BLUE_LENS = 132     # disco azul de g2, más pequeño: la lupa lo aumenta
+GAP = 18              # px de rendija de luz entre los vidrios de g1 (2.5 px en la tecla)
+FILLET = 24           # px de redondeo de las esquinas: las de 60° del borde exterior traían pliegues
+LIGHT_INSET = 1.5     # px: la luz llega casi al borde (dentro del cristal: sin halo). Si acaba antes,
+                      # el bisel de las esquinas de 60° toma el fondo oscuro y salen pliegues negros
+PETAL = 16.0          # grados que el rojo y el verde se montan sobre el amarillo en g3 (~114 px fuera)
+LENS_OVER = 30        # px que la lupa de g2 sobresale del anillo blanco (su borde dobla los colores)
 
 # Colores del icono oficial de iOS (mediana del interior de cada pieza) y tintes del cristal
 RED, YELLOW, GREEN, BLUE = "#F71C1C", "#FFC100", "#00A141", "#0078F3"
@@ -144,27 +145,37 @@ def overlap_wedge(piece, into, degrees, r_min):
     return max(wedges, key=lambda w: w.area).intersection(annulus(r_min, R))
 
 
+def petal_fillets(petals):
+    """Esquinas redondeadas en los pétalos, menos en la junta del rojo y el verde: van en una sola
+    pieza de cristal (combined), sin bisel ahí; redondearla abriría una muesca en el borde."""
+    red, green = petals["rojo"], petals["verde"]
+    return {
+        "rojo": unary_union([fillet(red), red.intersection(green.buffer(3 * FILLET))]),
+        "verde": unary_union([fillet(green), green.intersection(red.buffer(3 * FILLET))]),
+        "amarillo": fillet(petals["amarillo"]),
+    }
+
+
 def pieces():
     sw = swirl()
     disk = circle(CENTER, R)
     vidrio = {k: _polygons(fillet(v.difference(gaps(GAP)).intersection(disk))) for k, v in sw.items()}
     petals = {
-        "rojo": fillet(unary_union([sw["rojo"], overlap_wedge(sw["rojo"], sw["amarillo"], PETAL, R_RING - 16)])),
-        "verde": fillet(unary_union([sw["verde"], overlap_wedge(sw["verde"], sw["amarillo"], PETAL, R_RING - 16)])),
+        "rojo": unary_union([sw["rojo"], overlap_wedge(sw["rojo"], sw["amarillo"], PETAL, R_RING - 16)]),
+        "verde": unary_union([sw["verde"], overlap_wedge(sw["verde"], sw["amarillo"], PETAL, R_RING - 16)]),
+        "amarillo": sw["amarillo"],
     }
     return {
-        # Los tres colores hasta el centro (g2, y el amarillo de g3)
+        # Los tres colores hasta el centro (g2)
         **{f"{k}-centro": v for k, v in sw.items()},
         # g1: vidrios con rendijas de luz entre ellos
         **{f"vidrio-{k}": v for k, v in vidrio.items()},
         # g3: el rojo y el verde con la cuña que se monta sobre el amarillo
-        **{f"petalo-{k}": _polygons(v.intersection(disk)) for k, v in petals.items()},
+        **{f"petalo-{k}": _polygons(v.intersection(disk)) for k, v in petal_fillets(petals).items()},
         "azul": circle(CENTER, R_BLUE),
-        "aro": annulus(R_BLUE, R_RING),             # el anillo blanco solo
-        "azul-lupa": circle(CENTER, R_BLUE_LENS),   # g2: azul más pequeño detrás de la lupa
-        "aro-lupa": annulus(R_BLUE_LENS, R_RING),   # g2: la parte blanca de la lupa
-        "centro-lupa": circle(CENTER, R_BLUE_LENS),  # g2: la parte transparente de la lupa
-        "luz": circle(CENTER, R - LIGHT_INSET),     # la luz de detrás del cristal de color
+        "aro": annulus(R_BLUE, R_RING),              # el anillo blanco solo
+        "lupa": circle(CENTER, R_RING + LENS_OVER),  # g2: la lente, algo mayor que el anillo
+        "luz": circle(CENTER, R - LIGHT_INSET),      # la luz de detrás del cristal de color
     }
 
 
@@ -207,51 +218,78 @@ def light(shadow=("neutral", 0.35)):
                  specular=False)
 
 
-def tri(prefix, tints, alpha):
-    return [layer(k, f"{prefix}{k}" if prefix else f"{k}-centro", c, alpha)
+def tri(images, tints, alpha):
+    return [layer(k, f"{k}-centro" if images == "centro" else f"{images}-{k}", c, alpha)
             for k, c in zip(("rojo", "amarillo", "verde"), tints)]
 
 
+def spec(dark, groups):
+    """Oscuro: la luz detrás de todo (sin ella el cristal de color sobre negro sale oscuro y el
+    amarillo, mostaza). Claro: el fondo claro ya es la luz; lo de atrás proyecta su sombra de
+    color sobre él."""
+    if dark:
+        return {"fill": "system-dark", "groups": [*groups, light()]}
+    return {"fill": "system-light", "groups": groups}
+
+
+# Sombras: un grupo delante de otro cristal va sin sombra (la suya oscurecía lo de detrás: el
+# naranja y la lima de los pétalos salían rojo oscuro y menta); solo lo de atrás la proyecta.
+NONE = ("none", 0.0)
+
+
 # --- g1 vitral ----------------------------------------------------------------------------------
-def vitral(dark):
+def vitral(dark, placement="automatic", pane_refraction=(0.4, 0.18)):
     """Lente azul (refracción profunda: pieza grande y redonda), anillo esmerilado, vidrios con
     rendijas y la luz detrás. La lente ve debajo los tres colores y las rendijas juntándose."""
-    tints = (RED, YELLOW, GREEN)
-    lens = group("lente", [layer("azul", "azul", BLUE, 0.72)], translucency=0.55, blur=0.0,
-                 refraction=(0.7, 0.5), shadow=("layer-color", 0.5), placement="inside")
-    ring = group("anillo", [layer("aro", "aro", WHITE, 0.78)], translucency=0.5, blur=0.5,
-                 refraction=(0.3, 0.1), shadow=("neutral", 0.3))
-    panes = group("vidrios", tri("vidrio-", tints, 0.8 if dark else 0.85), translucency=0.55, blur=0.0,
-                  refraction=(0.45, 0.2), shadow=("none", 0.0) if dark else ("layer-color", 0.45))
-    return {"fill": "system-dark" if dark else "system-light", "groups": [lens, ring, panes, light()]}
+    lens = group("lente", [layer("azul", "azul", BLUE, 0.74)], translucency=0.55, blur=0.0,
+                 refraction=(0.7, 0.5), shadow=("layer-color", 0.3), placement="inside")
+    ring = group("anillo", [layer("aro", "aro", WHITE, 0.72)], translucency=0.55, blur=0.35,
+                 refraction=(0.3, 0.1), shadow=NONE)
+    panes = group("vidrios", tri("vidrio", (RED, YELLOW, GREEN), 0.78 if dark else 0.82), translucency=0.55,
+                  blur=0.0, refraction=pane_refraction, shadow=NONE if dark else ("layer-color", 0.45),
+                  placement=placement)
+    return spec(dark, [lens, ring, panes])
 
 
 # --- g2 lupa ------------------------------------------------------------------------------------
 def lupa(dark):
-    """Lupa: anillo y centro como una sola lente transparente (lighting combined: un solo cuerpo
-    de cristal, un solo bisel en el borde del anillo), refracción muy profunda; detrás, el azul
-    (más pequeño: la lupa lo aumenta) y los tres colores hasta el centro."""
-    lens = group("lupa", [layer("aro", "aro-lupa", WHITE, 0.55), layer("centro", "centro-lupa", WHITE, 0.08)],
-                 translucency=0.8, blur=0.0, refraction=(0.85, 0.65), shadow=("neutral", 0.45),
+    """Vista Previa: una lupa de cristal transparente, algo mayor que el anillo, sobre el anillo y
+    el azul (cristal esmerilado) y los colores (una sola pieza de cristal: lighting combined, sin
+    biseles en las juntas). Refracción muy profunda: su borde aumenta y dobla lo de debajo."""
+    lens = group("lupa", [layer("lupa", "lupa", WHITE, 0.1)], translucency=0.85, blur=0.0,
+                 refraction=(0.85, 0.65), shadow=("neutral", 0.25))
+    core = group("centro", [layer("azul", "azul", BLUE, 0.8), layer("aro", "aro", WHITE, 0.8)],
+                 translucency=0.5, blur=0.3, refraction=(0.35, 0.15), shadow=NONE)
+    segs = group("colores", tri("centro", (RED, YELLOW, GREEN), 0.78 if dark else 0.82), translucency=0.55,
+                 blur=0.0, refraction=(0.45, 0.2), shadow=NONE if dark else ("layer-color", 0.45),
                  lighting="combined")
-    blue = group("azul", [layer("azul", "azul-lupa", BLUE, 0.85)], translucency=0.45, blur=0.2,
-                 refraction=(0.4, 0.2), shadow=("layer-color", 0.45))
-    segs = group("colores", tri("", (RED, YELLOW, GREEN), 0.8), translucency=0.5, blur=0.0,
-                 refraction=(0.4, 0.15), shadow=("layer-color", 0.4))
-    return {"fill": "system-dark" if dark else "system-light", "groups": [lens, blue, segs, light()]}
+    return spec(dark, [lens, core, segs])
+
+
+def lupa_tintada(dark):
+    """Prueba para g2: la lente es el anillo blanco y el azul juntos (combined), sin disco azul
+    detrás; por ella se ven los colores juntándose en el centro."""
+    lens = group("lupa", [layer("azul", "azul", BLUE, 0.62), layer("aro", "aro", WHITE, 0.6)],
+                 translucency=0.6, blur=0.0, refraction=(0.85, 0.65), shadow=("layer-color", 0.3),
+                 lighting="combined")
+    segs = group("colores", tri("centro", (RED, YELLOW, GREEN), 0.78 if dark else 0.82), translucency=0.55,
+                 blur=0.0, refraction=(0.45, 0.2), shadow=NONE if dark else ("layer-color", 0.45),
+                 lighting="combined")
+    return spec(dark, [lens, segs])
 
 
 # --- g3 pétalos ---------------------------------------------------------------------------------
 def petalos(dark):
-    """Fotos: rojo y verde delante, montados sobre el amarillo; el centro, un botón de cristal."""
-    center = group("centro", [layer("azul", "azul", BLUE, 0.85), layer("aro", "aro", WHITE, 0.82)],
-                   translucency=0.45, blur=0.1, refraction=(0.55, 0.35), shadow=("neutral", 0.4),
+    """Fotos: rojo y verde delante (una pieza: combined, sin bisel en su junta), montados sobre el
+    amarillo; el centro, un botón de cristal (anillo y azul en una pieza) sobre el remolino."""
+    center = group("centro", [layer("azul", "azul", BLUE, 0.74), layer("aro", "aro", WHITE, 0.7)],
+                   translucency=0.55, blur=0.05, refraction=(0.55, 0.35), shadow=("neutral", 0.2),
                    lighting="combined")
     front = group("rojo-verde", [layer("rojo", "petalo-rojo", RED, 0.72), layer("verde", "petalo-verde", GREEN, 0.72)],
-                  translucency=0.6, blur=0.0, refraction=(0.5, 0.25), shadow=("layer-color", 0.5))
-    back = group("amarillo", [layer("amarillo", "amarillo-centro", YELLOW, 0.82)], translucency=0.5, blur=0.0,
-                 refraction=(0.45, 0.2), shadow=("layer-color", 0.45))
-    return {"fill": "system-dark" if dark else "system-light", "groups": [center, front, back, light()]}
+                  translucency=0.6, blur=0.0, refraction=(0.45, 0.22), shadow=NONE, lighting="combined")
+    back = group("amarillo", [layer("amarillo", "petalo-amarillo", YELLOW, 0.8)], translucency=0.55, blur=0.0,
+                 refraction=(0.4, 0.18), shadow=NONE if dark else ("layer-color", 0.45))
+    return spec(dark, [center, front, back])
 
 
 APPROVED = {}
@@ -263,15 +301,10 @@ CONCEPTS = {
     "chrome-g2c": lupa(dark=False),
     "chrome-g3": petalos(dark=True),
     "chrome-g3c": petalos(dark=False),
+    # Pruebas de la ronda 2 (se borran después)
+    "chrome-gx1": lupa_tintada(dark=True),
+    "chrome-gx2": vitral(dark=True, placement="outside", pane_refraction=(0.6, 0.4)),
 }
-
-# Pruebas de la ronda 1 (se borran después): g3 sin la luz detrás; g1 con los vidrios en multiplicar
-_x1 = petalos(dark=True)
-_x1["groups"] = _x1["groups"][:3]
-_x2 = vitral(dark=True)
-_x2["groups"][2]["blend-mode"] = "multiply"
-CONCEPTS["chrome-gx1"] = _x1
-CONCEPTS["chrome-gx2"] = _x2
 
 
 def main(names=None):
