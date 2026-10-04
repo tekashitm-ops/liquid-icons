@@ -70,15 +70,20 @@ STACK = (36, 0, -36)
 # g4: centro de las ondas y del disco de luz; 30 px por debajo del de g2, para que la barra
 # doble una banda de onda y no el hueco oscuro que había justo bajo su borde de arriba
 RING_C4 = (CENTER[0], CENTER[1] + 30)
-# g4: ondas (radio exterior, grosor) y disco. Ningún borde de círculo va casi paralelo a un borde
-# de la nota (ronda h1: los radios 117, 165 y 237 de g2 corrían a 3-4 px de las plicas y del
-# borde de abajo de la barra y dejaban astillas y rayas): el disco (95) y la segunda onda (250)
-# caen en medio de las plicas, la primera onda (130) a 17 px de la plica izquierda
-WAVES4 = [(178, 48), (298, 48), (418, 48)]
+# g4: ondas (radio exterior, grosor) y disco, con huecos de 47-60 px. Ningún borde de círculo va
+# casi paralelo a un borde de la nota (ronda h1: los radios 117, 165 y 237 de g2 corrían a 3-4 px
+# de las plicas y del borde de abajo de la barra y dejaban astillas y rayas; ronda h2: el 178
+# cruzaba la plica izquierda justo bajo la barra y dejaba una gota): el disco (95) y la segunda
+# onda (250) caen en medio de las plicas; la primera cruza la plica izquierda 23 px por debajo de
+# la barra (155) y 33 px por dentro de ella (203)
+WAVES4 = [(203, 48), (298, 48), (400, 48)]
 DISC_R = 95
-# g4 y g5: px que cada plica sube por debajo de la barra; con 70 la punta se veía dentro de la
-# barra como una gota, con 30 no se ve
+# g5: px que cada plica sube por debajo de la barra (punta redonda); con 70 la punta se veía dentro
+# de la barra como una gota. Con 30 no se ve sobre el orbe liso de g5, pero sobre las ondas de g4
+# la punta izquierda brillaba como un punto: g4 lleva plicas de punta plana que suben solo STUB px,
+# paralelas al borde de la barra, y la barra redondea sus esquinas de abajo con 8 px y no 20
 RISE2 = 30.0
+STUB, BAR_R = 10.0, 8
 # g5: aro de cristal alrededor del orbe (como el icono de iTunes 12): 318-385, el borde del orbe
 # (345) pasa por su centro; los dos lejos del radio 300, que va paralelo al borde de la barra
 HALO = (385, 67)
@@ -94,6 +99,7 @@ HOT_PINK = "#FF3D8B"    # rosa fucsia de la barra de g1 (el rosa del icono de Ap
 BLUSH = "#FFD6DF"       # rosa blanquecino: el cristal casi transparente de g2 y la pila de g3
 WINE_TOP, WINE_BOTTOM = "#3E0816", "#120207"    # fondo de g1: vino casi negro
 BLUSH_TOP, BLUSH_BOTTOM = "#FFF6F8", "#FFE2E9"  # fondo claro rosado de g1c y g3c
+PEARL = "#FFC9D5"       # g5c: abajo del orbe; uno blanco liso no se veía sobre el fondo rosado
 
 
 def xsrgb(rgb, alpha=1.0) -> str:
@@ -160,6 +166,10 @@ def pieces():
     geo["halo"] = ring(*HALO, ORB[0])
     tips = unary_union([rod(st, y_beam(sum(st) / 2) - RISE2) for st in (STEM_L, STEM_R)])
     geo["corcheas2"] = solid(nota.difference(beam).union(nota.intersection(tips)))
+    cols = unary_union([box(st[0] - 1, -300, st[1] + 1, 1324) for st in (STEM_L, STEM_R)])
+    stubs = nota.intersection(below((BEAM_BOTTOM[0], BEAM_BOTTOM[1] - STUB))).intersection(cols)
+    geo["corcheas3"] = solid(nota.difference(beam).union(soften(stubs, r=4)))
+    geo["barra2"] = soften(beam, r=BAR_R)
     return geo
 
 
@@ -279,7 +289,7 @@ def g4(light=False):
 
     Delante, la barra de cristal fucsia, pieza ancha (165 px) con refracción (0.4, 0.12), sobre la
     banda de la onda del medio (las ondas bajan 30 px): la tuerce en remolinos. Detrás, las
-    corcheas de cristal rosa casi transparente, con 30 px de plica bajo la barra; su refracción
+    corcheas de cristal rosa casi transparente, con 10 px de plica bajo la barra; su refracción
     baja a (0.35, 0.09) para quitar el pliegue del centro de las plicas (39 px). Las ondas, de
     cristal claro encendido (rosa arriba, rojo abajo, apenas esmerilado) y con brillo de su color.
     Al fondo, un disco de luz esmerilado en el centro de las ondas (como el orbe de g1): su borde
@@ -288,7 +298,7 @@ def g4(light=False):
     """
     if light:
         bar, note = (HOT_PINK, 0.6), (MUSIC_RED, 0.5)
-        wave, alphas, wave_glass = (ROSE, MUSIC_PINK), (0.7, 0.48, 0.3), (0.45, 0.25, 0.45)
+        wave, alphas, wave_glass = (ROSE, MUSIC_RED), (0.8, 0.56, 0.36), (0.45, 0.25, 0.45)
         disc = group("disco", [("disco", grad_fill(WHITE, WHITE, 0.95))], translucency=0.3, blur=0.5,
                      shadow="neutral", shadow_opacity=0.35)
         shadow = 0.4
@@ -300,9 +310,9 @@ def g4(light=False):
         shadow = 0.5
     waves = [(f"aro{i}", grad_fill(*wave, a)) for i, a in enumerate(alphas, 1)]
     return [
-        solo("barra", *bar, tinted=TINT_NOTE, translucency=0.6, blur=0.0, refraction=(0.4, 0.12),
+        solo("barra2", *bar, tinted=TINT_NOTE, translucency=0.6, blur=0.0, refraction=(0.4, 0.12),
              shadow="layer-color", shadow_opacity=0.6),
-        solo("corcheas2", *note, tinted=TINT_NOTE, translucency=0.75, blur=0.0, refraction=(0.35, 0.09),
+        solo("corcheas3", *note, tinted=TINT_NOTE, translucency=0.75, blur=0.0, refraction=(0.35, 0.09),
              shadow="layer-color", shadow_opacity=shadow),
         group("aros", waves, translucency=wave_glass[0], blur=wave_glass[1], shadow="layer-color",
               shadow_opacity=wave_glass[2]),
@@ -322,7 +332,7 @@ def g5(light=False):
     orbe blanco y el mismo aro sobre el fondo rosado: el cristal rojo tiene por fin algo que doblar.
     """
     if light:
-        bar, note, orb, shadow = (HOT_PINK, 0.55), (MUSIC_RED, 0.5), grad_fill(WHITE, WHITE, 0.95), "neutral"
+        bar, note, orb, shadow = (HOT_PINK, 0.55), (MUSIC_RED, 0.5), grad_fill(WHITE, PEARL, 0.92), "neutral"
     else:
         bar, note, orb, shadow = (HOT_PINK, 0.65), (MUSIC_RED, 0.45), grad_fill(WHITE, BLUSH, 0.85), "layer-color"
     return [
@@ -332,8 +342,7 @@ def g5(light=False):
              shadow="layer-color", shadow_opacity=0.6, specular="inside"),
         group("halo", [("halo", grad_fill(ROSE, MUSIC_RED, 0.85))], translucency=0.5, blur=0.1,
               refraction=(0.35, 0.12), shadow="layer-color", shadow_opacity=0.7),
-        group("orbe", [("orbe", orb)], translucency=0.4, blur=0.6, shadow=shadow,
-              shadow_opacity=0.35 if light else 0.5),
+        group("orbe", [("orbe", orb)], translucency=0.4, blur=0.6, shadow=shadow, shadow_opacity=0.5),
     ]
 
 

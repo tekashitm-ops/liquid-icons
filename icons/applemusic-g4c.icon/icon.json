@@ -11,7 +11,7 @@
   },
   "groups": [
     {
-      "name": "barra",
+      "name": "barra2",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
@@ -26,8 +26,8 @@
       },
       "layers": [
         {
-          "name": "barra",
-          "image-name": "barra.svg",
+          "name": "barra2",
+          "image-name": "barra2.svg",
           "glass": true,
           "fill-specializations": [
             {
@@ -51,7 +51,7 @@
       }
     },
     {
-      "name": "corcheas2",
+      "name": "corcheas3",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
@@ -66,8 +66,8 @@
       },
       "layers": [
         {
-          "name": "corcheas2",
-          "image-name": "corcheas2.svg",
+          "name": "corcheas3",
+          "image-name": "corcheas3.svg",
           "glass": true,
           "fill-specializations": [
             {
@@ -111,8 +111,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.70000",
-              "extended-srgb:1.00000,0.24314,0.38431,0.70000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.80000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.80000"
             ]
           }
         },
@@ -122,8 +122,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.48000",
-              "extended-srgb:1.00000,0.24314,0.38431,0.48000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.56000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.56000"
             ]
           }
         },
@@ -133,8 +133,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.30000",
-              "extended-srgb:1.00000,0.24314,0.38431,0.30000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.36000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.36000"
             ]
           }
         }

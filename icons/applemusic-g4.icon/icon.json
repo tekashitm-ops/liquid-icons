@@ -11,7 +11,7 @@
   },
   "groups": [
     {
-      "name": "barra",
+      "name": "barra2",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
@@ -26,8 +26,8 @@
       },
       "layers": [
         {
-          "name": "barra",
-          "image-name": "barra.svg",
+          "name": "barra2",
+          "image-name": "barra2.svg",
           "glass": true,
           "fill-specializations": [
             {
@@ -51,7 +51,7 @@
       }
     },
     {
-      "name": "corcheas2",
+      "name": "corcheas3",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
@@ -66,8 +66,8 @@
       },
       "layers": [
         {
-          "name": "corcheas2",
-          "image-name": "corcheas2.svg",
+          "name": "corcheas3",
+          "image-name": "corcheas3.svg",
           "glass": true,
           "fill-specializations": [
             {

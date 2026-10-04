@@ -131,7 +131,7 @@
       "blur-material": 0.6,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.35
+        "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
@@ -144,8 +144,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,1.00000,1.00000,0.95000",
-              "extended-srgb:1.00000,1.00000,1.00000,0.95000"
+              "extended-srgb:1.00000,1.00000,1.00000,0.92000",
+              "extended-srgb:1.00000,0.78824,0.83529,0.92000"
             ]
           }
         }
