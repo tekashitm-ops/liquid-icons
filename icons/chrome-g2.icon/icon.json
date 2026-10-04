@@ -25,7 +25,7 @@
           "image-name": "azul.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.00000,0.47059,0.95294,0.75000"
+            "solid": "extended-srgb:0.00000,0.47059,0.95294,0.72000"
           }
         },
         {
@@ -39,8 +39,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.65,
-        "depth": 0.45
+        "strength": 0.6,
+        "depth": 0.4
       }
     },
     {
@@ -109,7 +109,10 @@
           "image-name": "luz.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,1.00000"
+            "linear-gradient": [
+              "extended-srgb:1.00000,1.00000,1.00000,1.00000",
+              "extended-srgb:0.83137,0.83922,0.86275,1.00000"
+            ]
           }
         }
       ]

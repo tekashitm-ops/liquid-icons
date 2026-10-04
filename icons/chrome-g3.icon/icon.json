@@ -77,8 +77,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.3,
-        "depth": 0.1
+        "strength": 0.15,
+        "depth": 0.05
       }
     },
     {
@@ -131,7 +131,10 @@
           "image-name": "luz.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,1.00000"
+            "linear-gradient": [
+              "extended-srgb:1.00000,1.00000,1.00000,1.00000",
+              "extended-srgb:0.83137,0.83922,0.86275,1.00000"
+            ]
           }
         }
       ]

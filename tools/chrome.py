@@ -57,12 +57,12 @@ RES = 256             # segmentos por cuarto de círculo: curvas suaves a cualqu
 
 # Cristal
 GAP = 18              # px de rendija de luz entre los vidrios de g1 (2.5 px en la tecla)
-SLIT_END = 48         # px antes del borde exterior donde acaban las rendijas (fin redondo)
+SLIT_END = 64         # px antes del borde exterior donde acaban las rendijas (fin redondo)
 LIGHT_INSET = 1.5     # px: la luz llega casi al borde (dentro del cristal: sin halo)
 # Grados de anillo que ocupa la base del solape de cada pétalo. Las fronteras giran todas hacia el
-# mismo lado, así que el mismo giro da solapes distintos: rojo 20° (71 px en el anillo, 15° en el
-# borde exterior), verde 12° (43 px en el anillo, 17° en el borde)
-PETAL_RED, PETAL_GREEN = 20.0, 12.0
+# mismo lado, así que el mismo giro da solapes distintos: rojo 22° (79 px en el anillo, 16° en el
+# borde exterior), verde 16° (57 px en el anillo, 21° en el borde)
+PETAL_RED, PETAL_GREEN = 22.0, 16.0
 FILLET = 16           # px de redondeo de las esquinas libres de los pétalos
 
 # Colores del icono oficial de iOS (mediana del interior de cada pieza): tintes del cristal
@@ -248,11 +248,16 @@ def group(name, layers, translucency, blur, refraction=None, shadow=("none", 0.0
     return g
 
 
+# La luz baja un poco hacia abajo: ictool hace el cristal más transparente abajo (deja ver el 22%
+# de lo de detrás arriba y el 55% abajo, medido en la ronda 1) y el verde salía menta
+LIGHT_FILL = {"linear-gradient": [color(WHITE), color("#D4D6DC")]}
+
+
 def light():
-    """La luz de detrás (solo en oscuro): disco blanco plano, opaco, sin brillo ni refracción;
-    proyecta la sombra del logo sobre el fondo."""
-    return group("luz", [layer("luz", "luz", WHITE)], translucency=0.0, blur=0.5, shadow=("neutral", 0.4),
-                 specular=False)
+    """La luz de detrás (solo en oscuro): disco plano, opaco, sin brillo ni refracción, blanco
+    arriba y algo más apagado abajo; proyecta la sombra del logo sobre el fondo."""
+    return group("luz", [layer("luz", "luz", LIGHT_FILL)], translucency=0.0, blur=0.5,
+                 shadow=("neutral", 0.4), specular=False)
 
 
 def spec(dark, groups):
@@ -277,7 +282,7 @@ def vitral(dark):
                  refraction=(0.7, 0.5), shadow=("layer-color", 0.3), placement="inside")
     ring = group("anillo", [layer("aro", "aro", WHITE, 0.7)], translucency=0.55, blur=0.35,
                  refraction=(0.3, 0.1), shadow=NONE)
-    panes = group("vidrios", colors("vidrio-{}", 0.75), translucency=0.6, blur=0.0, refraction=(0.45, 0.2),
+    panes = group("vidrios", colors("vidrio-{}", 0.75), translucency=0.6, blur=0.0, refraction=(0.2, 0.06),
                   shadow=NONE if dark else BACK_SHADOW, lighting="combined")
     return spec(dark, [lens, ring, panes])
 
@@ -287,8 +292,8 @@ def lupa(dark):
     """Una sola lente gruesa: el anillo blanco y el azul juntos (combined), sin esmerilar, sobre el
     remolino; su bisel aumenta y dobla los colores que se juntan detrás. Refracción profunda, pero
     no tanto como (0.85, 0.65), que dejaba pelusa. Los colores, una pieza de cristal (combined)."""
-    lens = group("lupa", [layer("azul", "azul", BLUE, 0.75), layer("aro", "aro", WHITE, 0.62)],
-                 translucency=0.6, blur=0.0, refraction=(0.65, 0.45), shadow=("neutral", 0.3),
+    lens = group("lupa", [layer("azul", "azul", BLUE, 0.72), layer("aro", "aro", WHITE, 0.62)],
+                 translucency=0.6, blur=0.0, refraction=(0.6, 0.4), shadow=("neutral", 0.3),
                  lighting="combined")
     segs = group("colores", colors("{}-centro", 0.75), translucency=0.6, blur=0.0, refraction=(0.45, 0.2),
                  shadow=NONE if dark else BACK_SHADOW, lighting="combined")
@@ -304,7 +309,7 @@ def petalos(dark):
                    translucency=0.55, blur=0.3, refraction=(0.45, 0.25), shadow=("neutral", 0.25),
                    lighting="combined")
     front = group("rojo-verde", [layer("rojo", "petalo-rojo", RED, 0.7), layer("verde", "petalo-verde", GREEN, 0.7)],
-                  translucency=0.6, blur=0.0, refraction=(0.3, 0.1), shadow=NONE, lighting="combined")
+                  translucency=0.6, blur=0.0, refraction=(0.15, 0.05), shadow=NONE, lighting="combined")
     back = group("amarillo", [layer("amarillo", "petalo-amarillo", YELLOW, 0.75)], translucency=0.6, blur=0.0,
                  refraction=(0.4, 0.15), shadow=NONE if dark else BACK_SHADOW)
     return spec(dark, [center, front, back])
