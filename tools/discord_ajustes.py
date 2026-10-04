@@ -20,11 +20,11 @@ RES = 128
 GRAY_ON_LIGHT = "#7C7C80"  # gris de Ajustes de Apple, algo más oscuro para llegar a 3:1 sobre fondo claro
 
 
-def gear(cx, cy, r_tip, r_root, teeth=8, hole=0.0, fillet=10.0):
+def gear(cx, cy, r_tip, r_root, teeth=8, hole=0.0, fillet=10.0, root_frac=0.55, tip_frac=0.38):
     """Engranaje redondeado: cuerpo + dientes trapezoidales, esquinas suavizadas y eje hueco."""
     body = Point(cx, cy).buffer(r_root, quad_segs=RES)
     pitch = 2 * math.pi / teeth
-    w_root, w_tip = 0.55 * pitch * r_root, 0.38 * pitch * r_root  # anchura del diente (px)
+    w_root, w_tip = root_frac * pitch * r_root, tip_frac * pitch * r_root  # anchura del diente (px)
     parts = [body]
     for i in range(teeth):
         a = i * pitch - math.pi / 2
@@ -71,6 +71,10 @@ def pieces():
         "engranaje-p2": gear(678, 644, 215, 174, teeth=8, hole=66, fillet=10),
         "clyde-p3": clyde_at(0.80, 448, 434),
         "engranaje-p3": gear(664, 604, 215, 174, teeth=8, hole=66, fillet=10),
+        # Ronda 3: engranaje "lente" de dientes cortos y anchos, con más cuerpo macizo donde
+        # la refracción deforma a Clyde con suavidad (los dientes finos lo rompían en trozos)
+        "lente-p2": gear(678, 644, 215, 184, teeth=10, hole=70, fillet=12, root_frac=0.6, tip_frac=0.46),
+        "lente-p3": gear(664, 604, 215, 184, teeth=10, hole=70, fillet=12, root_frac=0.6, tip_frac=0.46),
     }
 
 
@@ -136,13 +140,26 @@ LENS_VARIANTS = {
     "v5": ("p2", CON_CUERPO),
     "v6": ("insignia", CLARO),  # posición original
 }
-for v, (pos, grade) in LENS_VARIANTS.items():
+# (Ronda 2 descartada: los dientes finos con refracción profunda rompían a Clyde en trozos,
+# como cristal roto.)
+# Ronda 3: refracción poco profunda (se curva en un borde limpio) y engranaje con más cuerpo.
+FINO = {"alpha": 0.18, "translucency": 0.85, "shadow_opacity": 0.35}
+LENS_VARIANTS.update({
+    "v7": ("p2", {**FINO, "refraction": (0.6, 0.25)}, "engranaje"),
+    "v8": ("p2", {**FINO, "refraction": (0.85, 0.25)}, "engranaje"),
+    "v9": ("p2", {**FINO, "refraction": (0.6, 0.3)}, "lente"),
+    "v10": ("p2", {**FINO, "refraction": (0.85, 0.3)}, "lente"),
+    "v11": ("p2", {**FINO, "refraction": (0.75, 0.5)}, "lente"),
+    "v12": ("p3", {**FINO, "refraction": (0.75, 0.3)}, "lente"),
+})
+for v, (pos, grade, *shape) in LENS_VARIANTS.items():
+    gear_piece = f"{shape[0] if shape else 'engranaje'}-{pos}"
     CONCEPTS[f"discord-ajustes-{v}"] = {"fill": BG, "groups": [
-        lens(f"engranaje-{pos}", **grade),
+        lens(gear_piece, **grade),
         clyde_glass(f"clyde-{pos}"),
     ]}
     CONCEPTS[f"discord-ajustes-{v}c"] = {"fill": "system-light", "groups": [
-        lens(f"engranaje-{pos}", fill=GRAY_ON_LIGHT, **grade),
+        lens(gear_piece, fill=GRAY_ON_LIGHT, **grade),
         clyde_glass(f"clyde-{pos}", light=True),
     ]}
 
