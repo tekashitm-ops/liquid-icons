@@ -128,7 +128,7 @@
       "layers": [
         {
           "name": "rojo",
-          "image-name": "banda-rojo.svg",
+          "image-name": "fondo-rojo.svg",
           "glass": false,
           "fill": {
             "solid": "extended-srgb:0.78431,0.06275,0.18039,1.00000"
@@ -136,7 +136,7 @@
         },
         {
           "name": "amarillo",
-          "image-name": "banda-amarillo.svg",
+          "image-name": "fondo-amarillo.svg",
           "glass": false,
           "fill": {
             "solid": "extended-srgb:0.96078,0.61961,0.00000,1.00000"
@@ -144,7 +144,7 @@
         },
         {
           "name": "verde",
-          "image-name": "banda-verde.svg",
+          "image-name": "fondo-verde.svg",
           "glass": false,
           "fill": {
             "solid": "extended-srgb:0.00000,0.52941,0.23529,1.00000"
