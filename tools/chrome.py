@@ -69,7 +69,8 @@ PETAL_RED, PETAL_GREEN = 22.0, 16.0
 FILLET = 16           # px de redondeo de las esquinas libres de los pétalos
 # g4: vitral abierto
 GAP4 = 20.0           # px de rendija abierta, del centro hasta pasado el borde exterior
-FILLET4 = 20.0        # px de redondeo de las esquinas de los vidrios (en el borde y en el centro)
+FILLET4 = 28.0        # px de redondeo de las esquinas de los vidrios (en el borde y en el centro):
+                      # con 20, la esquina de 60° junto a cada rendija juntaba sus biseles en una mota (g4-4)
 LIGHT_R4 = 0.62 * R   # radio de la luz de detrás (en claro, lo de dentro de él va sin fondo de color)
 # Rayos de luz bajo las rendijas: se abren de SPOKE4 px (8 px bajo el canto de cada vidrio: con
 # 18 px la junta con el disco salía como un goterón, ronda g4-1) a SPOKE_RIM4 en el borde, por el
