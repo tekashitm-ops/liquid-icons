@@ -78,8 +78,11 @@ X_TOP_REACH = 185  # px desde el cruce: los brazos de arriba acaban de frente al
 G4_SCALE = 0.85        # esfera del logo de 326 px de radio
 CAUSTIC_SHIFT = 0.42   # la copia lima baja 0.42 radios inscritos (21/36/69 px) dentro de su pieza.
                        # Con 0.55 la franja oscura se juntaba con el hueco y la X se veía gorda
-G4_TIP = 8             # px: puntas algo más romas que TIP_ROUND; en la punta aguda de la pieza de
-                       # abajo el bisel dejaba una gota lima brillante
+G4_TIP = {"abajo": 14}  # px: puntas algo más romas que TIP_ROUND (8 px; la de abajo 14): en su punta
+                        # aguda el bisel dejaba una gota lima brillante y luego dos cuernos
+CAUSTIC_MIN_BAND = 6    # px: la franja oscura más fina que 12 px se rellena de luz. Al bajar la copia,
+                        # el canto casi vertical de las laterales quedaba con una raya oscura fina, y
+                        # por ella su bisel enseñaba lo de detrás (en g5, la X de luz: una raya gris)
 X_LIGHT_GROW = 4       # g5: la X de luz pisa 4 px las piezas (sin raya oscura entre las dos)
 
 
@@ -143,8 +146,12 @@ def tidy(geom, r=8, min_area=4000):
 
 def caustic(parts):
     """g4: la copia lima de cada pieza, bajada y recortada a su pieza: la luz le entra por abajo."""
-    return unary_union([tidy(affinity.translate(p, 0, CAUSTIC_SHIFT * inscribed(p)).intersection(p))
-                        for p in parts])
+    out = []
+    for p in parts:
+        lit = affinity.translate(p, 0, CAUSTIC_SHIFT * inscribed(p)).intersection(p)
+        dark = p.difference(lit).buffer(-CAUSTIC_MIN_BAND, quad_segs=32).buffer(CAUSTIC_MIN_BAND, quad_segs=32)
+        out.append(tidy(p.difference(dark)))
+    return unary_union(out)
 
 
 def x_light(logo, r):
@@ -157,7 +164,8 @@ def pieces():
     logo = unary_union(list(logo_pieces().values()))
     small = affinity.scale(logo, MARBLE_SCALE, MARBLE_SCALE, origin=CENTER)
     parts4 = [affinity.scale(p, G4_SCALE, G4_SCALE, origin=CENTER)
-              .buffer(-G4_TIP, quad_segs=32).buffer(G4_TIP, quad_segs=32) for p in logo_pieces().values()]
+              .buffer(-G4_TIP.get(n, 8), quad_segs=32).buffer(G4_TIP.get(n, 8), quad_segs=32)
+              for n, p in logo_pieces().items()]
     logo4 = unary_union(parts4)
     return {
         "logo-g4": logo4,                                        # g4, g5: las piezas
