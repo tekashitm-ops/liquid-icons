@@ -1,0 +1,154 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:0.18039,0.09412,0.34510,1.00000",
+      "extended-srgb:0.04314,0.03922,0.06275,1.00000"
+    ],
+    "orientation": {
+      "start": {
+        "x": 0,
+        "y": 0
+      },
+      "stop": {
+        "x": 1,
+        "y": 1
+      }
+    }
+  },
+  "groups": [
+    {
+      "name": "fantasma",
+      "lighting": "combined",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "none",
+        "opacity": 0.0
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.85
+      },
+      "layers": [
+        {
+          "name": "g5-fantasma-marco",
+          "image-name": "g5-fantasma-marco.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.30000"
+          }
+        },
+        {
+          "name": "g5-fantasma-cara",
+          "image-name": "g5-fantasma-cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.06000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.3,
+        "depth": 0.1
+      },
+      "blend-mode": "plus-lighter"
+    },
+    {
+      "name": "ventanas",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.3
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.9
+      },
+      "layers": [
+        {
+          "name": "g5-ventanas",
+          "image-name": "g5-ventanas.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.14000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.25,
+        "depth": 0.08
+      }
+    },
+    {
+      "name": "detras",
+      "lighting": "combined",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.2,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.75
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.45
+      },
+      "layers": [
+        {
+          "name": "g5-detras-marco",
+          "image-name": "g5-detras-marco.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.46667,0.17255,0.90980,0.80000"
+          }
+        },
+        {
+          "name": "g5-detras-cara",
+          "image-name": "g5-detras-cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.15000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "luz",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.5,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.3
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.3
+      },
+      "layers": [
+        {
+          "name": "g5-luz",
+          "image-name": "g5-luz.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.90000"
+          }
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

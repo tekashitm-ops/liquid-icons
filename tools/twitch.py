@@ -99,6 +99,8 @@ def pieces():
         "ventanas": soften(grow(eyes, PANE), 4),
         # g3: el logo cortado en tres franjas; la del medio, delante y corrida a la derecha
         **slices(mark, face),
+        **g4_pieces(outer, inner, eyes),
+        **g5_pieces(outer, inner, eyes),
     }
 
 
@@ -227,9 +229,167 @@ def g3(light=False, refraction=(0.4, 0.15)):
     return [front, rest]
 
 
+# --- piezas comunes de g4 y g5 ---
+
+BODY_FILLET = 16   # g4/g5: rincones cóncavos del bocadillo (raíz de la cola) con más radio: la
+                   # refracción más fuerte no hace astillas en ellos
+NOTCH_R = 6        # radio de la punta de la muesca de la cara (sin él, un destello de 1 px)
+
+
+def round_at(geom, pt, r, zone):
+    """Redondea con radio r solo la esquina que cae junto a pt (en zone px)."""
+    area = Point(pt).buffer(zone, quad_segs=32)
+    return geom.difference(area).union(soften(geom, r).intersection(area))
+
+
+def base_shapes(outer, inner):
+    """Bocadillo entero y cara (con la zona de los ojos, sin huecos), con la punta de la cola y
+    la de la muesca redondeadas."""
+    body = fillet_concave(round_tip(outer), BODY_FILLET)
+    face = round_tip(inner, NOTCH_R, 24)
+    return body, face
+
+
+def capa(name, fill, alpha, glass_=True):
+    return {"name": name, "image-name": f"{name}.svg", "glass": glass_,
+            "fill": {"solid": color(fill, alpha)}}
+
+
+def grupo(name, layers, translucency, blur, refraction=None, shadow="neutral", shadow_opacity=0.5,
+          blend=None, lighting="individual", specular="automatic"):
+    """Grupo de cristal hecho a mano: varias capas, modo de luz y fusión."""
+    g = vidrio(name, "#FFFFFF", 1.0, translucency, blur, refraction, shadow=shadow,
+               shadow_opacity=shadow_opacity, specular=specular, blend=blend)
+    g["lighting"] = lighting
+    g["layers"] = layers
+    return g
+
+
+def diagonal(top, bottom):
+    """Degradado de arriba a la izquierda a abajo a la derecha (orientation de Icon Composer)."""
+    return {"linear-gradient": [color(top), color(bottom)],
+            "orientation": {"start": {"x": 0, "y": 0}, "stop": {"x": 1, "y": 1}}}
+
+
+# --- g4: glitch en franjas, con todo el cristal (g3 con los arreglos del juez) ---
+
+BAND = (548, 712)   # g4: la franja va de 548 (el bisel no llega a los ojos, que acaban en 476) a
+                    # 712 (la muesca entera, que acaba en 706, cae dentro: no asoma su punta)
+BAR_SHIFT = 36      # px que se corre la barra a la derecha
+BAR_R = 12          # radio de las esquinas de la barra
+BAR_TIP_R = 24      # radio de su punta aguda (arriba a la derecha): sin él, un rizo especular
+LIT_SHIFT = 24      # px que la cara iluminada de detrás se corre abajo a la derecha
+
+
+def g4_pieces(outer, inner, eyes):
+    """Barra corrida (marco + cara), el logo entero sin cortes debajo (la franja que pisa la barra
+    va aparte, más clara: el hueco del glitch), ventanas en los ojos y la cara iluminada de detrás,
+    corrida LIT_SHIFT px: sus bordes de abajo y de la derecha pasan bajo el marco."""
+    body, face = base_shapes(outer, inner)
+    frame = body.difference(face)
+    band = box(0, BAND[0], 1024, BAND[1])
+    bar = soften(shift(body.intersection(band), BAR_SHIFT, 0), BAR_R)
+    tip = (body.intersection(band).bounds[2] + BAR_SHIFT, BAND[0])  # punta aguda, arriba a la dcha.
+    bar = round_at(bar, tip, BAR_TIP_R, 70)
+    return {
+        "g4-barra-marco": shift(frame.intersection(band), BAR_SHIFT, 0).intersection(bar),
+        "g4-barra-cara": shift(face.intersection(band), BAR_SHIFT, 0).intersection(bar),
+        "g4-marco": frame.difference(band),
+        "g4-marco-franja": frame.intersection(band),
+        "g4-cara": face,
+        "g4-ventanas": soften(grow(eyes, PANE), 4),
+        "g4-luz": shift(face, LIT_SHIFT, LIT_SHIFT).difference(eyes),
+    }
+
+
+def g4(light=False):
+    """Delante la barra de cristal lila casi transparente (en claro, morado que se multiplica),
+    con brillo del color de la capa; luego las ventanas claras de los ojos; luego el logo entero
+    de cristal violeta (marco más transparente que en g3 y cara casi incolora), con la franja que
+    pisa la barra más clara; detrás, la cara iluminada corrida, que el marco y la barra doblan."""
+    if light:
+        bar_c, bar_a, bar_mix, bar_glow = TWITCH_PURPLE, 0.5, "multiply", 0.45
+        frame_c, frame_a, band_a, glow = TWITCH_PURPLE, 0.6, 0.42, 0.4
+        lit, lit_a = DEEP, 0.85
+    else:
+        bar_c, bar_a, bar_mix, bar_glow = LILAC, 0.45, "plus-lighter", 0.5
+        frame_c, frame_a, band_a, glow = VIOLET, 0.55, 0.4, 0.65
+        lit, lit_a = "#FFFFFF", 0.9
+    bar = grupo("barra", [capa("g4-barra-marco", bar_c, bar_a), capa("g4-barra-cara", LAVENDER, 0.16)],
+                0.8, 0.0, (0.4, 0.12), "layer-color", bar_glow, blend=bar_mix, lighting="combined")
+    windows = grupo("ventanas", [capa("g4-ventanas", "#FFFFFF", 0.14)], 0.9, 0.0, (0.25, 0.08),
+                    "neutral", 0.3)
+    logo = grupo("logo", [capa("g4-marco", frame_c, frame_a), capa("g4-marco-franja", frame_c, band_a),
+                          capa("g4-cara", LAVENDER, 0.1)],
+                 0.7, 0.05, (0.35, 0.15), "layer-color", glow, lighting="combined")
+    backing = grupo("luz", [capa("g4-luz", lit, lit_a)], 0.3, 0.5, None, "neutral", 0.3)
+    return [bar, windows, logo, backing]
+
+
+# --- g5: glitch doble de verdad transparente (g1 con los arreglos del juez) ---
+
+GHOST = 20   # px: cada copia se corre 20 px en diagonal (40 px entre las dos), como en g1
+LIT_GROW = 10  # px que la cara iluminada pisa el marco de la copia de detrás
+
+
+def g5_pieces(outer, inner, eyes, g=GHOST):
+    """Delante, un fantasma de cristal del logo (cuerpo entero: marco y cara a la vez, sin hueco,
+    así no hay halo alrededor de la cara), abajo a la izquierda; ventanas en sus ojos. Detrás, el
+    logo «de verdad», arriba a la derecha: marco y ojos morado profundo, cara clara sobre una cara
+    iluminada. La copia de detrás no tiene cola (solo se vería dentro de la del fantasma: era la
+    astilla de g1). g5b: además se corta a 116 px del borde izquierdo y 100 px del de abajo del
+    fantasma, fuera del alcance de su bisel (en g1 su borde, a 40 px, era la varilla gris)."""
+    body, face = base_shapes(outer, inner)
+    root = 770.0  # raíz de la cola en el lienzo
+    back = shift(body.intersection(box(0, 0, 1024, root)), g, -g)
+    back_b = back.intersection(box(outer.bounds[0] - g + 116, 0, 1024, root + g - 100))
+    back_face = shift(face.difference(eyes), g, -g)
+    lit = shift(grow(face, LIT_GROW).difference(eyes), g, -g)
+    front = shift(body, -g, g)
+    front_face = shift(face, -g, g)
+    return {
+        "g5-fantasma-marco": front.difference(front_face),
+        "g5-fantasma-cara": front_face,
+        "g5-ventanas": shift(soften(grow(eyes, PANE), 4), -g, g),
+        "g5-detras-marco": back.difference(back_face),
+        "g5-detras-cara": back_face.intersection(back),
+        "g5b-detras-marco": back_b.difference(back_face),
+        "g5b-detras-cara": back_face.intersection(back_b),
+        "g5-luz": lit.intersection(back),
+        "g5b-luz": lit.intersection(back_b),
+    }
+
+
+def g5(light=False, cut=False):
+    """Fantasma de cristal lila casi incoloro que se suma como luz (plus-lighter; en claro,
+    morado que se multiplica): deja ver la copia de detrás y el fondo en dos tintes. Detrás, el
+    logo de cristal morado profundo con brillo de su color, y la cara iluminada debajo."""
+    p = "g5b" if cut else "g5"
+    if light:
+        ghost_c, ghost_a, mix = TWITCH_PURPLE, 0.35, "multiply"
+        back_c, back_a, face_a, lit, glow = DEEP, 0.85, 0.12, "#FFFFFF", 0.45
+    else:
+        ghost_c, ghost_a, mix = LILAC, 0.3, "plus-lighter"
+        back_c, back_a, face_a, lit, glow = DEEP, 0.8, 0.15, "#FFFFFF", 0.75
+    ghost = grupo("fantasma", [capa("g5-fantasma-marco", ghost_c, ghost_a),
+                               capa("g5-fantasma-cara", ghost_c, 0.06)],
+                  0.85, 0.0, (0.3, 0.1), "none", 0.0, blend=mix, lighting="combined")
+    windows = grupo("ventanas", [capa("g5-ventanas", "#FFFFFF", 0.14)], 0.9, 0.0, (0.25, 0.08),
+                    "neutral", 0.3)
+    back = grupo("detras", [capa(f"{p}-detras-marco", back_c, back_a),
+                            capa(f"{p}-detras-cara", LAVENDER, face_a)],
+                 0.45, 0.2, None, "layer-color", glow, lighting="combined")
+    backing = grupo("luz", [capa(f"{p}-luz", lit, 0.9)], 0.3, 0.5, None, "neutral", 0.3)
+    return [ghost, windows, back, backing]
+
+
 # Negro de Twitch con un poco de morado arriba: el cristal tiene un degradado que doblar
 BG_DARK = {"linear-gradient": [color("#1A1426"), color(TWITCH_DARK)]}
 BG_LIGHT = {"linear-gradient": [color("#FFFFFF"), color("#F1EAFF")]}
+# g4/g5: degradado en diagonal más rico (morado arriba a la izquierda), para que el cristal
+# tenga algo que teñir y doblar
+BG4_DARK = diagonal("#2E1858", "#0B0A10")
+BG4_LIGHT = diagonal("#FFFFFF", "#E4D6FF")
 
 APPROVED = {}
 
@@ -240,6 +400,11 @@ CONCEPTS = {
     "twitch-g2c": {"fill": BG_LIGHT, "groups": g2(light=True)},
     "twitch-g3": {"fill": BG_DARK, "groups": g3()},
     "twitch-g3c": {"fill": BG_LIGHT, "groups": g3(light=True)},
+    "twitch-g4": {"fill": BG4_DARK, "groups": g4()},
+    "twitch-g4c": {"fill": BG4_LIGHT, "groups": g4(light=True)},
+    "twitch-g5": {"fill": BG4_DARK, "groups": g5()},
+    "twitch-g5c": {"fill": BG4_LIGHT, "groups": g5(light=True)},
+    "twitch-g5b": {"fill": BG4_DARK, "groups": g5(cut=True)},
 }
 
 
