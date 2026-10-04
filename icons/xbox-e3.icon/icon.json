@@ -1,0 +1,108 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:0.14902,0.15686,0.17255,1.00000",
+      "extended-srgb:0.06667,0.07059,0.07843,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "name": "x",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.4
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.85
+      },
+      "layers": [
+        {
+          "name": "x",
+          "image-name": "x.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.20000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.45,
+        "depth": 0.2
+      }
+    },
+    {
+      "name": "piezas",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.1,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.7
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.6
+      },
+      "layers": [
+        {
+          "name": "piezas",
+          "image-name": "logo.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:0.18431,0.62745,0.07059,0.60000",
+              "extended-srgb:0.35686,0.76078,0.04706,0.60000"
+            ]
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.3,
+        "depth": 0.1
+      }
+    },
+    {
+      "name": "luz",
+      "lighting": "individual",
+      "specular": false,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "none",
+        "opacity": 0.0
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0
+      },
+      "layers": [
+        {
+          "name": "luz",
+          "image-name": "logo.svg",
+          "glass": false,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:0.60784,0.94118,0.04314,0.45000",
+              "extended-srgb:0.82353,0.92549,0.07843,0.45000"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

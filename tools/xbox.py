@@ -1,50 +1,23 @@
 """Xbox: logo oficial (la esfera con la X tallada) ajustado al icono de iOS y montaje de los .icon.
 
-Trazado: brands/xbox.svg (recursos de marca, simple-icons 16.34.0): cuatro piezas (cúpula,
-derecha, izquierda y arco). Ajustado contra el icono de la App Store (id 736179781, versión
-2609.3.1, 1024 px). Con escala uniforme y posición: IoU 0.965. El icono de iOS dibuja la X algo
-más estrecha: el arco y las dos piezas laterales son 7-10 px más gruesos en los bordes que miran
-hacia abajo y hacia dentro (la cúpula y el contorno coinciden). Se modela con un barrido por
-pieza (suma de Minkowski con un vector corto, ajustado por máximo IoU) recortado al círculo de
-la esfera, y las puntas redondeadas 4 px como en el icono oficial: IoU 0.994.
-Ese icono oficial ya es de Liquid Glass: cuatro piezas de cristal verde con bordes lima sobre
-#1A1B1E (medido en las esquinas). Cuerpo verde hondo (~#447901, 3.2:1 sobre el fondo) que se
-aclara hacia el borde de la esfera y sobre todo hacia abajo (#D2EC14 al pie de la pieza de
-abajo), con bordes lima brillantes. Conceptos:
-- c1 (fiel): las cuatro piezas de cristal verde sobre el fondo oficial, con una luz lima detrás.
-- c2 (la esfera como lente): una lente de cristal transparente, del tamaño de la esfera, delante
-  de las piezas; su bisel curva el contorno y los extremos de la X, como una canica.
-- c3 (la X de cristal): el corazón de la X es una pieza de cristal tintado delante de las piezas
-  blancas, sobre el verde de Xbox. Sus bordes curvan los de las piezas; fuera de ella los brazos
-  siguen tallados, sin deformar (lo deformado junto a lo no deformado: la señal de lente).
-- c4: c1 sin la luz lima detrás (lo único que cambia). Compara si la luz refractada aporta.
+Trazado: brands/xbox.svg (recursos de marca, simple-icons 16.34.0): cuatro piezas (la de abajo,
+derecha, izquierda y el arco de arriba). Ajustado contra el icono de la App Store (id 736179781,
+versión 2609.3.1, 1024 px). Con escala uniforme y posición: IoU 0.965. El icono de iOS dibuja la
+X algo más estrecha: el arco y las dos piezas laterales son 7-10 px más gruesos en los bordes que
+miran hacia abajo y hacia dentro. Se modela con un barrido por pieza (suma de Minkowski con un
+vector corto, ajustado por máximo IoU) recortado al círculo de la esfera, y las puntas
+redondeadas 4 px como en el icono oficial: IoU 0.994. Fondo oficial #1A1B1E; verde #107C10;
+brillo lima #9BF00B / #D2EC14.
 
-Cambios en c1/c1c tras la revisión del render (el jurado eligió c1; el escéptico lo rechazó):
-1. Costuras rectas de 1 px en la sombra (oscuro: y=907, x=116 y x=907; claro: y=903, x=120 y
-   x=903): ictool recortaba la sombra de la capa a una caja ~8-12 px alrededor de la esfera.
-   Ahora las capas van a lienzo completo (write_icon con full_bounds) y la sombra es neutra y
-   más suave en vez de cromática: no hay brillo verde que cortar (el icono oficial tampoco lo
-   tiene) y, si el recorte siguiera, el escalón de una sombra oscura sobre #1A1B1E no se ve.
-2. Cristal plano (alpha 0.95 sobre fondo liso: nada que refractar, cuerpo #60A70C uniforme):
-   - relleno en degradado de verde hondo arriba a lima abajo (#58A300 → #8CD10A), como el cuerpo
-     del oficial; más translucidez (alpha 0.85, translucidez 0.4). El escéptico pedía
-     #3E7A00 con alpha 0.75: la cúpula quedaba a ~2.2:1 sobre #1A1B1E en la tecla de 144 px;
-     así queda a ~3.6:1 sin luz (el oficial está a 3.2:1).
-   - la refracción con función: detrás del cristal, la luz lima de Xbox (las piezas 6 px hacia
-     dentro, sin cristal, de tenue arriba a plena abajo). Sobre un fondo liso el bisel no tiene
-     nada que doblar; con la luz detrás sí. Medido en el render de c2 (lente 0.5/0.28): el
-     bisel mueve el contenido 6-17 px, hacia dentro en los bordes de arriba y de los lados (se
-     ve lo de fuera) y hacia fuera en el de abajo. Así la luz llega al borde de abajo de cada
-     pieza (borde lima, como el pie brillante del oficial) y arriba y a los lados deja una línea
-     oscura fina antes del cuerpo (el oficial la tiene a ~9 px del borde). La luz nunca asoma
-     por los huecos (la tapa el cristal) y no llega a las puntas finas (< 28 px de ancho).
-     Con 12 px de margen, en la vista plana se leía como un marco oscuro alrededor de la luz.
-   - refracción (0.4, 0.15), el máximo de lo aprendido; no (0.5, 0.3) como pedía el escéptico:
-     tan honda arrastra contenido lejano a las puntas finas de las piezas. Blur 0.25: suaviza
-     el borde de la luz vista a través del cristal.
-   - el contorno negro fino de 2-3 px por fuera de las piezas sale en todos los cristales de
-     ictool (también en Twitch c3 y Xbox c3); con la capa a lienzo completo puede que la
-     refracción del borde deje de leer transparente fuera de la caja de la pieza. A comprobar.
+Conceptos g (Liquid Glass al máximo: todo el logo es cristal de color que deja ver lo de detrás,
+y siempre hay algo detrás que el bisel dobla):
+- g1 canica: las piezas de cristal verde, encendidas por la luz lima de detrás, dentro de una
+  esfera de cristal transparente del tamaño de la esfera; su borde grueso dobla las piezas.
+- g2 doble cristal: las piezas de cristal verde transparente delante de una copia de cristal lima
+  esmerilado algo más abajo; se ve la lima a través del verde y el bisel dobla su borde.
+- g3 X de cristal: una X gruesa de cristal transparente delante de las piezas de cristal verde y
+  de una esfera de cristal verde hondo; la X dobla los bordes de las piezas.
+Las parejas claras (sufijo c) son la misma idea con verdes más hondos sobre fondo claro.
 """
 import re
 
@@ -54,50 +27,32 @@ from shapely.geometry import Point
 from shapely.ops import unary_union
 
 from brand import place, subpath_shapes
-from liquid import ROOT, WHITE, auto_gradient, clean, color, glass, write_icon
+from liquid import ROOT, WHITE, clean, color, write_icon
 
 D = re.search(r' d="([^"]+)"', (ROOT / "brands" / "xbox.svg").read_text(encoding="utf-8")).group(1)
 FIT = (31.968, 31.968, 128.25, 128.5)  # escala x, escala y, desplazamiento x, y (lienzo de 1024)
-NAMES = ("cupula", "derecha", "izquierda", "arco")  # orden de los subtrazados del SVG
+NAMES = ("abajo", "derecha", "izquierda", "arco")  # orden de los subtrazados del SVG
 SWEEP = {"derecha": (-5.25, 5.0), "izquierda": (5.25, 5.0), "arco": (0.0, 10.5)}  # px, simétrico
 TIP_ROUND = 4.0   # px: puntas romas, como en el icono oficial
 CENTER = (12 * FIT[0] + FIT[2], 12 * FIT[1] + FIT[3])  # centro de la esfera (511.9, 512.1)
 RADIUS = 12 * FIT[0]                                   # radio de la esfera (383.6)
 RES = 256
 
-# c2: el logo algo más pequeño para que la lente (que refracta fuerte) quede lejos del borde
-LENS_SCALE = 0.86  # esfera de 330 px de radio: la lente acaba a 174 px del borde del lienzo
-LENS_RIM = 8       # px que la lente sobresale de la esfera: la lente ES la esfera (con 22 px se
-                   # leía como un anillo añadido alrededor del logo)
-# c3: la X de cristal. Los brazos miden 30-45 px junto al borde de la esfera; el bisel recoge
-# contenido de ~50 px y los llenaría de blanco, así que el cristal solo cubre la parte ancha:
-X_MIN_WIDTH = 72   # px: se queda con la X donde mide al menos esto (abertura morfológica): los
-                   # brazos de abajo acaban redondeados a r ~292 del centro de la esfera
-X_REACH = 310      # radio máximo: los brazos de arriba (anchos hasta el borde) acaban a 50 px de
-                   # las puntas finas del arco. (Un corte circular a r 300 sobre toda la X unía los
-                   # dos brazos de arriba en una tapa; uno centrado en el cruce hacía un disco-lupa.)
-X_OVERLAP = 12     # px que el cristal pisa las piezas: su borde se ve como una pieza aparte
-X_FILLET = 12      # px: redondea las esquinas cóncavas (si no, la refracción se arruga)
-X_END_ROUND = 16   # px: redondea las esquinas de los extremos
-
 XBOX_BG = "#1A1B1E"      # fondo del icono oficial de iOS (medido)
 XBOX_GREEN = "#107C10"   # verde de marca de Xbox
-GLASS_GREEN = "#6AB80A"  # cristal verde para fondo oscuro: con translucidez 0.25 da el #578F03 medido
+XBOX_LIME = "#9BF00B"    # lima del brillo del icono de iOS
+XBOX_GLOW = "#D2EC14"    # lima amarillo del pie de la pieza de abajo del icono de iOS
 
-# c1/c4: cristal en degradado (arriba → abajo; con la capa a lienzo completo el degradado va de
-# y=0 a y=1024, así que las piezas, de y=129 a 896, ven del 13 % al 87 % de él)
-GLASS_DEEP = "#58A300"   # verde hondo arriba: la cúpula, sin luz detrás, a ~3.6:1 sobre #1A1B1E
-GLASS_LIME = "#8CD10A"   # lima abajo, como el brillo del pie de la pieza de abajo del oficial
-GLASS_DEEP_LIGHT = "#0B5E0B"  # en claro: verde más hondo arriba y el de marca abajo (>= 3.5:1
-                              # sobre el fondo claro; un verde más vivo abajo bajaba a ~3.1:1)
-# c1: la luz lima detrás del cristal (la refracta su bisel)
-XBOX_LIME = "#D2EC14"    # lima del brillo del icono oficial (medido al pie de la pieza de abajo)
-LIGHT_INSET = 6          # px hacia dentro de cada pieza: el cristal la tapa entera y el bisel
-                         # (que mueve 6-17 px) la lleva al borde de abajo
-LIGHT_ROUND = 8          # px: redondea sus puntas (abertura morfológica)
-LIGHT_MIN_AREA = 400     # px²: sin islas sueltas donde la pieza se estrecha
-LIGHT_ALPHA = (0.2, 1.0) # tenue arriba (la cúpula sigue honda), plena abajo: el oficial brilla
-                         # sobre todo al pie de la esfera
+# g1: la canica. El logo algo más pequeño: la esfera de cristal refracta hondo y su bisel
+# tiene que quedar dentro del lienzo con margen.
+MARBLE_SCALE = 0.9   # esfera de 345 px de radio
+MARBLE_RIM = 6       # px que la canica sobresale de la esfera: la canica ES la esfera
+# g2: la copia lima de detrás, desplazada hacia abajo (la luz de iOS viene de arriba)
+BACK_SHIFT = (0.0, 14.0)
+# g3: la X gruesa: el hueco entre las piezas engordado; pisa cada pieza X_GROW px
+X_GROW = 18
+X_FILLET = 16      # px: redondea las esquinas cóncavas (si no, la refracción se arruga)
+X_END_ROUND = 18   # px: redondea las esquinas de los extremos
 
 
 def disk(r, c=CENTER):
@@ -126,126 +81,160 @@ def largest(geom):
     return max(getattr(geom, "geoms", [geom]), key=lambda g: g.area)
 
 
-def x_glass(logo):
-    """El corazón de la X: el hueco entre las piezas donde es ancho, algo más ancho que el hueco."""
-    gap = largest(disk(RADIUS).difference(logo).buffer(-1.5).buffer(1.5))  # sin astillas en el borde
-    r = X_MIN_WIDTH / 2
-    core = largest(gap.buffer(-r, quad_segs=64).buffer(r, quad_segs=64)).intersection(disk(X_REACH - X_OVERLAP))
-    x = core.buffer(X_OVERLAP, quad_segs=64)
+def x_thick(logo):
+    """La X gruesa: el hueco entre las piezas, engordado X_GROW px y con las esquinas redondeadas."""
+    gap = largest(disk(RADIUS).difference(logo).buffer(-1.5).buffer(1.5))
+    x = gap.buffer(X_GROW, quad_segs=64)
     x = x.buffer(X_FILLET, quad_segs=32).buffer(-X_FILLET, quad_segs=32)
+    x = x.intersection(disk(RADIUS))
     return x.buffer(-X_END_ROUND, quad_segs=32).buffer(X_END_ROUND, quad_segs=32)
-
-
-def light_core(logo):
-    """La luz lima: cada pieza LIGHT_INSET px hacia dentro, con las puntas redondeadas y sin islas."""
-    core = logo.buffer(-(LIGHT_INSET + LIGHT_ROUND), quad_segs=32).buffer(LIGHT_ROUND, quad_segs=32)
-    return unary_union([p for p in getattr(core, "geoms", [core]) if p.area >= LIGHT_MIN_AREA])
 
 
 def pieces():
     logo = unary_union(list(logo_pieces().values()))
+    small = affinity.scale(logo, MARBLE_SCALE, MARBLE_SCALE, origin=CENTER)
     return {
-        # c1, c3 y c4: el logo oficial (las cuatro piezas en una capa)
-        "logo": logo,
-        # c1: la luz lima detrás del cristal
-        "luz": light_core(logo),
-        # c2: el logo reducido y, delante, la lente redonda apenas mayor que la esfera
-        "logo-lente": affinity.scale(logo, LENS_SCALE, LENS_SCALE, origin=CENTER),
-        "lente": disk(RADIUS * LENS_SCALE + LENS_RIM),
-        # c3: la X de cristal delante del logo
-        "x": x_glass(logo),
+        "logo": logo,                                            # g2, g3
+        "logo-canica": small,                                    # g1: piezas y su luz
+        "canica": disk(RADIUS * MARBLE_SCALE + MARBLE_RIM),      # g1: la esfera de cristal
+        "logo-detras": affinity.translate(logo, *BACK_SHIFT),    # g2: la copia lima
+        "x": x_thick(logo),                                      # g3: la X de cristal
+        "esfera": disk(RADIUS),                                  # g3: la esfera de detrás
     }
 
 
-BG = {"solid": color(XBOX_BG)}  # el fondo del icono oficial
-GREEN_BG = auto_gradient(XBOX_GREEN)
+def fill(c, alpha=1.0, bottom=None):
+    """Relleno liso o en degradado vertical (arriba → abajo) con el mismo alpha."""
+    if bottom:
+        return {"linear-gradient": [color(c, alpha), color(bottom, alpha)]}
+    return {"solid": color(c, alpha)}
 
 
-def logo_crystal(light=False):
-    """c1/c4: las piezas de cristal verde, en degradado de verde hondo a lima y más translúcidas.
+def group(name, image, paint, *, glass=True, translucency=0.5, blur=0.0, refraction=None,
+          shadow="neutral", shadow_opacity=0.5, specular="automatic", lighting="individual",
+          blend=None, opacity=None):
+    """Un grupo de Icon Composer con una capa, con todas las claves que usa el cristal de Xbox.
 
-    Sombra neutra y suave (no cromática): sin brillo verde que ictool pueda recortar en recto.
-    Refracción (0.4, 0.15): el bisel dobla la luz lima de detrás (c1) hasta el borde de abajo.
-    En claro, más opaco (alpha 0.92, translucidez 0.35): la translucidez mezcla el fondo blanco
-    y aclara el verde; así el pie de la pieza de abajo sigue a >= 3.5:1.
+    glass=False: la capa es luz plana (sin cristal, sin brillo ni sombra) para que el cristal de
+    delante tenga algo que refractar.
     """
-    if light:
-        alpha, top, bottom = 0.92, GLASS_DEEP_LIGHT, XBOX_GREEN
-        g = glass("logo", alpha=alpha, translucency=0.35, blur=0.25, refraction=(0.4, 0.15),
-                  shadow="neutral", shadow_opacity=0.3)
-    else:
-        alpha, top, bottom = 0.85, GLASS_DEEP, GLASS_LIME
-        g = glass("logo", alpha=alpha, translucency=0.4, blur=0.25, refraction=(0.4, 0.15),
-                  shadow="neutral", shadow_opacity=0.35)
-    g["layers"][0]["fill"] = {"linear-gradient": [color(top, alpha), color(bottom, alpha)]}
+    layer = {"name": name, "image-name": f"{image}.svg", "glass": glass, "fill": paint}
+    g = {
+        "name": name,
+        "lighting": lighting,
+        "specular": glass,
+        "specular-highlight-placement": specular,
+        "blur-material": blur,
+        "shadow": {"kind": shadow if glass else "none", "opacity": shadow_opacity if glass else 0.0},
+        "translucency": {"enabled": translucency > 0, "value": translucency},
+        "layers": [layer],
+    }
+    if refraction:
+        g["refractivity"] = {"enabled": True, "strength": refraction[0], "depth": refraction[1]}
+    if blend:
+        g["blend-mode"] = blend
+    if opacity is not None:
+        g["opacity"] = opacity
     return g
 
 
-def lime_light():
-    """c1: la luz lima detrás del cristal: contenido plano (sin cristal, sin sombra ni brillo)
-    para que el cristal de delante tenga algo que refractar. Tenue arriba, plena abajo."""
-    return {
-        "name": "luz",
-        "lighting": "individual",
-        "specular": False,
-        "blur-material": 0.0,
-        "shadow": {"kind": "none", "opacity": 0.0},
-        "translucency": {"enabled": False, "value": 0.0},
-        "layers": [{"name": "luz", "image-name": "luz.svg", "glass": False,
-                    "fill": {"linear-gradient": [color(XBOX_LIME, LIGHT_ALPHA[0]),
-                                                 color(XBOX_LIME, LIGHT_ALPHA[1])]}}],
-    }
+DARK_BG = {"linear-gradient": [color("#26282C"), color("#111214")]}   # el #1A1B1E con algo de relieve
+LIGHT_BG = {"linear-gradient": [color("#FFFFFF"), color("#E4E9E1")]}
 
 
-def logo_glass(image="logo", light=False):
-    """c2/c3: las piezas de cristal verde, como el icono oficial; sombra cromática (brillo verde)."""
+# --- g1: la canica ---
+def g1(light=False):
     if light:
-        return glass("logo", fill=XBOX_GREEN, alpha=0.95, translucency=0.2, blur=0.3,
-                     refraction=(0.35, 0.2), shadow="layer-color", shadow_opacity=0.5, image=image)
-    return glass("logo", fill=GLASS_GREEN, alpha=0.95, translucency=0.25, blur=0.3,
-                 refraction=(0.35, 0.2), shadow="layer-color", shadow_opacity=0.6, image=image)
+        return {"fill": LIGHT_BG, "groups": [
+            group("canica", "canica", fill(XBOX_GREEN, 0.08), translucency=0.9, blur=0.0,
+                  refraction=(0.6, 0.35), shadow="neutral", shadow_opacity=0.35),
+            group("piezas", "logo-canica", fill("#1E9A12", 0.75, "#0B5E0B"), translucency=0.5,
+                  blur=0.1, refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.6),
+            group("luz", "logo-canica", fill("#0B5E0B", 0.9), glass=False, translucency=0),
+        ]}
+    return {"fill": DARK_BG, "groups": [
+        group("canica", "canica", fill(WHITE, 0.08), translucency=0.9, blur=0.0,
+              refraction=(0.6, 0.35), shadow="neutral", shadow_opacity=0.4),
+        group("piezas", "logo-canica", fill("#2FA012", 0.6, "#5BC20C"), translucency=0.6,
+              blur=0.1, refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.7),
+        group("luz", "logo-canica", fill(XBOX_LIME, 0.45, XBOX_GLOW), glass=False, translucency=0),
+    ]}
 
 
-def logo_white():
-    """Las piezas de cristal blanco sobre el verde de Xbox (el logo clásico de la marca)."""
-    return glass("logo", alpha=0.95, translucency=0.2, blur=0.3, refraction=(0.35, 0.2),
-                 shadow="neutral", shadow_opacity=0.5)
-
-
-def lens(light=False):
-    """La esfera como lente: cristal transparente sin esmerilar, redondo y liso, refracción fuerte."""
-    return glass("lente", fill=XBOX_GREEN if light else WHITE, alpha=0.05 if light else 0.08,
-                 translucency=0.85, blur=0.0, refraction=(0.5, 0.28), shadow="neutral", shadow_opacity=0.3)
-
-
-def x_front(light=False):
-    """La X de cristal tintado sin esmerilar. Sobre el hueco no cambia el color (verde sobre verde,
-    blanco sobre claro), así la X se sigue leyendo tallada; sobre el borde de las piezas se ve el
-    tinte y ahí curva sus bordes. Refracción suave: es una pieza de brazos estrechos.
-    En claro, el blanco con alpha 0.35 aclaraba el borde verde que pisa a 2.9:1 contra la X; 0.25 da 3:1."""
+# --- g2: doble cristal ---
+def g2(light=False):
     if light:
-        return glass("x", fill=WHITE, alpha=0.25, translucency=0.8, blur=0.0, refraction=(0.3, 0.12),
-                     shadow="neutral", shadow_opacity=0.25, specular="inside")
-    return glass("x", fill=XBOX_GREEN, alpha=0.3, translucency=0.8, blur=0.0, refraction=(0.3, 0.12),
-                 shadow="layer-color", shadow_opacity=0.35, specular="inside")
+        return {"fill": LIGHT_BG, "groups": [
+            group("piezas", "logo", fill(XBOX_GREEN, 0.6), translucency=0.6, blur=0.0,
+                  refraction=(0.35, 0.12), shadow="layer-color", shadow_opacity=0.5),
+            group("detras", "logo-detras", fill("#5DB80A", 0.9), translucency=0.3, blur=0.6,
+                  shadow="layer-color", shadow_opacity=0.5),
+        ]}
+    return {"fill": DARK_BG, "groups": [
+        group("piezas", "logo", fill(XBOX_GREEN, 0.55), translucency=0.65, blur=0.0,
+              refraction=(0.35, 0.12), shadow="layer-color", shadow_opacity=0.7),
+        group("detras", "logo-detras", fill(XBOX_LIME, 0.85, XBOX_GLOW), translucency=0.3, blur=0.6,
+              shadow="layer-color", shadow_opacity=0.7),
+    ]}
+
+
+# --- g3: la X de cristal ---
+def g3(light=False):
+    if light:
+        return {"fill": LIGHT_BG, "groups": [
+            group("x", "x", fill(WHITE, 0.2), translucency=0.85, blur=0.0, refraction=(0.4, 0.18),
+                  shadow="neutral", shadow_opacity=0.35),
+            group("piezas", "logo", fill(XBOX_GREEN, 0.7, "#2E9E12"), translucency=0.5, blur=0.2,
+                  refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.5),
+            group("esfera", "esfera", fill("#0B4D0B", 0.8), translucency=0.4, blur=0.6,
+                  shadow="neutral", shadow_opacity=0.4),
+        ]}
+    return {"fill": DARK_BG, "groups": [
+        group("x", "x", fill(WHITE, 0.15), translucency=0.85, blur=0.0, refraction=(0.4, 0.18),
+              shadow="neutral", shadow_opacity=0.4),
+        group("piezas", "logo", fill("#3FAE10", 0.65, XBOX_LIME), translucency=0.5, blur=0.2,
+              refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.6),
+        group("esfera", "esfera", fill("#0E4A0E", 0.75), translucency=0.4, blur=0.6,
+              shadow="neutral", shadow_opacity=0.5),
+    ]}
+
+
+# --- variantes de exploración (ronda 1) ---
+def e1():
+    """g1 con la canica teñida de verde y más honda."""
+    c = g1()
+    c["groups"][0] = group("canica", "canica", fill(XBOX_LIME, 0.12), translucency=0.85, blur=0.0,
+                           refraction=(0.8, 0.5), shadow="layer-color", shadow_opacity=0.5)
+    return c
+
+
+def e2():
+    """g2 con la luz lima plana (sin cristal) con la forma exacta de las piezas."""
+    return {"fill": DARK_BG, "groups": [
+        group("piezas", "logo", fill("#2FA012", 0.55), translucency=0.65, blur=0.0,
+              refraction=(0.35, 0.12), shadow="layer-color", shadow_opacity=0.9),
+        group("luz", "logo", fill(XBOX_LIME, 0.45, XBOX_GLOW), glass=False, translucency=0),
+    ]}
+
+
+def e3():
+    """g3 sin la esfera de detrás: la X deja ver el fondo; las piezas sobre la luz lima."""
+    return {"fill": DARK_BG, "groups": [
+        group("x", "x", fill(WHITE, 0.2), translucency=0.85, blur=0.0, refraction=(0.45, 0.2),
+              shadow="neutral", shadow_opacity=0.4),
+        group("piezas", "logo", fill("#2FA012", 0.6, "#5BC20C"), translucency=0.6, blur=0.1,
+              refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.7),
+        group("luz", "logo", fill(XBOX_LIME, 0.45, XBOX_GLOW), glass=False, translucency=0),
+    ]}
 
 
 APPROVED = {}
 
 CONCEPTS = {
-    # c1 (fiel): como el icono oficial, piezas de cristal verde sobre #1A1B1E, con la luz lima
-    # detrás que el cristal deja ver y su bisel refracta hasta el borde
-    "xbox-c1": {"fill": BG, "groups": [logo_crystal(), lime_light()]},
-    "xbox-c1c": {"fill": "system-light", "groups": [logo_crystal(light=True), lime_light()]},
-    # c4: c1 sin la luz lima (solo el cristal en degradado): para comparar en el render
-    "xbox-c4": {"fill": BG, "groups": [logo_crystal()]},
-    "xbox-c4c": {"fill": "system-light", "groups": [logo_crystal(light=True)]},
-    # c2: la esfera como lente transparente delante de las piezas
-    "xbox-c2": {"fill": BG, "groups": [lens(), logo_glass("logo-lente")]},
-    "xbox-c2c": {"fill": "system-light", "groups": [lens(light=True), logo_glass("logo-lente", light=True)]},
-    # c3: la X de cristal delante de las piezas (blanco sobre el verde de Xbox; en claro, verde)
-    "xbox-c3": {"fill": GREEN_BG, "groups": [x_front(), logo_white()]},
-    "xbox-c3c": {"fill": "system-light", "groups": [x_front(light=True), logo_glass(light=True)]},
+    "xbox-g1": g1(), "xbox-g1c": g1(light=True),
+    "xbox-g2": g2(), "xbox-g2c": g2(light=True),
+    "xbox-g3": g3(), "xbox-g3c": g3(light=True),
+    "xbox-e1": e1(), "xbox-e2": e2(), "xbox-e3": e3(),
 }
 
 
