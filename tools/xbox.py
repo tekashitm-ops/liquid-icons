@@ -69,6 +69,12 @@ X_TOP_REACH = 185  # px desde el cruce: los brazos de arriba acaban de frente al
                    # del borde de la esfera. Con el corte circular de abajo, el corte cruzaba en
                    # diagonal el borde de la pieza lateral y el bisel traía un triángulo suelto de
                    # ese borde dentro de la X junto a cada extremo
+# g4/g5: la canica de g1 con los arreglos del juez. Logo más pequeño dentro de la misma canica
+# (r 351): queda un anillo de cristal vacío de 25 px y el bisel de la canica cae sobre todo en él
+G4_SCALE = 0.85             # esfera del logo de 326 px de radio
+G4_SHIFT = (0.0, 20.0)      # la copia lima de detrás (la luz de iOS viene de arriba)
+LENS_R = 165                # g5: lente sobre el cruce de la X; su borde corta las cuatro piezas
+LENS_CENTER = (CENTER[0], CENTER[1] + (345.0 - CENTER[1]) * G4_SCALE)  # cruce de la X a 0.85
 
 
 def disk(r, c=CENTER):
@@ -121,7 +127,12 @@ def glow(logo, r):
 def pieces():
     logo = unary_union(list(logo_pieces().values()))
     small = affinity.scale(logo, MARBLE_SCALE, MARBLE_SCALE, origin=CENTER)
+    small4 = affinity.scale(logo, G4_SCALE, G4_SCALE, origin=CENTER)
     return {
+        "logo-g4": small4,                                       # g4, g5: las piezas
+        "logo-g4-detras": affinity.translate(small4, *G4_SHIFT),  # g4, g5: su copia lima
+        "nucleo-g4": disk(RADIUS * G4_SCALE),                    # g4, g5: el corazón
+        "lente": disk(LENS_R, LENS_CENTER),                      # g5: la lente del cruce
         "luz-canica": glow(small, RADIUS * MARBLE_SCALE),         # g1: la luz de dentro
         "nucleo": disk(RADIUS * MARBLE_SCALE),                   # g1: el corazón verde hondo
         "logo": logo,                                            # g2, g3
@@ -264,12 +275,59 @@ def g3(light_bg=False):
     ]}
 
 
+# --- g4: la canica, sin timidez ---
+def marble4(tint, alpha, shadow_opacity, lens=False):
+    """La canica de g4: cuerpo de cristal visible (alpha doble que g1) y brillo por dentro.
+
+    lens: una segunda capa en el mismo grupo, la lente sobre el cruce de la X (g5); así el icono
+    sigue en 4 grupos.
+    """
+    g = group("canica", "canica", fill(tint, alpha), translucency=0.85, blur=0.0,
+              refraction=(0.55, 0.25), shadow="neutral", shadow_opacity=shadow_opacity,
+              specular="inside")
+    if lens:
+        g["layers"].insert(0, {"name": "lente", "image-name": "lente.svg", "glass": True,
+                               "fill": fill(WHITE, 0.10)})
+    return g
+
+
+def g4(light_bg=False, lens=False):
+    """Canica g1 con los arreglos del juez: dentro, cristal verde claro delante de su copia lima.
+
+    Sin la placa de luz plana (por ella las piezas se veían mate): cada pieza de cristal verde
+    transparente tiene detrás su copia lima 20 px más abajo, así que dentro de cada pieza hay dos
+    tintes (sobre lima / sobre el corazón oscuro) y su bisel de abajo dobla el canto lima. El logo
+    a 0.85 deja un anillo de cristal vacío dentro de la canica y encoge los pies.
+    """
+    if light_bg:
+        return {"fill": LIGHT_BG, "groups": [
+            marble4(XBOX_GREEN, 0.08, 0.35, lens),
+            group("piezas", "logo-g4", fill(XBOX_GREEN, 0.45), translucency=0.75, blur=0.0,
+                  refraction=(0.45, 0.16), shadow="layer-color", shadow_opacity=0.8),
+            group("detras", "logo-g4-detras", fill("#5DB80A", 0.9), translucency=0.3, blur=0.6,
+                  shadow="neutral", shadow_opacity=0.4),
+            group("nucleo", "nucleo-g4", fill("#0B4D0B", 0.2), translucency=0.6, blur=0.6,
+                  shadow="neutral", shadow_opacity=0.3),
+        ]}
+    return {"fill": DARK_BG, "groups": [
+        marble4(XBOX_LIME, 0.12, 0.4, lens),
+        group("piezas", "logo-g4", fill(XBOX_GREEN, 0.38), translucency=0.8, blur=0.0,
+              refraction=(0.45, 0.16), shadow="layer-color", shadow_opacity=1.0),
+        group("detras", "logo-g4-detras", fill(XBOX_LIME, 0.85), translucency=0.3, blur=0.6,
+              shadow="neutral", shadow_opacity=0.5),
+        group("nucleo", "nucleo-g4", fill("#0A420A", 0.65), translucency=0.55, blur=0.6,
+              shadow="neutral", shadow_opacity=0.4),
+    ]}
+
+
 APPROVED = {}
 
 CONCEPTS = {
     "xbox-g1": g1(), "xbox-g1c": g1(light_bg=True),
     "xbox-g2": g2(), "xbox-g2c": g2(light_bg=True),
     "xbox-g3": g3(), "xbox-g3c": g3(light_bg=True),
+    "xbox-g4": g4(), "xbox-g4c": g4(light_bg=True),
+    "xbox-g5": g4(lens=True), "xbox-g5c": g4(light_bg=True, lens=True),
 }
 
 
