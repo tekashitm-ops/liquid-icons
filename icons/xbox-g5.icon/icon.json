@@ -87,7 +87,7 @@
       "layers": [
         {
           "name": "luz",
-          "image-name": "corazon-g5.svg",
+          "image-name": "caustica-g4.svg",
           "glass": true,
           "fill": {
             "solid": "extended-srgb:0.60784,0.94118,0.04314,0.85000"
@@ -110,6 +110,14 @@
         "value": 0.55
       },
       "layers": [
+        {
+          "name": "xluz",
+          "image-name": "xluz-g5.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.93725,1.00000,0.84706,0.85000"
+          }
+        },
         {
           "name": "nucleo",
           "image-name": "nucleo-g4.svg",

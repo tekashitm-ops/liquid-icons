@@ -76,8 +76,11 @@ X_TOP_REACH = 185  # px desde el cruce: los brazos de arriba acaban de frente al
 # si queda a más de ~0.3 radios inscritos del borde (la de abajo mide 165, las laterales 86, el
 # arco 49). Por eso la luz de dentro se mide en radios inscritos de cada pieza
 G4_SCALE = 0.85        # esfera del logo de 326 px de radio
-CAUSTIC_SHIFT = 0.55   # g4: la copia lima baja 0.55 radios inscritos (27/47/91 px) dentro de su pieza
-CORE_INSET = 0.36      # g5: el corazón lima, 0.36 radios inscritos hacia dentro (18/31/59 px)
+CAUSTIC_SHIFT = 0.42   # la copia lima baja 0.42 radios inscritos (21/36/69 px) dentro de su pieza.
+                       # Con 0.55 la franja oscura se juntaba con el hueco y la X se veía gorda
+G4_TIP = 8             # px: puntas algo más romas que TIP_ROUND; en la punta aguda de la pieza de
+                       # abajo el bisel dejaba una gota lima brillante
+X_LIGHT_GROW = 4       # g5: la X de luz pisa 4 px las piezas (sin raya oscura entre las dos)
 
 
 def disk(r, c=CENTER):
@@ -144,20 +147,23 @@ def caustic(parts):
                         for p in parts])
 
 
-def heart(parts):
-    """g5: el corazón lima de cada pieza, encogida por igual en todo su contorno."""
-    return unary_union([tidy(p.buffer(-CORE_INSET * inscribed(p), quad_segs=32), r=12) for p in parts])
+def x_light(logo, r):
+    """g5: la X de luz, el hueco entre las piezas dentro de su esfera (r), engordado X_LIGHT_GROW px."""
+    gap = largest(disk(r).difference(logo).buffer(-1.5).buffer(1.5))
+    return gap.buffer(X_LIGHT_GROW, quad_segs=32).intersection(disk(r))
 
 
 def pieces():
     logo = unary_union(list(logo_pieces().values()))
     small = affinity.scale(logo, MARBLE_SCALE, MARBLE_SCALE, origin=CENTER)
-    parts4 = [affinity.scale(p, G4_SCALE, G4_SCALE, origin=CENTER) for p in logo_pieces().values()]
+    parts4 = [affinity.scale(p, G4_SCALE, G4_SCALE, origin=CENTER)
+              .buffer(-G4_TIP, quad_segs=32).buffer(G4_TIP, quad_segs=32) for p in logo_pieces().values()]
+    logo4 = unary_union(parts4)
     return {
-        "logo-g4": unary_union(parts4),                          # g4, g5: las piezas
+        "logo-g4": logo4,                                        # g4, g5: las piezas
         "nucleo-g4": disk(RADIUS * G4_SCALE),                    # g4, g5: el corazón hondo
-        "caustica-g4": caustic(parts4),                          # g4: la luz de abajo
-        "corazon-g5": heart(parts4),                             # g5: el corazón de luz
+        "caustica-g4": caustic(parts4),                          # g4, g5: la luz de abajo
+        "xluz-g5": x_light(logo4, RADIUS * G4_SCALE),            # g5: la X de luz
         "luz-canica": glow(small, RADIUS * MARBLE_SCALE),         # g1: la luz de dentro
         "nucleo": disk(RADIUS * MARBLE_SCALE),                   # g1: el corazón verde hondo
         "logo": logo,                                            # g2, g3
@@ -318,33 +324,43 @@ def marble4(tint, alpha, shadow_opacity):
                  specular="inside")
 
 
-def g4(light_bg=False, light="caustica-g4"):
+def g4(light_bg=False, x_light=False):
     """Canica / piezas de cristal verde transparente / su luz lima de cristal / corazón hondo.
 
     Sin la placa de luz plana de g1 (por ella las piezas se veían mate): detrás de cada pieza de
-    cristal verde transparente hay una luz lima de cristal esmerilado de su misma forma, que no
-    llega a todo: dentro de cada pieza hay dos tintes, verde hondo sobre el corazón oscuro y lima
-    sobre la luz, y el bisel dobla el borde de la luz. light: caustica-g4 (g4, luz que entra por
-    abajo, como el brillo del icono de iOS) o corazon-g5 (g5, corazón de luz con canto oscuro).
+    cristal verde transparente está su copia lima de cristal esmerilado, bajada y recortada a la
+    pieza: la luz le entra por abajo, como el brillo del icono de iOS. Dentro de cada pieza hay
+    dos tintes, verde hondo arriba (sobre el corazón oscuro) y lima abajo (sobre la luz), y el
+    bisel dobla el canto de la luz. x_light (g5): el hueco de la X es cristal esmerilado blanco
+    lima que brilla (la X de luz de la bola de Xbox 360), en el mismo grupo que el corazón.
     """
     if light_bg:
+        back = fill("#0B4D0B", 0.45 if x_light else 0.2)  # g5c: corazón más verde, X blanca
+        nucleo = group("nucleo", "nucleo-g4", back, translucency=0.6, blur=0.6,
+                       shadow="neutral", shadow_opacity=0.3)
+        if x_light:
+            nucleo["layers"].insert(0, {"name": "xluz", "image-name": "xluz-g5.svg", "glass": True,
+                                        "fill": fill(WHITE, 0.92)})
         return {"fill": LIGHT_BG, "groups": [
             marble4(XBOX_GREEN, 0.08, 0.35),
             group("piezas", "logo-g4", fill(XBOX_GREEN, 0.45), translucency=0.75, blur=0.0,
                   refraction=PIECE4_REFRACTION, shadow="layer-color", shadow_opacity=0.8),
-            group("luz", light, fill("#5DB80A", 0.9), translucency=0.3, blur=0.6,
+            group("luz", "caustica-g4", fill("#5DB80A", 0.9), translucency=0.3, blur=0.6,
                   shadow="neutral", shadow_opacity=0.4),
-            group("nucleo", "nucleo-g4", fill("#0B4D0B", 0.2), translucency=0.6, blur=0.6,
-                  shadow="neutral", shadow_opacity=0.3),
+            nucleo,
         ]}
+    nucleo = group("nucleo", "nucleo-g4", fill("#0A420A", 0.65), translucency=0.55, blur=0.6,
+                   shadow="neutral", shadow_opacity=0.4)
+    if x_light:
+        nucleo["layers"].insert(0, {"name": "xluz", "image-name": "xluz-g5.svg", "glass": True,
+                                    "fill": fill("#EFFFD8", 0.85)})
     return {"fill": DARK_BG, "groups": [
         marble4(XBOX_LIME, 0.12, 0.4),
         group("piezas", "logo-g4", fill(XBOX_GREEN, 0.38), translucency=0.8, blur=0.0,
               refraction=PIECE4_REFRACTION, shadow="layer-color", shadow_opacity=1.0),
-        group("luz", light, fill(XBOX_LIME, 0.85), translucency=0.3, blur=0.6,
+        group("luz", "caustica-g4", fill(XBOX_LIME, 0.85), translucency=0.3, blur=0.6,
               shadow="neutral", shadow_opacity=0.5),
-        group("nucleo", "nucleo-g4", fill("#0A420A", 0.65), translucency=0.55, blur=0.6,
-              shadow="neutral", shadow_opacity=0.4),
+        nucleo,
     ]}
 
 
@@ -355,7 +371,7 @@ CONCEPTS = {
     "xbox-g2": g2(), "xbox-g2c": g2(light_bg=True),
     "xbox-g3": g3(), "xbox-g3c": g3(light_bg=True),
     "xbox-g4": g4(), "xbox-g4c": g4(light_bg=True),
-    "xbox-g5": g4(light="corazon-g5"), "xbox-g5c": g4(light_bg=True, light="corazon-g5"),
+    "xbox-g5": g4(x_light=True), "xbox-g5c": g4(light_bg=True, x_light=True),
 }
 
 
