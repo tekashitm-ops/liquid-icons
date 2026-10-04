@@ -10,10 +10,10 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "inside",
-      "blur-material": 0.05,
+      "blur-material": 0.0,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.5
+        "opacity": 0.25
       },
       "translucency": {
         "enabled": true,
@@ -31,8 +31,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.7,
-        "depth": 0.5
+        "strength": 0.6,
+        "depth": 0.4
       }
     },
     {
@@ -40,7 +40,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.15,
+      "blur-material": 0.1,
       "shadow": {
         "kind": "none",
         "opacity": 0.0
@@ -55,7 +55,7 @@
           "image-name": "aro.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.70000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.85000"
           }
         }
       ],
@@ -107,8 +107,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.45,
-        "depth": 0.2
+        "strength": 0.35,
+        "depth": 0.12
       }
     },
     {
@@ -140,6 +140,14 @@
           "glass": false,
           "fill": {
             "solid": "extended-srgb:1.00000,1.00000,1.00000,1.00000"
+          }
+        },
+        {
+          "name": "rendijas",
+          "image-name": "rendijas4.svg",
+          "glass": false,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.85000"
           }
         }
       ]
