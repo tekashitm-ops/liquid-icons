@@ -28,11 +28,12 @@ pone Icon Composer. Como mucho 4 grupos.
   centro es un botón de cristal esmerilado.
 - g4 vitral abierto: g1 con todo el cristal. Tres vidrios sueltos (lighting individual: bisel y
   brillo en todo su borde) separados por rendijas abiertas hasta el borde, sobre una luz más
-  pequeña: un disco de 0.62 R y tres rayos bajo las rendijas. Cada vidrio tiene dos tintes: claro
-  sobre la luz (junto al anillo) y hondo fuera de ella, y su bisel dobla el borde de la luz. Por
-  las rendijas se ve la luz, teñida por la sombra de color de los vidrios; bajo la lente sigue una
-  Y fina de luz que la lente dobla. En claro, bajo la parte de fuera de cada vidrio va su color
-  hondo (sobre el fondo claro solo, todo salía pastel).
+  pequeña: un disco de 0.72 R y tres rayos bajo las rendijas, anchos del lado de la esquina. Cada
+  vidrio tiene dos tintes: claro sobre la luz (junto al anillo y a lo largo de su rendija) y hondo
+  fuera de ella, y su bisel dobla el borde de la luz. Por las rendijas se ve la luz, algo apagada
+  y teñida por la sombra de color de los vidrios, hasta el círculo exterior. Bajo la lente no hay
+  vidrios: azul limpio sobre la luz con una Y gris que la lente dobla. En claro, el cristal sobre
+  el fondo claro y, junto al borde, una banda de su color hondo.
 Lo que enseñaron los renders de CI (rondas 1-4):
 - Un grupo delante de otro cristal va sin sombra: la suya oscurecía lo de detrás (el naranja y la
   lima salían rojo oscuro y menta).
@@ -65,6 +66,21 @@ Lo que enseñaron los renders de g4 (rondas g4-1 a g4-5):
 - Probado y descartado (g5): el rojo montado sobre el amarillo y el amarillo sobre el verde en
   franjas de 32 px. El naranja sale limpio, pero la lima sale menta, el logo pierde la simetría
   y el borde recto de la franja naranja da costura en seams.py.
+Lo que enseñaron las rondas g4-6 a g4-9:
+- Con el remolino entero bajo la lente salía una canica gris, morada y turquesa: los vidrios
+  acaban a R_BLUE - 30 y la lente enseña azul sobre la luz. Una Y negra bajo ella, el bisel la
+  envuelve en costuras de pelota con bordes peinados, tanto si llega al borde como si acaba a
+  100 px (la lente aumenta mucho): va gris.
+- La sombra de color de la lente (0.5) ensuciaba de gris salvia la parte baja del anillo.
+- La luz recortada a vidrios y rendijas dejaba agujeros sueltos (las esquinas redondas no casan
+  con las rendijas): una estrella oscura en el cruce de la Y. Ahora se rellena (_solid).
+- En la esquina de 60° (y en la de 120°) de cada boca de rendija, el bisel toma lo oscuro de fuera
+  del círculo: cuña oliva en el amarillo y un dedo oscuro en la franja clara del vidrio de la
+  esquina. Con la boca llena de luz no cambia (no viene del hueco de la boca); menos refracción
+  y el amarillo más lleno lo achican.
+- En claro, unas vetas grises bajo cada vidrio salían como manchas sucias (y el amarillo, mostaza),
+  sin bisel que las doblara (están lejos de los bordes), y el bisel del anillo tomaba sus puntas
+  en motas junto a él. Descartadas.
 Los conceptos c1-c5 (logo casi opaco) se rechazaron y quedan en el historial de git.
 """
 import math
@@ -132,7 +148,8 @@ YELLOW4, BLUE4 = "#FFD23F", "#1A7FFF"
 # Fondo de color bajo la parte de fuera de cada vidrio (claro), y el ámbar bajo el amarillo (oscuro:
 # el cristal amarillo sobre negro sale oliva, ronda g4-1: 148,123,44)
 CORE_RED, CORE_AMBER, CORE_GREEN, CORE_AMBER_DARK = "#C8102E", "#F59E00", "#00873C", "#C77800"
-DARK_Y = "#1C1C1E"    # claro: la Y oscura bajo la lente (el fondo de la pareja oscura)
+# La Y de debajo de la lente, gris: en oscuro, luz al 0.45 sobre el fondo; en claro, gris medio
+Y_ALPHA4, Y_GREY = 0.45, "#8E8E93"
 
 
 def circle(c, r):
@@ -517,7 +534,7 @@ def abierto(dark):
     """g1 con todo el cristal: vidrios sueltos (individual: bisel y brillo propios en cada uno) con
     rendijas abiertas hasta el borde, sobre una luz más pequeña (disco de 0.72 R y tres rayos bajo
     las rendijas, anchos del lado de la esquina): cada vidrio se ve claro sobre la luz y hondo fuera
-    de ella, y su bisel dobla el borde de la luz. Lente azul sobre luz con una Y oscura que dobla.
+    de ella, y su bisel dobla el borde de la luz. Lente azul sobre luz con una Y gris que dobla.
     En oscuro, fuera de la luz se ve el fondo oscuro (rojo y verde hondos) salvo bajo el amarillo, que
     lleva ámbar. En claro, una banda honda junto al borde."""
     names = ("rojo", "amarillo", "verde")
@@ -527,30 +544,36 @@ def abierto(dark):
     # color, a 0.5, ensuciaba de gris salvia el anillo de abajo (176,173,176, ronda g4-5)
     lens = group("lente", [layer("azul", "azul", BLUE4, 0.72)], translucency=0.6, blur=0.0,
                  refraction=(0.6, 0.4), shadow=("layer-color", 0.25), placement="inside")
-    # Anillo: el injerto de g2, algo de refracción y poco esmerilado; más blanco (al 0.7 se teñía)
-    ring = group("anillo", [layer("aro", "aro", WHITE, 0.85)], translucency=0.55, blur=0.10,
+    # Anillo: el injerto de g2, algo de refracción y poco esmerilado; más blanco (al 0.7 se teñía
+    # y abajo salía gris)
+    ring = group("anillo", [layer("aro", "aro", WHITE, 0.9)], translucency=0.55, blur=0.10,
                  refraction=(0.45, 0.2), shadow=NONE)
-    # Vidrios: en oscuro, su sombra de color tiñe la luz de las rendijas (rosa, ámbar, verde). A
-    # (0.45, 0.2) el bisel del amarillo llegaba a lo oscuro de debajo del verde: franja oliva
+    # Vidrios: en oscuro, su sombra de color tiñe la luz de las rendijas (rosa, ámbar, verde). En
+    # la esquina de cada boca, el bisel toma lo oscuro de fuera del círculo: a (0.45, 0.2) daba una
+    # franja oliva en el amarillo y a (0.35, 0.12) aún una cuña (446 px) y dedos oscuros (g4-6 a 8).
+    # El amarillo, más lleno en oscuro: sobre lo oscuro sale menos oliva
     alpha, transl = (0.72, 0.6) if dark else (0.85, 0.45)
-    panes = group("vidrios", [layer(k, f"panel-{k}", c, alpha) for k, c in zip(names, (RED, YELLOW4, GREEN))],
-                  translucency=transl, blur=0.0, refraction=(0.35, 0.12),
+    alphas = (alpha, 0.8 if dark else alpha, alpha)
+    panes = group("vidrios", [layer(k, f"panel-{k}", c, a) for k, c, a in zip(names, (RED, YELLOW4, GREEN), alphas)],
+                  translucency=transl, blur=0.0, refraction=(0.3, 0.1),
                   shadow=("layer-color", 0.4) if dark else BACK_SHADOW)
     if dark:
         # La luz: el disco con rayos, blanco, y el ámbar bajo la parte de fuera del amarillo; la de
-        # las rendijas, aparte y más apagada
+        # las rendijas, aparte y más apagada; la Y, gris (negra, la lente la envolvía en costuras
+        # de pelota muy marcadas, rondas g4-6 a 8)
         back = group("luz", [layer("ambar", "fondo-amarillo", CORE_AMBER_DARK, glass=False),
                              layer("luz", "luz4", WHITE, glass=False),
-                             layer("rendijas", "rendijas4", WHITE, GAP_ALPHA4, glass=False)],
+                             layer("rendijas", "rendijas4", WHITE, GAP_ALPHA4, glass=False),
+                             layer("y", "y-oscura", WHITE, Y_ALPHA4, glass=False)],
                      translucency=0.0, blur=0.0, shadow=NONE, specular=False)
         return {"fill": "system-dark", "groups": [lens, ring, panes, back]}
     # Claro: la placa esmerilada blanca (ronda g4-1) no se veía sobre el fondo claro; con el color
     # hondo bajo todo el fuera de cada vidrio, salía liso (ronda g4-5). Ahora el cristal enseña el
     # fondo claro y, junto al borde, la banda honda; vidrios más llenos (0.85) y menos translúcidos
-    # (0.45) para que sobre el fondo claro no salgan pastel. Y la Y oscura bajo la lente
+    # (0.45) para que sobre el fondo claro no salgan pastel. Y la Y gris bajo la lente
     back = group("fondo", [*[layer(k, f"banda-{k}", c, glass=False)
                              for k, c in zip(names, (CORE_RED, CORE_AMBER, CORE_GREEN))],
-                           layer("y", "y-oscura", DARK_Y, glass=False)],
+                           layer("y", "y-oscura", Y_GREY, glass=False)],
                  translucency=0.0, blur=0.0, shadow=NONE, specular=False)
     return {"fill": "system-light", "groups": [lens, ring, panes, back]}
 
