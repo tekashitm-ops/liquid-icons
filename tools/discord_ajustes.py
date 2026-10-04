@@ -127,7 +127,12 @@ CON_CUERPO = {"alpha": 0.38, "translucency": 0.75, "refraction": (0.6, 0.5), "sh
 
 BG = gradient(discord.DISCORD_BG)
 
-APPROVED = {}
+APPROVED = {
+    # v24 (aprobada): engranaje de cristal transparente girado medio diente, refracción 0.3/0.1
+    "discord-ajustes-oscuro": "discord-ajustes-v24",
+    # su pareja clara (guardada para el modo claro): cristal gris sobre fondo claro
+    "discord-ajustes-claro": "discord-ajustes-v24c",
+}
 
 CONCEPTS = {
     # Eje: el engranaje de Ajustes en blanco y Clyde como su eje

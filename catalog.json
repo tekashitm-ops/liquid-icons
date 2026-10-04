@@ -67,6 +67,15 @@
         "oscuro": "discord-oscuro",
         "claro": "discord-claro"
       }
+    },
+    {
+      "id": "discord-ajustes",
+      "name": "Discord (carpeta)",
+      "match": {},
+      "variants": {
+        "oscuro": "discord-ajustes-oscuro",
+        "claro": "discord-ajustes-claro"
+      }
     }
   ]
 }
