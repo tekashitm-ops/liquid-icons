@@ -1,0 +1,20 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Renders de Icon Composer</title>
+<style>
+  body { margin: 0; padding: 20px; color: #f2f2f7; font: 13px system-ui, sans-serif;
+         background: linear-gradient(135deg, #5b6c8f, #1d2433 60%, #3b2f4f); min-height: 100vh; }
+  h2 { font-size: 14px; margin: 18px 0 10px; }
+  .row { display: flex; gap: 18px; flex-wrap: wrap; }
+  figure { margin: 0; text-align: center; } figcaption { margin-top: 6px; color: #c7c7cc; }
+  img { width: 150px; height: 150px; display: block; }
+</style>
+<div id="root"></div>
+<script>
+  const names = (new URLSearchParams(location.search).get('icons') || 'steam').split(',');
+  const R = ['Default', 'Dark', 'TintedLight', 'TintedDark', 'ClearLight', 'ClearDark'];
+  const L = { Default: 'Por defecto', Dark: 'Oscuro', TintedLight: 'Tintado claro', TintedDark: 'Tintado oscuro', ClearLight: 'Transparente claro', ClearDark: 'Transparente oscuro' };
+  for (const n of names) {
+    root.insertAdjacentHTML('beforeend', `<h2>${n}</h2><div class="row">${R.map(r => `<figure><img src="../renders/${n}-${r}.png"><figcaption>${L[r]}</figcaption></figure>`).join('')}</div>`);
+  }
+</script>

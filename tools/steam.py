@@ -1,7 +1,9 @@
-"""Steam: reconstrucción vectorial del logo del icono oficial de iOS y montaje del .icon.
+"""Steam: reconstrucción vectorial del logo del icono oficial de iOS y montaje de los .icon.
 
 Geometría ajustada contra el icono de la App Store (1024 px) con IoU 0.989.
-Capas (de atrás a delante): manivela, eje, biela — las piezas mecánicas del logo.
+Piezas del logo (de atrás a delante): manivela, biela, eje. Cada pieza va en su propio
+grupo de Liquid Glass, como los pétalos de Fotos en iOS 27: cristal tintado translúcido
+que se solapa, refracta lo que tiene detrás y proyecta sombra cromática.
 """
 import json
 import math
@@ -21,75 +23,109 @@ ROD_ANGLE = 0.3941                                           # inclinación de l
 CANVAS = box(0, 0, 1024, 1024)
 RES = 256  # segmentos por cuarto de círculo: curvas suaves a cualquier tamaño
 
+# Colores de marca de Steam
+STEAM_BG_TOP, STEAM_BG_BOTTOM = "#158ABD", "#091B3F"   # degradado del icono oficial de iOS
+STEAM_CYAN, STEAM_BLUE = "#06BFFF", "#2D73FF"          # degradado de los botones de Steam
+STEAM_LIGHT = "#66C0F4"                                # azul claro clásico de Steam
+
 
 def circle(c, r):
     return Point(c).buffer(r, quad_segs=RES)
 
 
-def svg_path(geom) -> str:
-    polys = getattr(geom, "geoms", [geom])
-    d = []
-    for poly in polys:
-        for ring in [poly.exterior, *poly.interiors]:
-            pts = list(ring.coords)
-            d.append("M" + " L".join(f"{x:.2f} {y:.2f}" for x, y in pts) + "Z")
-    return "".join(d)
-
-
 def svg(geom) -> str:
+    d = []
+    for poly in getattr(geom, "geoms", [geom]):
+        for ring in [poly.exterior, *poly.interiors]:
+            d.append("M" + " L".join(f"{x:.2f} {y:.2f}" for x, y in ring.coords) + "Z")
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">'
-        f'<path fill="#FFFFFF" fill-rule="evenodd" d="{svg_path(geom)}"/></svg>\n'
+        f'<path fill="#FFFFFF" fill-rule="evenodd" d="{"".join(d)}"/></svg>\n'
     )
 
 
-def build():
+def pieces():
     arm = unary_union([circle(C1, HULL_R1), circle(C2, HULL_R2)]).convex_hull
     manivela = unary_union([circle(C1, R1), circle(C2, R2), arm])
     manivela = manivela.difference(circle(C1, R1_OUT)).difference(circle(C2, R2_OUT))
-    eje = circle(C1, R1_IN)
     far = (C2[0] - math.cos(ROD_ANGLE) * 900, C2[1] - math.sin(ROD_ANGLE) * 900)
     biela = LineString([far, C2]).buffer(R2_IN, quad_segs=RES).intersection(CANVAS)
-    return {"1-manivela.svg": manivela, "2-eje.svg": eje, "3-biela.svg": biela}
+    eje = circle(C1, R1_IN)
+    return {"manivela": manivela, "biela": biela, "eje": eje}
 
 
-def srgb(hexcolor: str) -> str:
+def color(hexcolor: str, alpha: float = 1.0) -> str:
     r, g, b = (int(hexcolor[i:i + 2], 16) / 255 for i in (1, 3, 5))
-    return f"extended-srgb:{r:.5f},{g:.5f},{b:.5f},1.00000"
+    return f"extended-srgb:{r:.5f},{g:.5f},{b:.5f},{alpha:.5f}"
 
 
-def icon_json(translucency: float | None) -> dict:
-    group = {
-        "name": "logo",
-        # Cada pieza recibe su propio canto de cristal (capas de cristal distintas, iOS 27)
+def group(name, fill, translucency, refraction=None, shadow="layer-color", specular="automatic",
+          alpha=1.0, blur=0.5, shadow_opacity=0.5):
+    g = {
+        "name": name,
         "lighting": "individual",
         "specular": True,
-        "shadow": {"kind": "neutral", "opacity": 0.5},
-        "translucency": {"enabled": translucency is not None, "value": translucency or 0.0},
-        # Icon Composer lista de delante hacia atrás
-        "layers": [
-            {"name": "3-biela", "image-name": "3-biela.svg", "glass": True},
-            {"name": "2-eje", "image-name": "2-eje.svg", "glass": True},
-            {"name": "1-manivela", "image-name": "1-manivela.svg", "glass": True},
+        "specular-highlight-placement": specular,
+        "blur-material": blur,
+        "shadow": {"kind": shadow, "opacity": shadow_opacity},
+        "translucency": {"enabled": translucency > 0, "value": translucency},
+        "layers": [{"name": name, "image-name": f"{name}.svg", "glass": True, "fill": {"solid": color(fill, alpha)}}],
+    }
+    if refraction:
+        g["refractivity"] = {"enabled": True, "strength": refraction[0], "depth": refraction[1]}
+    return g
+
+
+# Cada concepto: fondo + grupos de delante hacia atrás (así los ordena Icon Composer)
+CONCEPTS = {
+    # Como Fotos: fondo System Light de Apple y tres piezas de cristal tintado en los
+    # azules de Steam que se mezclan donde se solapan.
+    "steam-fotos": {
+        "fill": "system-light",
+        "groups": [
+            group("eje", STEAM_CYAN, 0.35, refraction=(0.6, 0.6)),
+            group("biela", STEAM_CYAN, 0.45, refraction=(0.6, 0.6)),
+            group("manivela", STEAM_BLUE, 0.35),
         ],
-    }
-    return {
-        # Degradado del fondo, muestreado del icono oficial (arriba → abajo)
-        "fill": {"linear-gradient": [srgb("#158ABD"), srgb("#091B3F")]},
-        "groups": [group],
-        "supported-platforms": {"squares": "shared"},
-    }
+    },
+    # Fiel al Steam de siempre: su degradado azul y el logo en cristal claro; la biela,
+    # tintada del azul clásico, refracta la manivela que pasa por debajo.
+    "steam-cristal": {
+        "fill": {"linear-gradient": [color(STEAM_BG_TOP), color(STEAM_BG_BOTTOM)]},
+        "groups": [
+            group("eje", "#FFFFFF", 0.0, shadow="neutral", specular="inside"),
+            group("biela", STEAM_LIGHT, 0.45, refraction=(0.6, 0.6)),
+            group("manivela", "#FFFFFF", 0.4, shadow="neutral"),
+        ],
+    },
+    # Como la lente de Vista Previa: la biela es cristal transparente y grueso que dobla
+    # el borde de la manivela al pasar por encima; manivela y eje casi opacos y nítidos.
+    "steam-lente": {
+        "fill": {"linear-gradient": [color(STEAM_BG_TOP), color(STEAM_BG_BOTTOM)]},
+        "groups": [
+            group("eje", "#FFFFFF", 0.0, shadow="neutral", specular="inside"),
+            group("biela", "#FFFFFF", 0.8, refraction=(0.9, 0.8), shadow="neutral",
+                  alpha=0.25, blur=0.15, shadow_opacity=0.35),
+            group("manivela", "#FFFFFF", 0.2, shadow="neutral"),
+        ],
+    },
+}
 
 
 def main():
-    layers = build()
-    variants = {"steam": 0.5, "steam-solido": None}
-    for name, tr in variants.items():
+    geo = pieces()
+    for name, spec in CONCEPTS.items():
         icon = ROOT / "icons" / f"{name}.icon"
         (icon / "Assets").mkdir(parents=True, exist_ok=True)
-        for file, geom in layers.items():
-            (icon / "Assets" / file).write_text(svg(geom), encoding="utf-8")
-        (icon / "icon.json").write_text(json.dumps(icon_json(tr), indent=2), encoding="utf-8")
+        for piece, g in geo.items():
+            (icon / "Assets" / f"{piece}.svg").write_text(svg(g), encoding="utf-8")
+        doc = {
+            "features": ["refractivity", "specular-location"],
+            "fill": spec["fill"],
+            "groups": spec["groups"],
+            "supported-platforms": {"squares": "shared"},
+        }
+        (icon / "icon.json").write_text(json.dumps(doc, indent=2), encoding="utf-8")
         print("ok", icon.relative_to(ROOT))
 
 
