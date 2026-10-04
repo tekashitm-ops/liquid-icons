@@ -15,7 +15,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.0,
+      "blur-material": 0.06,
       "shadow": {
         "kind": "neutral",
         "opacity": 0.45
@@ -27,7 +27,7 @@
       "layers": [
         {
           "name": "engranaje",
-          "image-name": "suave-p2.svg",
+          "image-name": "redondo-p2.svg",
           "glass": true,
           "fill": {
             "solid": "extended-srgb:1.00000,1.00000,1.00000,0.22000"
@@ -36,8 +36,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.7,
-        "depth": 0.3
+        "strength": 0.5,
+        "depth": 0.2
       }
     },
     {

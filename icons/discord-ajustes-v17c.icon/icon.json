@@ -31,8 +31,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.55,
-        "depth": 0.4
+        "strength": 0.45,
+        "depth": 0.2
       }
     },
     {

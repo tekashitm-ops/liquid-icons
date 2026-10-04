@@ -111,9 +111,10 @@ def gear_glass(image, fill, alpha=0.92, translucency=0.35, refraction=(0.55, 0.4
                  refraction=refraction, shadow="neutral", shadow_opacity=0.55, image=image)
 
 
-def lens(image, fill="#FFFFFF", alpha=0.22, translucency=0.85, refraction=(0.75, 0.65), shadow_opacity=0.35):
+def lens(image, fill="#FFFFFF", alpha=0.22, translucency=0.85, refraction=(0.75, 0.65), shadow_opacity=0.35,
+         blur=0.0):
     """Engranaje de cristal transparente: casi sin color, sin esmerilar, refracta a Clyde debajo."""
-    return glass("engranaje", fill=fill, alpha=alpha, translucency=translucency, blur=0.0,
+    return glass("engranaje", fill=fill, alpha=alpha, translucency=translucency, blur=blur,
                  refraction=refraction, shadow="neutral", shadow_opacity=shadow_opacity, image=image)
 
 
@@ -184,7 +185,16 @@ LENS_VARIANTS.update({
     "v15": ("p2", {**SUAVE, "refraction": (0.55, 0.4)}, "suave"),
     "v16": ("p2", {**SUAVE, "refraction": (0.6, 0.25)}, "redondo"),
 })
-ROUND4 = {"v13", "v14", "v15", "v16"}
+# Ronda 5: el bisel aún recogía trozos de Clyde de alrededor (un Clyde en miniatura en un
+# diente). Menos fuerza y profundidad para que solo recoja lo cercano; en dos, un esmerilado
+# mínimo que suaviza los destellos sin quitar transparencia.
+LENS_VARIANTS.update({
+    "v17": ("p2", {**SUAVE, "refraction": (0.45, 0.2)}, "suave"),
+    "v18": ("p2", {**SUAVE, "refraction": (0.45, 0.2), "blur": 0.1}, "suave"),
+    "v19": ("p2", {**SUAVE, "refraction": (0.5, 0.2), "blur": 0.06}, "redondo"),
+    "v20": ("p2", {**SUAVE, "refraction": (0.4, 0.15)}, "redondo"),
+})
+ROUND4 = {"v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20"}
 for v, (pos, grade, *shape) in LENS_VARIANTS.items():
     gear_piece = f"{shape[0] if shape else 'engranaje'}-{pos}"
     CONCEPTS[f"discord-ajustes-{v}"] = {"fill": BG, "groups": [
