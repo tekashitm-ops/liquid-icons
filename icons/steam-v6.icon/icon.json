@@ -3,21 +3,26 @@
     "refractivity",
     "specular-location"
   ],
-  "fill": "system-light",
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:0.08235,0.54118,0.74118,1.00000",
+      "extended-srgb:0.03529,0.10588,0.24706,1.00000"
+    ]
+  },
   "groups": [
     {
       "name": "eje",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.5,
+      "blur-material": 0.15,
       "shadow": {
-        "kind": "layer-color",
+        "kind": "neutral",
         "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.35
+        "value": 0.6
       },
       "layers": [
         {
@@ -25,13 +30,13 @@
           "image-name": "eje.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.02353,0.74902,1.00000,1.00000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.35000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.6,
+        "strength": 0.7,
         "depth": 0.6
       }
     },
@@ -40,14 +45,14 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.5,
+      "blur-material": 0.15,
       "shadow": {
-        "kind": "layer-color",
+        "kind": "neutral",
         "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.45
+        "value": 0.5
       },
       "layers": [
         {
@@ -55,14 +60,14 @@
           "image-name": "biela.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.02353,0.74902,1.00000,1.00000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.60000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.6,
-        "depth": 0.6
+        "strength": 0.55,
+        "depth": 0.45
       }
     },
     {
@@ -70,9 +75,9 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.5,
+      "blur-material": 0.3,
       "shadow": {
-        "kind": "layer-color",
+        "kind": "neutral",
         "opacity": 0.5
       },
       "translucency": {
@@ -85,10 +90,15 @@
           "image-name": "manivela.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.17647,0.45098,1.00000,1.00000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.90000"
           }
         }
-      ]
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.4
+      }
     }
   ],
   "supported-platforms": {

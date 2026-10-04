@@ -21,6 +21,7 @@ jobs:
           fi
           echo "ICTOOL=$ICTOOL" >> "$GITHUB_ENV"
           "$ICTOOL" --version
+          "$ICTOOL" --help || true
 
       - name: Renderizar con Icon Composer (generación 27)
         run: |

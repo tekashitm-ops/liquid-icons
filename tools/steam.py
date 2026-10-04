@@ -2,8 +2,8 @@
 
 Geometría ajustada contra el icono de la App Store (1024 px) con IoU 0.989.
 Piezas del logo (de atrás a delante): manivela, biela, eje. Cada pieza va en su propio
-grupo de Liquid Glass, como los pétalos de Fotos en iOS 27: cristal tintado translúcido
-que se solapa, refracta lo que tiene detrás y proyecta sombra cromática.
+grupo de Liquid Glass para que el cristal de delante refracte (deforme) lo que tiene
+detrás, como los pétalos de Fotos o la lente de Vista Previa en iOS 27.
 """
 import json
 import math
@@ -24,9 +24,10 @@ CANVAS = box(0, 0, 1024, 1024)
 RES = 256  # segmentos por cuarto de círculo: curvas suaves a cualquier tamaño
 
 # Colores de marca de Steam
-STEAM_BG_TOP, STEAM_BG_BOTTOM = "#158ABD", "#091B3F"   # degradado del icono oficial de iOS
-STEAM_CYAN, STEAM_BLUE = "#06BFFF", "#2D73FF"          # degradado de los botones de Steam
-STEAM_LIGHT = "#66C0F4"                                # azul claro clásico de Steam
+STEAM_BG = ["#158ABD", "#091B3F"]         # degradado del icono oficial de iOS
+STEAM_CYAN, STEAM_BLUE = "#06BFFF", "#2D73FF"
+STEAM_LIGHT = "#66C0F4"
+WHITE = "#FFFFFF"
 
 
 def circle(c, r):
@@ -59,8 +60,9 @@ def color(hexcolor: str, alpha: float = 1.0) -> str:
     return f"extended-srgb:{r:.5f},{g:.5f},{b:.5f},{alpha:.5f}"
 
 
-def group(name, fill, translucency, refraction=None, shadow="layer-color", specular="automatic",
-          alpha=1.0, blur=0.5, shadow_opacity=0.5):
+def glass(name, fill=WHITE, alpha=1.0, translucency=0.2, blur=0.5, refraction=None,
+          shadow="neutral", shadow_opacity=0.5, specular="automatic"):
+    """Un grupo de Liquid Glass con una sola pieza del logo."""
     g = {
         "name": name,
         "lighting": "individual",
@@ -69,51 +71,71 @@ def group(name, fill, translucency, refraction=None, shadow="layer-color", specu
         "blur-material": blur,
         "shadow": {"kind": shadow, "opacity": shadow_opacity},
         "translucency": {"enabled": translucency > 0, "value": translucency},
-        "layers": [{"name": name, "image-name": f"{name}.svg", "glass": True, "fill": {"solid": color(fill, alpha)}}],
+        "layers": [{"name": name, "image-name": f"{name}.svg", "glass": True,
+                    "fill": {"solid": color(fill, alpha)}}],
     }
     if refraction:
         g["refractivity"] = {"enabled": True, "strength": refraction[0], "depth": refraction[1]}
     return g
 
 
-# Cada concepto: fondo + grupos de delante hacia atrás (así los ordena Icon Composer)
+def gradient(colors):
+    return {"linear-gradient": [color(c) for c in colors]}
+
+
+# Fondo + grupos de delante hacia atrás (así los ordena Icon Composer).
+# Cristal claro (poco esmerilado) para que la deformación de lo que hay detrás se vea nítida.
 CONCEPTS = {
-    # Como Fotos: fondo System Light de Apple y tres piezas de cristal tintado en los
-    # azules de Steam que se mezclan donde se solapan.
-    "steam-fotos": {
-        "fill": "system-light",
-        "groups": [
-            group("eje", STEAM_CYAN, 0.35, refraction=(0.6, 0.6)),
-            group("biela", STEAM_CYAN, 0.45, refraction=(0.6, 0.6)),
-            group("manivela", STEAM_BLUE, 0.35),
-        ],
-    },
-    # Fiel al Steam de siempre: su degradado azul y el logo en cristal claro; la biela,
-    # tintada del azul clásico, refracta la manivela que pasa por debajo.
-    "steam-cristal": {
-        "fill": {"linear-gradient": [color(STEAM_BG_TOP), color(STEAM_BG_BOTTOM)]},
-        "groups": [
-            group("eje", "#FFFFFF", 0.0, shadow="neutral", specular="inside"),
-            group("biela", STEAM_LIGHT, 0.45, refraction=(0.6, 0.6)),
-            group("manivela", "#FFFFFF", 0.4, shadow="neutral"),
-        ],
-    },
-    # Como la lente de Vista Previa: la biela es cristal transparente y grueso que dobla
-    # el borde de la manivela al pasar por encima; manivela y eje casi opacos y nítidos.
-    "steam-lente": {
-        "fill": {"linear-gradient": [color(STEAM_BG_TOP), color(STEAM_BG_BOTTOM)]},
-        "groups": [
-            group("eje", "#FFFFFF", 0.0, shadow="neutral", specular="inside"),
-            group("biela", "#FFFFFF", 0.8, refraction=(0.9, 0.8), shadow="neutral",
-                  alpha=0.25, blur=0.15, shadow_opacity=0.35),
-            group("manivela", "#FFFFFF", 0.2, shadow="neutral"),
-        ],
-    },
+    # El eje es una lente transparente: dobla el anillo de la manivela en su borde.
+    "steam-v1": {"fill": gradient(STEAM_BG), "groups": [
+        glass("eje", alpha=0.35, translucency=0.6, blur=0.15, refraction=(0.6, 0.5)),
+        glass("biela", translucency=0.3, blur=0.3, refraction=(0.4, 0.3)),
+        glass("manivela"),
+    ]},
+    # Igual, con la lente del eje más potente.
+    "steam-v2": {"fill": gradient(STEAM_BG), "groups": [
+        glass("eje", alpha=0.3, translucency=0.7, blur=0.1, refraction=(0.85, 0.7)),
+        glass("biela", translucency=0.3, blur=0.3, refraction=(0.4, 0.3)),
+        glass("manivela"),
+    ]},
+    # La biela es cristal azul claro de Steam que deforma el círculo pequeño al pasar.
+    "steam-v3": {"fill": gradient(STEAM_BG), "groups": [
+        glass("eje", translucency=0.0, specular="inside"),
+        glass("biela", fill=STEAM_LIGHT, alpha=0.7, translucency=0.5, blur=0.15,
+              refraction=(0.55, 0.45), shadow="layer-color"),
+        glass("manivela"),
+    ]},
+    # Todo cristal: lente en el eje, biela azul y manivela con refracción suave.
+    "steam-v4": {"fill": gradient(STEAM_BG), "groups": [
+        glass("eje", alpha=0.35, translucency=0.6, blur=0.15, refraction=(0.7, 0.6)),
+        glass("biela", fill=STEAM_LIGHT, alpha=0.7, translucency=0.5, blur=0.15,
+              refraction=(0.55, 0.45), shadow="layer-color"),
+        glass("manivela", alpha=0.9, translucency=0.35, blur=0.3, refraction=(0.4, 0.4)),
+    ]},
+    # Como Fotos: fondo System Light y piezas de cristal tintado que se deforman entre sí.
+    "steam-v5": {"fill": "system-light", "groups": [
+        glass("eje", fill=STEAM_CYAN, alpha=0.6, translucency=0.5, blur=0.15,
+              refraction=(0.7, 0.6), shadow="layer-color"),
+        glass("biela", fill=STEAM_CYAN, alpha=0.75, translucency=0.45, blur=0.15,
+              refraction=(0.6, 0.5), shadow="layer-color"),
+        glass("manivela", fill=STEAM_BLUE, alpha=0.9, translucency=0.3, blur=0.3,
+              refraction=(0.4, 0.4), shadow="layer-color"),
+    ]},
+    # Como v4 pero con la biela en blanco (más cercano al logo original).
+    "steam-v6": {"fill": gradient(STEAM_BG), "groups": [
+        glass("eje", alpha=0.35, translucency=0.6, blur=0.15, refraction=(0.7, 0.6)),
+        glass("biela", alpha=0.6, translucency=0.5, blur=0.15, refraction=(0.55, 0.45)),
+        glass("manivela", alpha=0.9, translucency=0.35, blur=0.3, refraction=(0.4, 0.4)),
+    ]},
 }
 
 
 def main():
     geo = pieces()
+    for old in (ROOT / "icons").glob("steam*.icon"):
+        for f in sorted(old.rglob("*"), reverse=True):
+            f.unlink() if f.is_file() else f.rmdir()
+        old.rmdir()
     for name, spec in CONCEPTS.items():
         icon = ROOT / "icons" / f"{name}.icon"
         (icon / "Assets").mkdir(parents=True, exist_ok=True)
