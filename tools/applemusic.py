@@ -36,6 +36,23 @@ mezcla normal. g2: la nota rosa se confundía con las ondas en la tecla; vuelve 
 Ronda 4: el vitral con corcheas claras (rosa blanquecino al 0.78 sobre el vino) se veía malva gris,
 como plástico. Lo que sí se ve como cristal es el vitral claro (g1c): cristal de color con luz
 detrás. En oscuro esa luz la pone ahora el orbe, y las corcheas vuelven a rojo.
+
+Ronda h (el juez eligió g2 y pidió más; g1-g3 se quedan tal cual para comparar):
+  - g4 "ondas 2": g2 con todos los arreglos del juez. Fondo vino (lo que se ve a través de la
+    nota ya no es gris); la nota en dos cristales: barra fucsia delante, que tuerce en remolinos
+    la onda del medio, y corcheas de cristal rosa casi transparente detrás; ondas de cristal claro
+    encendido con brillo de su color; disco de luz esmerilado en su centro, cuyo borde dobla la
+    plica izquierda; refracción de las corcheas (0.35, 0.09) contra el pliegue de las plicas.
+  - g5 "vitral 2": g1 con sus defectos arreglados y el aro del icono de iTunes 12 alrededor del
+    orbe: corcheas transparentes de verdad, plicas que suben solo 30 px bajo la barra (ni mancha
+    en la esquina ni gotas) y, en claro, orbe nacarado y aro para que haya algo que doblar.
+  En tintado la nota se perdía: barra y corcheas llevan ahí un relleno blanco casi opaco, y el
+  orbe uno tenue (fill-specializations, appearance "tinted").
+  h1: con 70 px de plica bajo la barra la punta se veía como una gota dentro de ella; las ondas
+  de g2 (radios 117, 165, 237) corrían a 3-4 px de las plicas y del borde de la barra (astillas y
+  rayas). h2: la punta redonda de 30 px brillaba como un punto en la esquina de la barra sobre las
+  ondas (sobre el orbe liso de g5 no se ve): g4 lleva plicas de punta plana de 10 px. h3: ondas
+  claras más limpias (sin esmerilar) en g4c; el orbe de g5 en tintado tapaba la nota.
 """
 import re
 
@@ -282,6 +299,7 @@ def solo(name, fill, alpha, tinted=None, **kw):
 
 
 TINT_NOTE = {"solid": color(WHITE, 0.85)}  # en tintado la nota se perdía: ahí, blanca casi opaca
+TINT_BACK = {"solid": color(WHITE, 0.3)}   # y lo de detrás, tenue: el orbe de g5 tapaba la nota
 
 
 def g4(light=False):
@@ -298,20 +316,20 @@ def g4(light=False):
     """
     if light:
         bar, note = (HOT_PINK, 0.6), (MUSIC_RED, 0.5)
-        wave, alphas, wave_glass = (ROSE, MUSIC_RED), (0.8, 0.56, 0.36), (0.45, 0.25, 0.45)
+        wave, alphas, wave_glass = (ROSE, MUSIC_RED), (0.85, 0.62, 0.42), (0.4, 0.05, 0.45)
         disc = group("disco", [("disco", grad_fill(WHITE, WHITE, 0.95))], translucency=0.3, blur=0.5,
                      shadow="neutral", shadow_opacity=0.35)
         shadow = 0.4
     else:
         bar, note = (HOT_PINK, 0.5), (ROSE, 0.46)
-        wave, alphas, wave_glass = (ROSE, MUSIC_RED), (1.0, 0.8, 0.6), (0.45, 0.1, 0.8)
+        wave, alphas, wave_glass = (ROSE, MUSIC_RED), (1.0, 0.88, 0.72), (0.45, 0.1, 0.8)
         disc = group("disco", [("disco", grad_fill(WHITE, BLUSH, 0.85))], translucency=0.4, blur=0.6,
                      shadow="layer-color", shadow_opacity=0.5)
         shadow = 0.5
     waves = [(f"aro{i}", grad_fill(*wave, a)) for i, a in enumerate(alphas, 1)]
     return [
         solo("barra2", *bar, tinted=TINT_NOTE, translucency=0.6, blur=0.0, refraction=(0.4, 0.12),
-             shadow="layer-color", shadow_opacity=0.6),
+             shadow="layer-color", shadow_opacity=0.8),
         solo("corcheas3", *note, tinted=TINT_NOTE, translucency=0.75, blur=0.0, refraction=(0.35, 0.09),
              shadow="layer-color", shadow_opacity=shadow),
         group("aros", waves, translucency=wave_glass[0], blur=wave_glass[1], shadow="layer-color",
@@ -342,7 +360,8 @@ def g5(light=False):
              shadow="layer-color", shadow_opacity=0.6, specular="inside"),
         group("halo", [("halo", grad_fill(ROSE, MUSIC_RED, 0.85))], translucency=0.5, blur=0.1,
               refraction=(0.35, 0.12), shadow="layer-color", shadow_opacity=0.7),
-        group("orbe", [("orbe", orb)], translucency=0.4, blur=0.6, shadow=shadow, shadow_opacity=0.5),
+        dict(group("orbe", [], translucency=0.4, blur=0.6, shadow=shadow, shadow_opacity=0.5),
+             layers=[layer("orbe", orb, TINT_BACK)]),
     ]
 
 

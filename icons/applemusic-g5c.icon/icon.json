@@ -142,12 +142,22 @@
           "name": "orbe",
           "image-name": "orbe.svg",
           "glass": true,
-          "fill": {
-            "linear-gradient": [
-              "extended-srgb:1.00000,1.00000,1.00000,0.92000",
-              "extended-srgb:1.00000,0.78824,0.83529,0.92000"
-            ]
-          }
+          "fill-specializations": [
+            {
+              "value": {
+                "linear-gradient": [
+                  "extended-srgb:1.00000,1.00000,1.00000,0.92000",
+                  "extended-srgb:1.00000,0.78824,0.83529,0.92000"
+                ]
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "solid": "extended-srgb:1.00000,1.00000,1.00000,0.30000"
+              }
+            }
+          ]
         }
       ]
     }
