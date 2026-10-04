@@ -22,19 +22,24 @@ gNc = su pareja clara (cristal morado sobre blanco, para un futuro modo día/noc
   tema oscuro, la cara deja ver el fondo), cortado en tres franjas: la del medio, delante y
   corrida 36 px a la derecha, es una barra de cristal que dobla con su bisel los bordes de las
   franjas que pisa y deja a la izquierda el hueco del glitch.
-- g4 «glitch en franjas, con luz»: g3 con los arreglos del juez. Fondo en diagonal más rico; el
-  logo entero sin cortes, de cristal morado más transparente, con la franja que pisa la barra más
-  clara (el hueco del glitch, a la izquierda); detrás, la cara iluminada (blanco esmerilado)
-  corrida 24 px abajo a la derecha, que asoma lila por el marco de la derecha; ventanas de cristal
-  claro en los ojos. Delante, la barra de cristal lila casi transparente con brillo de su color,
-  esquinas redondeadas y punta derecha en vertical; su cara se corre con ella y brilla (la luz de
-  detrás se corre también), y por su marco se ve la franja sin correr: doble imagen del borde de
-  la cara y de la muesca. En claro, morado que se multiplica sobre una cara morado profundo.
-- g5 «fantasma»: g1 de verdad transparente. Detrás, el logo de cristal morado profundo con la cara
-  iluminada, arriba a la derecha; delante, un fantasma del logo en cristal violeta casi incoloro
-  (plus-lighter, sin refracción), 40 px abajo a la izquierda: deja ver el logo de detrás y, a la
-  izquierda y abajo, una franja de fondo. Los ojos del fantasma son ventanas de cristal claro que
-  doblan los ojos de detrás. En claro, el fantasma se multiplica.
+- g4 «glitch en franjas, con luz»: g3 con los arreglos del juez y del escéptico. Fondo en diagonal
+  más rico; el logo entero de cristal morado transparente con luz individual (la cara, casi
+  incolora, tiene su propio bisel), con la franja que pisa la barra más clara (el hueco del glitch,
+  a la izquierda). Detrás, luces: la cara iluminada (blanco esmerilado) corrida 24 px a la derecha,
+  que asoma lila por el marco de la derecha; una raya de luz bajo el chaflán y un resplandor bajo
+  la banda de abajo y la cola: el marco tiene dos tintes y su bisel dobla las luces. Ventanas de
+  cristal morado en los ojos. Delante, la barra de cristal violeta casi transparente con brillo de
+  su color, la esquina de arriba a la derecha viva y la punta derecha en vertical; su cara se corre
+  con ella y brilla (la luz de detrás se corre también), y por su marco se ve la franja sin correr:
+  doble imagen del borde de la cara y de la muesca. En claro, morado que se multiplica sobre una
+  cara de luz morado profundo con una esquina blanca.
+- g5 «fantasma»: g1 de verdad transparente. Detrás, el logo de cristal morado profundo, arriba a la
+  derecha; delante, un fantasma del logo en cristal violeta casi incoloro (plus-lighter), 64 px
+  abajo a la izquierda, con refracción suave: deja ver el logo de detrás y, a la izquierda, una
+  franja de fondo, y su bisel dobla el borde de detrás donde cruza su chaflán. La cara del fantasma
+  es la luz: por ella se ve la cara de detrás, blanca, y el marco de detrás, morado encendido. Un
+  solo par de ojos: los de detrás, bajo las ventanas de cristal claro del fantasma, que los doblan.
+  En claro, el fantasma se multiplica.
 Los conceptos c (logo casi opaco, rechazados: «no tiene Liquid Glass») siguen en el historial.
 """
 import re
@@ -400,7 +405,9 @@ def g4(light=False):
         bar_face, bar_face_a, win_c, win_a = LAVENDER, 0.18, TWITCH_PURPLE, 0.22
         # la luz bajo la barra a 0.8: a 0.55 la cara de la barra salía gris (172,165,186)
         lights = [capa("g4-luz", "#FFFFFF", 0.9), capa("g4-luz-barra", "#FFFFFF", 0.8),
-                  capa("g4-luz-chaflan", "#FFFFFF", 0.7), resplandor("g4-luz-cola", "#FFFFFF", 0.7)]
+                  capa("g4-luz-chaflan", "#FFFFFF", 0.7),
+                  # resplandor lavanda: en blanco, bajo el morado la cola salía gris (132,114,161)
+                  resplandor("g4-luz-cola", LAVENDER, 0.7)]
     bar = grupo("barra", [capa("g4-barra-marco", bar_c, bar_a), capa("g4-barra-cara", bar_face, bar_face_a)],
                 0.8, 0.0, (0.3, 0.04), "layer-color", bar_glow, blend=bar_mix, lighting="combined")
     face = capa("g4-cara", LAVENDER, 0.1)

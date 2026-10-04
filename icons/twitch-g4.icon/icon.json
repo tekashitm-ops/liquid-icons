@@ -180,8 +180,8 @@
           "glass": false,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,1.00000,1.00000,0.70000",
-              "extended-srgb:1.00000,1.00000,1.00000,0.00000"
+              "extended-srgb:0.74902,0.58039,1.00000,0.70000",
+              "extended-srgb:0.74902,0.58039,1.00000,0.00000"
             ],
             "orientation": {
               "start": {
