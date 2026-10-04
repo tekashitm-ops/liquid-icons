@@ -85,34 +85,51 @@ def gradient(colors):
 
 # Fondo + grupos de delante hacia atrás (así los ordena Icon Composer).
 # Cristal claro (poco esmerilado) para que la deformación de lo que hay detrás se vea nítida.
+def eje_blanco():
+    """Eje blanco casi opaco con una lente suave en el borde: el centro del logo sigue siendo blanco."""
+    return glass("eje", alpha=0.92, translucency=0.2, blur=0.1, refraction=(0.35, 0.3), specular="inside")
+
+
 CONCEPTS = {
-    # El eje es una lente transparente: dobla el anillo de la manivela en su borde.
-    "steam-v1": {"fill": gradient(STEAM_BG), "groups": [
-        glass("eje", alpha=0.35, translucency=0.6, blur=0.15, refraction=(0.6, 0.5)),
-        glass("biela", translucency=0.3, blur=0.3, refraction=(0.4, 0.3)),
-        glass("manivela"),
+    # Biela de cristal azul claro, sin esmerilar: deforma nítidamente el círculo pequeño.
+    "steam-v7": {"fill": gradient(STEAM_BG), "groups": [
+        eje_blanco(),
+        glass("biela", fill=STEAM_LIGHT, alpha=0.7, translucency=0.6, blur=0.0,
+              refraction=(0.5, 0.4), shadow="layer-color"),
+        glass("manivela", translucency=0.25),
     ]},
-    # Igual, con la lente del eje más potente.
-    "steam-v2": {"fill": gradient(STEAM_BG), "groups": [
-        glass("eje", alpha=0.3, translucency=0.7, blur=0.1, refraction=(0.85, 0.7)),
-        glass("biela", translucency=0.3, blur=0.3, refraction=(0.4, 0.3)),
-        glass("manivela"),
+    # Igual, con refracción más marcada en la biela.
+    "steam-v8": {"fill": gradient(STEAM_BG), "groups": [
+        eje_blanco(),
+        glass("biela", fill=STEAM_LIGHT, alpha=0.7, translucency=0.6, blur=0.0,
+              refraction=(0.75, 0.6), shadow="layer-color"),
+        glass("manivela", translucency=0.25),
     ]},
-    # La biela es cristal azul claro de Steam que deforma el círculo pequeño al pasar.
-    "steam-v3": {"fill": gradient(STEAM_BG), "groups": [
-        glass("eje", translucency=0.0, specular="inside"),
-        glass("biela", fill=STEAM_LIGHT, alpha=0.7, translucency=0.5, blur=0.15,
+    # Biela de cristal transparente (como la lente de Vista Previa).
+    "steam-v9": {"fill": gradient(STEAM_BG), "groups": [
+        eje_blanco(),
+        glass("biela", alpha=0.45, translucency=0.75, blur=0.0, refraction=(0.6, 0.5),
+              shadow_opacity=0.35),
+        glass("manivela", translucency=0.25),
+    ]},
+    # Colores de Steam sobre su fondo: biela y eje en cian de cristal.
+    "steam-v10": {"fill": gradient(STEAM_BG), "groups": [
+        glass("eje", fill=STEAM_CYAN, alpha=0.9, translucency=0.3, blur=0.1,
+              refraction=(0.35, 0.3), shadow="layer-color", specular="inside"),
+        glass("biela", fill=STEAM_CYAN, alpha=0.75, translucency=0.55, blur=0.0,
               refraction=(0.55, 0.45), shadow="layer-color"),
-        glass("manivela"),
+        glass("manivela", alpha=0.92, translucency=0.3),
     ]},
-    # Todo cristal: lente en el eje, biela azul y manivela con refracción suave.
-    "steam-v4": {"fill": gradient(STEAM_BG), "groups": [
-        glass("eje", alpha=0.35, translucency=0.6, blur=0.15, refraction=(0.7, 0.6)),
-        glass("biela", fill=STEAM_LIGHT, alpha=0.7, translucency=0.5, blur=0.15,
+    # Como Fotos (fondo System Light), con cristal sin esmerilar.
+    "steam-v11": {"fill": "system-light", "groups": [
+        glass("eje", fill=STEAM_CYAN, alpha=0.9, translucency=0.3, blur=0.1,
+              refraction=(0.35, 0.3), shadow="layer-color", specular="inside"),
+        glass("biela", fill=STEAM_CYAN, alpha=0.75, translucency=0.55, blur=0.0,
               refraction=(0.55, 0.45), shadow="layer-color"),
-        glass("manivela", alpha=0.9, translucency=0.35, blur=0.3, refraction=(0.4, 0.4)),
+        glass("manivela", fill=STEAM_BLUE, alpha=0.9, translucency=0.35, blur=0.2,
+              refraction=(0.3, 0.3), shadow="layer-color"),
     ]},
-    # Como Fotos: fondo System Light y piezas de cristal tintado que se deforman entre sí.
+    # Referencias de la ronda anterior.
     "steam-v5": {"fill": "system-light", "groups": [
         glass("eje", fill=STEAM_CYAN, alpha=0.6, translucency=0.5, blur=0.15,
               refraction=(0.7, 0.6), shadow="layer-color"),

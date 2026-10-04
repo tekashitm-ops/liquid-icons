@@ -11,8 +11,10 @@
 </style>
 <div id="root"></div>
 <script>
-  const names = (new URLSearchParams(location.search).get('icons') || 'steam').split(',');
-  const R = ['Default', 'Dark', 'TintedLight', 'TintedDark', 'ClearLight', 'ClearDark'];
+  const q = new URLSearchParams(location.search);
+  const names = (q.get('icons') || 'steam').split(',');
+  const R = (q.get('r') || 'Default,Dark,TintedLight,TintedDark,ClearLight,ClearDark').split(',');
+  if (q.get('size')) document.head.insertAdjacentHTML('beforeend', `<style>img{width:${q.get('size')}px;height:${q.get('size')}px}</style>`);
   const L = { Default: 'Por defecto', Dark: 'Oscuro', TintedLight: 'Tintado claro', TintedDark: 'Tintado oscuro', ClearLight: 'Transparente claro', ClearDark: 'Transparente oscuro' };
   for (const n of names) {
     root.insertAdjacentHTML('beforeend', `<h2>${n}</h2><div class="row">${R.map(r => `<figure><img src="../renders/${n}-${r}.png"><figcaption>${L[r]}</figcaption></figure>`).join('')}</div>`);
