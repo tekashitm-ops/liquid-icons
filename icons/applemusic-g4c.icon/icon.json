@@ -32,7 +32,7 @@
           "fill-specializations": [
             {
               "value": {
-                "solid": "extended-srgb:1.00000,0.23922,0.54510,0.45000"
+                "solid": "extended-srgb:1.00000,0.23922,0.54510,0.60000"
               }
             },
             {
@@ -51,7 +51,7 @@
       }
     },
     {
-      "name": "corcheas4",
+      "name": "corcheas2",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
@@ -66,13 +66,13 @@
       },
       "layers": [
         {
-          "name": "corcheas4",
-          "image-name": "corcheas4.svg",
+          "name": "corcheas2",
+          "image-name": "corcheas2.svg",
           "glass": true,
           "fill-specializations": [
             {
               "value": {
-                "solid": "extended-srgb:0.98039,0.14118,0.23529,0.40000"
+                "solid": "extended-srgb:0.98039,0.14118,0.23529,0.50000"
               }
             },
             {
@@ -95,7 +95,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.3,
+      "blur-material": 0.25,
       "shadow": {
         "kind": "layer-color",
         "opacity": 0.45
@@ -111,8 +111,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.24314,0.38431,0.75000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.75000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.70000",
+              "extended-srgb:1.00000,0.24314,0.38431,0.70000"
             ]
           }
         },
@@ -122,8 +122,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.24314,0.38431,0.50000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.50000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.48000",
+              "extended-srgb:1.00000,0.24314,0.38431,0.48000"
             ]
           }
         },
@@ -133,8 +133,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.24314,0.38431,0.32000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.32000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.30000",
+              "extended-srgb:1.00000,0.24314,0.38431,0.30000"
             ]
           }
         }
@@ -147,12 +147,12 @@
       "specular-highlight-placement": "automatic",
       "blur-material": 0.5,
       "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.4
+        "kind": "neutral",
+        "opacity": 0.35
       },
       "translucency": {
         "enabled": true,
-        "value": 0.4
+        "value": 0.3
       },
       "layers": [
         {
@@ -161,8 +161,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.75000",
-              "extended-srgb:1.00000,0.24314,0.38431,0.75000"
+              "extended-srgb:1.00000,1.00000,1.00000,0.95000",
+              "extended-srgb:1.00000,1.00000,1.00000,0.95000"
             ]
           }
         }

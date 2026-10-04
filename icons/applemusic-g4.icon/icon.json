@@ -51,7 +51,7 @@
       }
     },
     {
-      "name": "corcheas4",
+      "name": "corcheas2",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
@@ -66,13 +66,13 @@
       },
       "layers": [
         {
-          "name": "corcheas4",
-          "image-name": "corcheas4.svg",
+          "name": "corcheas2",
+          "image-name": "corcheas2.svg",
           "glass": true,
           "fill-specializations": [
             {
               "value": {
-                "solid": "extended-srgb:1.00000,0.56078,0.65098,0.42000"
+                "solid": "extended-srgb:1.00000,0.56078,0.65098,0.46000"
               }
             },
             {
@@ -102,7 +102,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.55
+        "value": 0.45
       },
       "layers": [
         {
@@ -111,8 +111,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.90000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.90000"
+              "extended-srgb:1.00000,0.56078,0.65098,1.00000",
+              "extended-srgb:0.98039,0.14118,0.23529,1.00000"
             ]
           }
         },
@@ -122,8 +122,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.70000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.70000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.80000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.80000"
             ]
           }
         },
@@ -133,8 +133,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.50000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.50000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.60000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.60000"
             ]
           }
         }
@@ -161,8 +161,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,1.00000,1.00000,0.80000",
-              "extended-srgb:1.00000,0.83922,0.87451,0.80000"
+              "extended-srgb:1.00000,1.00000,1.00000,0.85000",
+              "extended-srgb:1.00000,0.83922,0.87451,0.85000"
             ]
           }
         }

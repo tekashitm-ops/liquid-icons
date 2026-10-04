@@ -70,9 +70,18 @@ STACK = (36, 0, -36)
 # g4: centro de las ondas y del disco de luz; 30 px por debajo del de g2, para que la barra
 # doble una banda de onda y no el hueco oscuro que había justo bajo su borde de arriba
 RING_C4 = (CENTER[0], CENTER[1] + 30)
-DISC_R = 105                   # disco de luz: dentro del hueco de la primera onda (radio 117)
-RISE4 = 70.0                   # g4: las plicas acaban hacia la mitad de la barra (165 px)
-RISE5 = 30.0                   # g5: un trozo corto, lejos de la esquina de arriba de la barra
+# g4: ondas (radio exterior, grosor) y disco. Ningún borde de círculo va casi paralelo a un borde
+# de la nota (ronda h1: los radios 117, 165 y 237 de g2 corrían a 3-4 px de las plicas y del
+# borde de abajo de la barra y dejaban astillas y rayas): el disco (95) y la segunda onda (250)
+# caen en medio de las plicas, la primera onda (130) a 17 px de la plica izquierda
+WAVES4 = [(178, 48), (298, 48), (418, 48)]
+DISC_R = 95
+# g4 y g5: px que cada plica sube por debajo de la barra; con 70 la punta se veía dentro de la
+# barra como una gota, con 30 no se ve
+RISE2 = 30.0
+# g5: aro de cristal alrededor del orbe (como el icono de iTunes 12): 318-385, el borde del orbe
+# (345) pasa por su centro; los dos lejos del radio 300, que va paralelo al borde de la barra
+HALO = (385, 67)
 
 # Colores
 MUSIC_BG_TOP = (1.0, 0.2439, 0.3882)       # degradado del icono oficial, medido arriba y abajo
@@ -144,13 +153,13 @@ def pieces():
     # g3: copias desplazadas en vertical (la de delante abajo, la de detrás arriba)
     for name, dy in zip(("pila1", "pila2", "pila3"), STACK):
         geo[name] = affinity.translate(nota, 0, dy)
-    # g4: ondas más abajo y disco de luz en su centro; g4 y g5: corcheas que suben menos
-    for i, (r, w) in enumerate(WAVES, 1):
+    # g4: ondas más abajo y disco de luz en su centro; g5: aro del orbe; g4 y g5: corcheas que suben menos
+    for i, (r, w) in enumerate(WAVES4, 1):
         geo[f"aro{i}"] = ring(r, w, RING_C4)
     geo["disco"] = Point(RING_C4).buffer(DISC_R, quad_segs=128)
-    for key, rise in (("corcheas4", RISE4), ("corcheas5", RISE5)):
-        tips = unary_union([rod(st, y_beam(sum(st) / 2) - rise) for st in (STEM_L, STEM_R)])
-        geo[key] = solid(nota.difference(beam).union(nota.intersection(tips)))
+    geo["halo"] = ring(*HALO, ORB[0])
+    tips = unary_union([rod(st, y_beam(sum(st) / 2) - RISE2) for st in (STEM_L, STEM_R)])
+    geo["corcheas2"] = solid(nota.difference(beam).union(nota.intersection(tips)))
     return geo
 
 
@@ -268,52 +277,63 @@ TINT_NOTE = {"solid": color(WHITE, 0.85)}  # en tintado la nota se perdía: ahí
 def g4(light=False):
     """Ondas, segunda versión: la nota en dos cristales sobre ondas de cristal encendidas.
 
-    Delante, la barra de cristal fucsia (0.4, 0.12) sobre los 70 px de plica que suben por debajo
-    y sobre la banda de la onda del medio (las ondas bajan 30 px): dentro de la barra se ven dos
-    cristales y la onda torcida. Detrás, las corcheas de cristal rosa casi transparente; su
-    refracción baja a (0.35, 0.09) para quitar el pliegue del centro de las plicas (39 px). Las
-    ondas pasan a cristal claro y encendido (rosa arriba, rojo abajo, apenas esmerilado). Al fondo,
-    un disco de luz esmerilado en el centro de las ondas (como el orbe de g1): la plica izquierda
-    pasa por encima y dobla su borde. Fondo vino de g1: lo que se ve a través ya no es gris.
+    Delante, la barra de cristal fucsia, pieza ancha (165 px) con refracción (0.4, 0.12), sobre la
+    banda de la onda del medio (las ondas bajan 30 px): la tuerce en remolinos. Detrás, las
+    corcheas de cristal rosa casi transparente, con 30 px de plica bajo la barra; su refracción
+    baja a (0.35, 0.09) para quitar el pliegue del centro de las plicas (39 px). Las ondas, de
+    cristal claro encendido (rosa arriba, rojo abajo, apenas esmerilado) y con brillo de su color.
+    Al fondo, un disco de luz esmerilado en el centro de las ondas (como el orbe de g1): su borde
+    pasa por el medio de la plica izquierda, que lo dobla. Fondo vino de g1: lo que se ve a través
+    de la nota ya no es gris.
     """
     if light:
-        bar, note, wave, disc = (HOT_PINK, 0.45), (MUSIC_RED, 0.40), (MUSIC_PINK, MUSIC_RED), (ROSE, MUSIC_PINK)
-        alphas, wave_glass, shadow = (0.75, 0.5, 0.32), (0.45, 0.3, 0.45), 0.4
+        bar, note = (HOT_PINK, 0.6), (MUSIC_RED, 0.5)
+        wave, alphas, wave_glass = (ROSE, MUSIC_PINK), (0.7, 0.48, 0.3), (0.45, 0.25, 0.45)
+        disc = group("disco", [("disco", grad_fill(WHITE, WHITE, 0.95))], translucency=0.3, blur=0.5,
+                     shadow="neutral", shadow_opacity=0.35)
+        shadow = 0.4
     else:
-        bar, note, wave, disc = (HOT_PINK, 0.5), (ROSE, 0.42), (ROSE, MUSIC_RED), (WHITE, BLUSH)
-        alphas, wave_glass, shadow = (0.9, 0.7, 0.5), (0.55, 0.1, 0.8), 0.5
+        bar, note = (HOT_PINK, 0.5), (ROSE, 0.46)
+        wave, alphas, wave_glass = (ROSE, MUSIC_RED), (1.0, 0.8, 0.6), (0.45, 0.1, 0.8)
+        disc = group("disco", [("disco", grad_fill(WHITE, BLUSH, 0.85))], translucency=0.4, blur=0.6,
+                     shadow="layer-color", shadow_opacity=0.5)
+        shadow = 0.5
     waves = [(f"aro{i}", grad_fill(*wave, a)) for i, a in enumerate(alphas, 1)]
     return [
         solo("barra", *bar, tinted=TINT_NOTE, translucency=0.6, blur=0.0, refraction=(0.4, 0.12),
              shadow="layer-color", shadow_opacity=0.6),
-        solo("corcheas4", *note, tinted=TINT_NOTE, translucency=0.75, blur=0.0, refraction=(0.35, 0.09),
+        solo("corcheas2", *note, tinted=TINT_NOTE, translucency=0.75, blur=0.0, refraction=(0.35, 0.09),
              shadow="layer-color", shadow_opacity=shadow),
         group("aros", waves, translucency=wave_glass[0], blur=wave_glass[1], shadow="layer-color",
               shadow_opacity=wave_glass[2]),
-        group("disco", [("disco", grad_fill(*disc, 0.75 if light else 0.8))], translucency=0.4,
-              blur=0.5 if light else 0.6, shadow="layer-color", shadow_opacity=0.4 if light else 0.5),
+        disc,
     ]
 
 
 def g5(light=False):
-    """Vitral, segunda versión: barra fucsia y corcheas de cristal rojo de verdad transparente.
+    """Vitral, segunda versión: la nota de cristal de color ante el orbe con su aro (iTunes 12).
 
-    Las corcheas bajan de 0.75 a 0.5 de color y suben a 0.7 de translucidez, sin esmerilar: a
-    través de ellas se ve el orbe (y el vino donde la cabeza izquierda sale de él). Las plicas
-    suben solo 30 px bajo la barra: su punta ya no cae en la esquina de arriba a la derecha (la
-    mancha) ni se estira por el bisel de los lados (las gotas). En claro, el orbe es de cristal
-    rosa esmerilado sobre el fondo rosado: el cristal rojo tiene por fin algo que doblar.
+    Las corcheas bajan de 0.75 a 0.45 de color y suben a 0.75 de translucidez, sin esmerilar.
+    Las plicas suben solo 30 px bajo la barra: su punta ya no cae en la esquina de arriba a la
+    derecha (la mancha) ni se estira por el bisel de los lados (las gotas). Detrás del orbe
+    esmerilado, un aro de cristal rojo claro que pisa su borde (como el icono de iTunes 12): la
+    esquina de la barra y la cabeza izquierda salen del orbe por encima del aro, así que dentro de
+    ellas se ven tres cosas (luz, aro, vino) y el bisel dobla los dos bordes. En claro, el mismo
+    orbe blanco y el mismo aro sobre el fondo rosado: el cristal rojo tiene por fin algo que doblar.
     """
     if light:
-        bar, note, orb = (HOT_PINK, 0.55), (MUSIC_DEEP, 0.5), grad_fill(ROSE, MUSIC_PINK, 0.7)
+        bar, note, orb, shadow = (HOT_PINK, 0.55), (MUSIC_RED, 0.5), grad_fill(WHITE, WHITE, 0.95), "neutral"
     else:
-        bar, note, orb = (HOT_PINK, 0.65), (MUSIC_RED, 0.5), grad_fill(WHITE, BLUSH, 0.85)
+        bar, note, orb, shadow = (HOT_PINK, 0.65), (MUSIC_RED, 0.45), grad_fill(WHITE, BLUSH, 0.85), "layer-color"
     return [
         solo("barra", *bar, tinted=TINT_NOTE, translucency=0.65, blur=0.0, refraction=(0.4, 0.12),
              shadow="layer-color", shadow_opacity=0.6),
-        solo("corcheas5", *note, tinted=TINT_NOTE, translucency=0.7, blur=0.0, refraction=(0.3, 0.08),
+        solo("corcheas2", *note, tinted=TINT_NOTE, translucency=0.75, blur=0.0, refraction=(0.3, 0.08),
              shadow="layer-color", shadow_opacity=0.6, specular="inside"),
-        group("orbe", [("orbe", orb)], translucency=0.4, blur=0.6, shadow="layer-color", shadow_opacity=0.5),
+        group("halo", [("halo", grad_fill(ROSE, MUSIC_RED, 0.85))], translucency=0.5, blur=0.1,
+              refraction=(0.35, 0.12), shadow="layer-color", shadow_opacity=0.7),
+        group("orbe", [("orbe", orb)], translucency=0.4, blur=0.6, shadow=shadow,
+              shadow_opacity=0.35 if light else 0.5),
     ]
 
 
