@@ -66,8 +66,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.6,
-        "depth": 0.22
+        "strength": 0.32,
+        "depth": 0.08
       }
     },
     {
@@ -75,7 +75,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.0,
+      "blur-material": 0.25,
       "shadow": {
         "kind": "neutral",
         "opacity": 0.5
