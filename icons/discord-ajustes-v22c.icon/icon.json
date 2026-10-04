@@ -3,12 +3,7 @@
     "refractivity",
     "specular-location"
   ],
-  "fill": {
-    "linear-gradient": [
-      "extended-srgb:0.45490,0.49804,0.96863,1.00000",
-      "extended-srgb:0.33725,0.38431,0.96078,1.00000"
-    ]
-  },
+  "fill": "system-light",
   "groups": [
     {
       "name": "engranaje",
@@ -18,7 +13,7 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.45
+        "opacity": 0.55
       },
       "translucency": {
         "enabled": true,
@@ -27,17 +22,17 @@
       "layers": [
         {
           "name": "engranaje",
-          "image-name": "suave-p2.svg",
+          "image-name": "redondo-p2.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.22000"
+            "solid": "extended-srgb:0.48627,0.48627,0.50196,0.34000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.55,
-        "depth": 0.25
+        "strength": 0.25,
+        "depth": 0.08
       }
     },
     {
@@ -45,14 +40,14 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.3,
+      "blur-material": 0.2,
       "shadow": {
-        "kind": "neutral",
+        "kind": "layer-color",
         "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.3
+        "value": 0.35
       },
       "layers": [
         {
@@ -60,14 +55,14 @@
           "image-name": "clyde-p2.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.95000"
+            "solid": "extended-srgb:0.34510,0.39608,0.94902,0.92000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.4,
-        "depth": 0.35
+        "strength": 0.35,
+        "depth": 0.3
       }
     }
   ],

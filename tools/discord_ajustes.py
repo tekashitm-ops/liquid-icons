@@ -20,14 +20,14 @@ RES = 128
 GRAY_ON_LIGHT = "#7C7C80"  # gris de Ajustes de Apple, algo más oscuro para llegar a 3:1 sobre fondo claro
 
 
-def gear(cx, cy, r_tip, r_root, teeth=8, hole=0.0, fillet=10.0, root_frac=0.55, tip_frac=0.38):
+def gear(cx, cy, r_tip, r_root, teeth=8, hole=0.0, fillet=10.0, root_frac=0.55, tip_frac=0.38, rotation=0.0):
     """Engranaje redondeado: cuerpo + dientes trapezoidales, esquinas suavizadas y eje hueco."""
     body = Point(cx, cy).buffer(r_root, quad_segs=RES)
     pitch = 2 * math.pi / teeth
     w_root, w_tip = root_frac * pitch * r_root, tip_frac * pitch * r_root  # anchura del diente (px)
     parts = [body]
     for i in range(teeth):
-        a = i * pitch - math.pi / 2
+        a = i * pitch - math.pi / 2 + rotation * pitch  # rotation en dientes (0.5 = medio)
         ux, uy = math.cos(a), math.sin(a)          # hacia fuera
         px, py = -uy, ux                            # perpendicular
         base, tip = r_root * 0.9, r_tip
@@ -95,6 +95,8 @@ def pieces():
         # Ronda 4: perfil continuo (sin esquinas) y el trapecio de siempre con esquinas muy suaves
         "suave-p2": smooth_gear(678, 644, 194, 22, teeth=8, sharpness=2.5, hole=66),
         "redondo-p2": gear(678, 644, 215, 174, teeth=8, hole=66, fillet=20),
+        # Ronda 6: el mismo, girado medio diente (cambia qué dientes quedan cerca del borde de Clyde)
+        "girado-p2": gear(678, 644, 215, 174, teeth=8, hole=66, fillet=20, rotation=0.5),
     }
 
 
@@ -194,7 +196,15 @@ LENS_VARIANTS.update({
     "v19": ("p2", {**SUAVE, "refraction": (0.5, 0.2), "blur": 0.06}, "redondo"),
     "v20": ("p2", {**SUAVE, "refraction": (0.4, 0.15)}, "redondo"),
 })
-ROUND4 = {"v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20"}
+# Ronda 6: el panel aún encontró en v20 dos destellos traídos de ~100 px (el bisel "mira" a esa
+# distancia). Menos refracción para que mire más cerca, y el engranaje girado medio diente.
+LENS_VARIANTS.update({
+    "v21": ("p2", {**SUAVE, "refraction": (0.3, 0.1)}, "redondo"),
+    "v22": ("p2", {**SUAVE, "refraction": (0.25, 0.08)}, "redondo"),
+    "v23": ("p2", {**SUAVE, "refraction": (0.4, 0.15)}, "girado"),
+    "v24": ("p2", {**SUAVE, "refraction": (0.3, 0.1)}, "girado"),
+})
+ROUND4 = {"v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24"}
 for v, (pos, grade, *shape) in LENS_VARIANTS.items():
     gear_piece = f"{shape[0] if shape else 'engranaje'}-{pos}"
     CONCEPTS[f"discord-ajustes-{v}"] = {"fill": BG, "groups": [

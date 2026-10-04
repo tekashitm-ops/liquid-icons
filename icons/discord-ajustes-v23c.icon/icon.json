@@ -22,7 +22,7 @@
       "layers": [
         {
           "name": "engranaje",
-          "image-name": "suave-p2.svg",
+          "image-name": "girado-p2.svg",
           "glass": true,
           "fill": {
             "solid": "extended-srgb:0.48627,0.48627,0.50196,0.34000"
@@ -31,8 +31,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.45,
-        "depth": 0.2
+        "strength": 0.4,
+        "depth": 0.15
       }
     },
     {
