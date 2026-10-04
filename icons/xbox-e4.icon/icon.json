@@ -5,8 +5,8 @@
   ],
   "fill": {
     "linear-gradient": [
-      "extended-srgb:1.00000,1.00000,1.00000,1.00000",
-      "extended-srgb:0.89412,0.91373,0.88235,1.00000"
+      "extended-srgb:0.14902,0.15686,0.17255,1.00000",
+      "extended-srgb:0.06667,0.07059,0.07843,1.00000"
     ]
   },
   "groups": [
@@ -18,7 +18,7 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.35
+        "opacity": 0.4
       },
       "translucency": {
         "enabled": true,
@@ -30,7 +30,7 @@
           "image-name": "canica.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.08000"
+            "solid": "extended-srgb:0.60784,0.94118,0.04314,0.12000"
           }
         }
       ],
@@ -48,11 +48,11 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.8
+        "opacity": 1.0
       },
       "translucency": {
         "enabled": true,
-        "value": 0.75
+        "value": 0.8
       },
       "layers": [
         {
@@ -60,7 +60,7 @@
           "image-name": "logo-g4.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.45000"
+            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.38000"
           }
         }
       ],
@@ -78,7 +78,7 @@
       "blur-material": 0.6,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.4
+        "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
@@ -87,10 +87,10 @@
       "layers": [
         {
           "name": "detras",
-          "image-name": "logo-g4-detras.svg",
+          "image-name": "logo-g4-detras24.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.36471,0.72157,0.03922,0.90000"
+            "solid": "extended-srgb:0.60784,0.94118,0.04314,0.85000"
           }
         }
       ]
@@ -103,11 +103,11 @@
       "blur-material": 0.6,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.3
+        "opacity": 0.4
       },
       "translucency": {
         "enabled": true,
-        "value": 0.6
+        "value": 0.55
       },
       "layers": [
         {
@@ -115,7 +115,7 @@
           "image-name": "nucleo-g4.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.04314,0.30196,0.04314,0.20000"
+            "solid": "extended-srgb:0.03922,0.25882,0.03922,0.65000"
           }
         }
       ]
