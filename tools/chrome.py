@@ -169,6 +169,8 @@ def pieces():
         "fondo-azul": circle(CENTER, R_BLUE - BLUE_WINDOW),
         "base-fiel": circle(CENTER, R - BASE_INSET_FIEL),
         "sombra": circle(CENTER, R - SHADOW_INSET),
+        # c5: el anillo blanco como parte del cristal azul (una sola pieza de cristal hasta R_RING)
+        "anillo": circle(CENTER, R_RING),
     }
 
 
@@ -309,7 +311,41 @@ def lens_backing():
 
 APPROVED = {}
 
+# --- c5 (ronda 3): c4 sin los dos defectos que quedaban ------------------------------------------
+# El escéptico de c4 midió (1) el rojo volviéndose marrón y el amarillo oliva en las juntas: el
+# esmerilado 0.3 y la translucidez 0.5 mezclaban los fondos planos vecinos; y (2) contornos grises
+# de 3-4 px a los dos lados del anillo blanco: la banda oscura que ictool dibuja junto a cada borde
+# de cristal caía sobre el blanco opaco. En c5 el cristal es nítido (blur 0, translucidez 0.2) y el
+# anillo blanco forma parte del grupo del azul: el borde de ese cristal es el exterior del anillo,
+# así que su banda cae sobre los segmentos de color (como el canto del anillo del oficial) y no hay
+# borde de cristal sobre el blanco.
+def blue_ring():
+    g = group("azul", [("azul", "azul", BLUE, 0.95), ("anillo", "anillo", WHITE, 1.0)],
+              translucency=0.2, blur=0.0, refraction=(0.35, 0.12), shadow="none", shadow_opacity=0.0)
+    return g
+
+
+def segments_clean():
+    g = group("segmentos", [("rojo", "rojo", RED, 0.95), ("amarillo", "amarillo", YELLOW, 0.95),
+                            ("verde", "verde", GREEN, 0.95)],
+              translucency=0.2, blur=0.0, refraction=(0.3, 0.1), shadow="none", shadow_opacity=0.0)
+    g["lighting"] = "combined"
+    return g
+
+
+def fiel_limpio(dark):
+    """Máximo 4 grupos (norma de Apple): los fondos planos del azul y del anillo van en el grupo de la
+    base, detrás de los segmentos; no se solapan con ellos, así que el orden no cambia nada."""
+    backing = [("fondo-azul", "fondo-azul", BLUE, 1.0), ("fondo-anillo", "anillo", WHITE, 1.0)]
+    if dark:
+        base = flat("base", [*backing, *FONDOS, ("base", "base-fiel", WHITE, 1.0)])
+        return {"fill": "system-dark", "groups": [blue_ring(), segments_clean(), base, shadow_caster()]}
+    return {"fill": WHITE_BG, "groups": [blue_ring(), segments_clean(), flat("fondos", [*backing, *FONDOS])]}
+
+
 CONCEPTS = {
+    "chrome-c5": fiel_limpio(dark=True),
+    "chrome-c5c": fiel_limpio(dark=False),
     # c1 (fiel al oficial): fondo oscuro de Apple, base blanca con los fondos planos, segmentos y
     # azul de cristal sin sombra, y la sombra de un disco oculto
     "chrome-c1": fiel(dark=True),
