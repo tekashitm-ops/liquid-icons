@@ -54,7 +54,7 @@ GLOW_RADIUS = 0.85        # en radios de la esfera
 # g2: la copia lima de detrás, desplazada hacia abajo (la luz de iOS viene de arriba)
 BACK_SHIFT = (0.0, 18.0)
 # g3: la X gruesa: el hueco entre las piezas engordado; pisa cada pieza X_GROW px
-X_GROW = 20
+X_GROW = 26
 X_FILLET = 16      # px: redondea las esquinas cóncavas (si no, la refracción se arruga)
 X_END_ROUND = 30   # px: extremos redondos
 X_INSET = 70       # px: la X acaba dentro de la esfera, donde sus brazos aún son anchos. Si llega
@@ -114,6 +114,7 @@ def pieces():
         "canica": disk(RADIUS * MARBLE_SCALE + MARBLE_RIM),      # g1: la esfera de cristal
         "logo-detras": affinity.translate(logo, *BACK_SHIFT),    # g2: la copia lima
         "x": x_thick(logo),                                      # g3: la X de cristal
+        "luz": glow(logo, RADIUS),                               # g3: la luz de las piezas
         "esfera": disk(RADIUS),                                  # g3: la esfera de detrás
     }
 
@@ -205,13 +206,13 @@ def g2(light_bg=False):
     if light_bg:
         return {"fill": LIGHT_BG, "groups": [
             group("piezas", "logo", fill(XBOX_GREEN, 0.55), translucency=0.7, blur=0.0,
-                  refraction=(0.4, 0.14), shadow="layer-color", shadow_opacity=0.6),
+                  refraction=(0.45, 0.16), shadow="layer-color", shadow_opacity=0.6),
             group("detras", "logo-detras", fill("#5DB80A", 0.9), translucency=0.3, blur=0.6,
                   shadow="neutral", shadow_opacity=0.4),
         ]}
     return {"fill": DARK_BG, "groups": [
-        group("piezas", "logo", fill(XBOX_GREEN, 0.45), translucency=0.75, blur=0.0,
-              refraction=(0.4, 0.14), shadow="layer-color", shadow_opacity=1.0),
+        group("piezas", "logo", fill(XBOX_GREEN, 0.4), translucency=0.75, blur=0.0,
+              refraction=(0.45, 0.16), shadow="layer-color", shadow_opacity=1.0),
         group("detras", "logo-detras", fill(XBOX_LIME, 0.85, XBOX_GLOW), translucency=0.3, blur=0.6,
               shadow="neutral", shadow_opacity=0.5),
     ]}
@@ -226,21 +227,21 @@ def g3(light_bg=False, x_tint=XBOX_LIME, x_alpha=0.14):
     """
     if light_bg:
         return {"fill": LIGHT_BG, "groups": [
-            group("x", "x", fill(WHITE, 0.1), translucency=0.9, blur=0.0, refraction=(0.4, 0.14),
+            group("x", "x", fill(WHITE, 0.1), translucency=0.9, blur=0.0, refraction=(0.5, 0.2),
                   shadow="neutral", shadow_opacity=0.35),
-            group("piezas", "logo", fill(XBOX_GREEN, 0.65), translucency=0.55, blur=0.25,
+            group("piezas", "logo", fill(XBOX_GREEN, 0.75), translucency=0.5, blur=0.4,
                   refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.5),
-            light("luz", [("logo", fill("#0B5E0B", 0.25, "#0B5E0B"))]),
+            light("luz", [("luz", fill("#0B5E0B", 0.5)), ("logo", fill("#0B5E0B", 0.3))]),
             group("esfera", "esfera", fill("#CFEFC4", 0.7, "#A9DD98"), translucency=0.4, blur=0.6,
                   shadow="neutral", shadow_opacity=0.35),
         ]}
     return {"fill": DARK_BG, "groups": [
-        group("x", "x", fill(x_tint, x_alpha), translucency=0.9, blur=0.0, refraction=(0.4, 0.14),
-              shadow="neutral", shadow_opacity=0.4),
-        group("piezas", "logo", fill("#2FA012", 0.55), translucency=0.65, blur=0.25,
+        group("x", "x", fill(x_tint, x_alpha), translucency=0.9, blur=0.0, refraction=(0.5, 0.2),
+              shadow="neutral", shadow_opacity=0.45),
+        group("piezas", "logo", fill("#2FA012", 0.55), translucency=0.65, blur=0.4,
               refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.8),
-        light("luz", [("logo", fill(XBOX_LIME, 0.4, XBOX_GLOW))]),
-        group("esfera", "esfera", fill("#082E08", 0.85, "#0E4A0E"), translucency=0.35, blur=0.6,
+        light("luz", [("luz", fill(XBOX_GLOW, 0.5)), ("logo", fill(XBOX_LIME, 0.3))]),
+        group("esfera", "esfera", fill("#072A07", 0.85, "#125412"), translucency=0.35, blur=0.6,
               shadow="neutral", shadow_opacity=0.5),
     ]}
 
@@ -251,9 +252,6 @@ CONCEPTS = {
     "xbox-g1": g1(), "xbox-g1c": g1(light_bg=True),
     "xbox-g2": g2(), "xbox-g2c": g2(light_bg=True),
     "xbox-g3": g3(), "xbox-g3c": g3(light_bg=True),
-    # exploración, ronda 3
-    "xbox-e1": g1(refraction=(0.4, 0.15)),
-    "xbox-e3": g3(x_tint=WHITE, x_alpha=0.04),
 }
 
 

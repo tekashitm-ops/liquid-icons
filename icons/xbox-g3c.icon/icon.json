@@ -36,8 +36,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.4,
-        "depth": 0.14
+        "strength": 0.5,
+        "depth": 0.2
       }
     },
     {
@@ -45,14 +45,14 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.25,
+      "blur-material": 0.4,
       "shadow": {
         "kind": "layer-color",
         "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.55
+        "value": 0.5
       },
       "layers": [
         {
@@ -60,7 +60,7 @@
           "image-name": "logo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.65000"
+            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.75000"
           }
         }
       ],
@@ -87,13 +87,18 @@
       "layers": [
         {
           "name": "luz-0",
+          "image-name": "luz.svg",
+          "glass": false,
+          "fill": {
+            "solid": "extended-srgb:0.04314,0.36863,0.04314,0.50000"
+          }
+        },
+        {
+          "name": "luz-1",
           "image-name": "logo.svg",
           "glass": false,
           "fill": {
-            "linear-gradient": [
-              "extended-srgb:0.04314,0.36863,0.04314,0.25000",
-              "extended-srgb:0.04314,0.36863,0.04314,0.25000"
-            ]
+            "solid": "extended-srgb:0.04314,0.36863,0.04314,0.30000"
           }
         }
       ]

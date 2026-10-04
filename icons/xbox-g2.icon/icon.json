@@ -30,14 +30,14 @@
           "image-name": "logo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.45000"
+            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.40000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.4,
-        "depth": 0.14
+        "strength": 0.45,
+        "depth": 0.16
       }
     },
     {
