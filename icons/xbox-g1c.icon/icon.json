@@ -18,7 +18,7 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.35
+        "opacity": 0.4
       },
       "translucency": {
         "enabled": true,
@@ -30,14 +30,14 @@
           "image-name": "canica.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.08000"
+            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.05000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.6,
-        "depth": 0.35
+        "strength": 0.5,
+        "depth": 0.2
       }
     },
     {
@@ -45,14 +45,14 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.1,
+      "blur-material": 0.35,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.6
+        "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.5
+        "value": 0.6
       },
       "layers": [
         {
@@ -60,10 +60,7 @@
           "image-name": "logo-canica.svg",
           "glass": true,
           "fill": {
-            "linear-gradient": [
-              "extended-srgb:0.11765,0.60392,0.07059,0.75000",
-              "extended-srgb:0.04314,0.36863,0.04314,0.75000"
-            ]
+            "solid": "extended-srgb:0.11765,0.60392,0.07059,0.60000"
           }
         }
       ],
@@ -90,10 +87,38 @@
       "layers": [
         {
           "name": "luz",
-          "image-name": "logo-canica.svg",
+          "image-name": "luz-canica.svg",
           "glass": false,
           "fill": {
-            "solid": "extended-srgb:0.04314,0.36863,0.04314,0.90000"
+            "linear-gradient": [
+              "extended-srgb:0.06275,0.48627,0.06275,0.50000",
+              "extended-srgb:0.04314,0.36863,0.04314,0.50000"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "nucleo",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.6,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.3
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.5
+      },
+      "layers": [
+        {
+          "name": "nucleo",
+          "image-name": "nucleo.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.04314,0.30196,0.04314,0.25000"
           }
         }
       ]

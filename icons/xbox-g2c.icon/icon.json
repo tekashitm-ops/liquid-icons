@@ -22,7 +22,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.6
+        "value": 0.65
       },
       "layers": [
         {
@@ -30,14 +30,14 @@
           "image-name": "logo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.60000"
+            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.55000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.12
+        "strength": 0.4,
+        "depth": 0.14
       }
     },
     {
@@ -47,8 +47,8 @@
       "specular-highlight-placement": "automatic",
       "blur-material": 0.6,
       "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.5
+        "kind": "neutral",
+        "opacity": 0.4
       },
       "translucency": {
         "enabled": true,

@@ -22,7 +22,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.85
+        "value": 0.9
       },
       "layers": [
         {
@@ -30,14 +30,14 @@
           "image-name": "x.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.20000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.12000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.4,
-        "depth": 0.18
+        "strength": 0.45,
+        "depth": 0.2
       }
     },
     {
@@ -45,14 +45,14 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.2,
+      "blur-material": 0.25,
       "shadow": {
         "kind": "layer-color",
         "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.5
+        "value": 0.6
       },
       "layers": [
         {
@@ -60,10 +60,7 @@
           "image-name": "logo.svg",
           "glass": true,
           "fill": {
-            "linear-gradient": [
-              "extended-srgb:0.06275,0.48627,0.06275,0.70000",
-              "extended-srgb:0.18039,0.61961,0.07059,0.70000"
-            ]
+            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.60000"
           }
         }
       ],
@@ -72,6 +69,34 @@
         "strength": 0.3,
         "depth": 0.1
       }
+    },
+    {
+      "name": "luz",
+      "lighting": "individual",
+      "specular": false,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "none",
+        "opacity": 0.0
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0
+      },
+      "layers": [
+        {
+          "name": "luz",
+          "image-name": "logo.svg",
+          "glass": false,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:0.18039,0.61961,0.07059,0.50000",
+              "extended-srgb:0.04314,0.36863,0.04314,0.50000"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "esfera",
@@ -85,7 +110,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.4
+        "value": 0.35
       },
       "layers": [
         {
@@ -93,7 +118,10 @@
           "image-name": "esfera.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.04314,0.30196,0.04314,0.80000"
+            "linear-gradient": [
+              "extended-srgb:0.04314,0.30196,0.04314,0.85000",
+              "extended-srgb:0.07843,0.42353,0.07843,0.85000"
+            ]
           }
         }
       ]

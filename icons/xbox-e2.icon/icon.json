@@ -18,11 +18,11 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.9
+        "opacity": 0.8
       },
       "translucency": {
         "enabled": true,
-        "value": 0.65
+        "value": 0.7
       },
       "layers": [
         {
@@ -30,39 +30,39 @@
           "image-name": "logo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.18431,0.62745,0.07059,0.55000"
+            "solid": "extended-srgb:0.06275,0.48627,0.06275,0.50000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.12
+        "strength": 0.4,
+        "depth": 0.14
       }
     },
     {
-      "name": "luz",
+      "name": "detras",
       "lighting": "individual",
-      "specular": false,
+      "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.0,
+      "blur-material": 0.6,
       "shadow": {
-        "kind": "none",
-        "opacity": 0.0
+        "kind": "neutral",
+        "opacity": 0.5
       },
       "translucency": {
-        "enabled": false,
-        "value": 0
+        "enabled": true,
+        "value": 0.3
       },
       "layers": [
         {
-          "name": "luz",
-          "image-name": "logo.svg",
-          "glass": false,
+          "name": "detras",
+          "image-name": "logo-detras2.svg",
+          "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:0.60784,0.94118,0.04314,0.45000",
-              "extended-srgb:0.82353,0.92549,0.07843,0.45000"
+              "extended-srgb:0.60784,0.94118,0.04314,0.85000",
+              "extended-srgb:0.82353,0.92549,0.07843,0.85000"
             ]
           }
         }
