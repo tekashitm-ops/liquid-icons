@@ -11,8 +11,8 @@
   },
   "groups": [
     {
-      "name": "glitch-delante",
-      "lighting": "individual",
+      "name": "franja",
+      "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
       "blur-material": 0.0,
@@ -22,15 +22,23 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.65
+        "value": 0.55
       },
       "layers": [
         {
-          "name": "glitch-delante",
-          "image-name": "glitch-delante.svg",
+          "name": "franja-marco",
+          "image-name": "franja-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.42000"
+            "solid": "extended-srgb:0.66275,0.43922,1.00000,0.72000"
+          }
+        },
+        {
+          "name": "franja-cara",
+          "image-name": "franja-cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.91765,0.86275,1.00000,0.72000"
           }
         }
       ],
@@ -38,37 +46,44 @@
         "enabled": true,
         "strength": 0.3,
         "depth": 0.1
-      },
-      "blend-mode": "normal"
+      }
     },
     {
-      "name": "glitch-detras",
-      "lighting": "individual",
+      "name": "resto",
+      "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.15,
+      "blur-material": 0.1,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.75
+        "opacity": 0.65
       },
       "translucency": {
         "enabled": true,
-        "value": 0.4
+        "value": 0.5
       },
       "layers": [
         {
-          "name": "glitch-detras",
-          "image-name": "glitch-detras.svg",
+          "name": "resto-marco",
+          "image-name": "resto-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.46667,0.17255,0.90980,0.85000"
+            "solid": "extended-srgb:0.66275,0.43922,1.00000,0.72000"
+          }
+        },
+        {
+          "name": "resto-cara",
+          "image-name": "resto-cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.91765,0.86275,1.00000,0.72000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.3,
-        "depth": 0.1
+        "strength": 0.25,
+        "depth": 0.08
       }
     }
   ],

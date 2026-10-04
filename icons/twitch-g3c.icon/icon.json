@@ -11,26 +11,34 @@
   },
   "groups": [
     {
-      "name": "lente",
-      "lighting": "individual",
+      "name": "franja",
+      "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
       "blur-material": 0.0,
       "shadow": {
-        "kind": "neutral",
-        "opacity": 0.3
+        "kind": "none",
+        "opacity": 0.0
       },
       "translucency": {
         "enabled": true,
-        "value": 0.85
+        "value": 0.55
       },
       "layers": [
         {
-          "name": "lente",
-          "image-name": "lente.svg",
+          "name": "franja-marco",
+          "image-name": "franja-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.20000"
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.78000"
+          }
+        },
+        {
+          "name": "franja-cara",
+          "image-name": "franja-cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.78000"
           }
         }
       ],
@@ -38,17 +46,18 @@
         "enabled": true,
         "strength": 0.3,
         "depth": 0.1
-      }
+      },
+      "blend-mode": "multiply"
     },
     {
-      "name": "glitch",
-      "lighting": "individual",
+      "name": "resto",
+      "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.05,
+      "blur-material": 0.1,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.45
+        "opacity": 0.4
       },
       "translucency": {
         "enabled": true,
@@ -56,44 +65,27 @@
       },
       "layers": [
         {
-          "name": "glitch",
-          "image-name": "glitch.svg",
+          "name": "resto-marco",
+          "image-name": "resto-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.75000"
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.78000"
+          }
+        },
+        {
+          "name": "resto-cara",
+          "image-name": "resto-cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.78000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
         "strength": 0.25,
-        "depth": 0.06
+        "depth": 0.08
       }
-    },
-    {
-      "name": "cara-fondo",
-      "lighting": "individual",
-      "specular": true,
-      "specular-highlight-placement": "automatic",
-      "blur-material": 0.5,
-      "shadow": {
-        "kind": "neutral",
-        "opacity": 0.3
-      },
-      "translucency": {
-        "enabled": true,
-        "value": 0.3
-      },
-      "layers": [
-        {
-          "name": "cara-fondo",
-          "image-name": "cara-fondo.svg",
-          "glass": true,
-          "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.95000"
-          }
-        }
-      ]
     }
   ],
   "supported-platforms": {
