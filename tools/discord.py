@@ -39,6 +39,12 @@ def clyde_clear():
                  shadow_opacity=0.35)
 
 
+def clyde_blurple():
+    """Clyde de cristal morado, para fondo claro."""
+    return glass("clyde", fill=BLURPLE, alpha=0.92, translucency=0.35, blur=0.2,
+                 refraction=(0.35, 0.3), shadow="layer-color")
+
+
 def eyes(fill=BLURPLE):
     """Ojos como lentes de cristal morado que deforman el borde de la cara."""
     return glass("ojos", fill=fill, alpha=0.8, translucency=0.5, blur=0.0, refraction=(0.6, 0.5),
@@ -54,12 +60,11 @@ CONCEPTS = {
     "discord-c2": {"fill": gradient(DISCORD_BG), "groups": [eyes(), clyde_white()]},
     # Oscuro con Clyde de cristal transparente
     "discord-c3": {"fill": gradient(DISCORD_BG), "groups": [clyde_clear()]},
-    # Claro: fondo claro estándar de Apple y Clyde de cristal morado, ojos de lente
-    "discord-c4": {"fill": "system-light", "groups": [
-        eyes(),
-        glass("clyde", fill=BLURPLE, alpha=0.92, translucency=0.35, blur=0.2,
-              refraction=(0.35, 0.3), shadow="layer-color"),
-    ]},
+    # Claro: fondo claro estándar de Apple y Clyde de cristal morado, ojos de lente (pareja de c2)
+    "discord-c4": {"fill": "system-light", "groups": [eyes(), clyde_blurple()]},
+    # (c3 descartado: en la tecla Clyde transparente se ve lavado)
+    # Claro con los ojos huecos, como el oficial (pareja de c1)
+    "discord-c5": {"fill": "system-light", "groups": [clyde_blurple()]},
 }
 
 

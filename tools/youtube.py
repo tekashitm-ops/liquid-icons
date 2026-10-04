@@ -57,6 +57,13 @@ CONCEPTS = {
     "youtube-c3": {"fill": WHITE_BG, "groups": [play_white(), pill()]},
     # Claro con el triángulo prisma
     "youtube-c4": {"fill": WHITE_BG, "groups": [play_prism(), pill("pastilla-lente")]},
+    # (c2 y c4 descartados: la refracción del hueco pequeño dibuja una estrella dentro del triángulo)
+    # Claro con el rojo más fiel: la pastilla deja pasar menos el blanco del fondo
+    "youtube-c5": {"fill": WHITE_BG, "groups": [
+        play_white(),
+        glass("pastilla", fill=YT_RED, alpha=1.0, translucency=0.1, blur=0.3,
+              refraction=(0.35, 0.3), shadow="layer-color"),
+    ]},
 }
 
 

@@ -3,21 +3,23 @@
     "refractivity",
     "specular-location"
   ],
-  "fill": "system-dark",
+  "fill": {
+    "solid": "extended-srgb:1.00000,1.00000,1.00000,1.00000"
+  },
   "groups": [
     {
       "name": "play",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "inside",
-      "blur-material": 0.0,
+      "blur-material": 0.1,
       "shadow": {
         "kind": "neutral",
         "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.45
+        "value": 0.2
       },
       "layers": [
         {
@@ -25,14 +27,14 @@
           "image-name": "play.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.82000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.95000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.65,
-        "depth": 0.5
+        "strength": 0.5,
+        "depth": 0.4
       }
     },
     {
@@ -47,15 +49,15 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.25
+        "value": 0.1
       },
       "layers": [
         {
           "name": "pastilla",
-          "image-name": "pastilla-lente.svg",
+          "image-name": "pastilla.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,0.00000,0.20000,0.95000"
+            "solid": "extended-srgb:1.00000,0.00000,0.20000,1.00000"
           }
         }
       ],
