@@ -5,14 +5,12 @@ Piezas del logo (de atrás a delante): manivela, biela, eje. Cada pieza va en su
 grupo de Liquid Glass para que el cristal de delante refracte (deforme) lo que tiene
 detrás, como los pétalos de Fotos o la lente de Vista Previa en iOS 27.
 """
-import json
 import math
-from pathlib import Path
 
 from shapely.geometry import LineString, Point, box
 from shapely.ops import unary_union
 
-ROOT = Path(__file__).resolve().parent.parent
+from liquid import WHITE, clean, glass, gradient, write_icon
 
 # Medidas en el lienzo de 1024 (ajustadas por mínimos cuadrados contra el original)
 C1, R1, R1_IN, R1_OUT = (678.5, 379.5), 193.0, 96.5, 128.5   # círculo grande y su anillo hueco
@@ -27,22 +25,10 @@ RES = 256  # segmentos por cuarto de círculo: curvas suaves a cualquier tamaño
 STEAM_BG = ["#158ABD", "#091B3F"]         # degradado del icono oficial de iOS
 STEAM_CYAN, STEAM_BLUE = "#06BFFF", "#2D73FF"
 STEAM_LIGHT = "#66C0F4"
-WHITE = "#FFFFFF"
 
 
 def circle(c, r):
     return Point(c).buffer(r, quad_segs=RES)
-
-
-def svg(geom) -> str:
-    d = []
-    for poly in getattr(geom, "geoms", [geom]):
-        for ring in [poly.exterior, *poly.interiors]:
-            d.append("M" + " L".join(f"{x:.2f} {y:.2f}" for x, y in ring.coords) + "Z")
-    return (
-        '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">'
-        f'<path fill="#FFFFFF" fill-rule="evenodd" d="{"".join(d)}"/></svg>\n'
-    )
 
 
 def pieces():
@@ -53,34 +39,6 @@ def pieces():
     biela = LineString([far, C2]).buffer(R2_IN, quad_segs=RES).intersection(CANVAS)
     eje = circle(C1, R1_IN)
     return {"manivela": manivela, "biela": biela, "eje": eje}
-
-
-def color(hexcolor: str, alpha: float = 1.0) -> str:
-    r, g, b = (int(hexcolor[i:i + 2], 16) / 255 for i in (1, 3, 5))
-    return f"extended-srgb:{r:.5f},{g:.5f},{b:.5f},{alpha:.5f}"
-
-
-def glass(name, fill=WHITE, alpha=1.0, translucency=0.2, blur=0.5, refraction=None,
-          shadow="neutral", shadow_opacity=0.5, specular="automatic"):
-    """Un grupo de Liquid Glass con una sola pieza del logo."""
-    g = {
-        "name": name,
-        "lighting": "individual",
-        "specular": True,
-        "specular-highlight-placement": specular,
-        "blur-material": blur,
-        "shadow": {"kind": shadow, "opacity": shadow_opacity},
-        "translucency": {"enabled": translucency > 0, "value": translucency},
-        "layers": [{"name": name, "image-name": f"{name}.svg", "glass": True,
-                    "fill": {"solid": color(fill, alpha)}}],
-    }
-    if refraction:
-        g["refractivity"] = {"enabled": True, "strength": refraction[0], "depth": refraction[1]}
-    return g
-
-
-def gradient(colors):
-    return {"linear-gradient": [color(c) for c in colors]}
 
 
 # Fondo + grupos de delante hacia atrás (así los ordena Icon Composer).
@@ -157,24 +115,10 @@ CONCEPTS = {
 def main():
     """Escribe en icons/ solo los aprobados; el resto de conceptos quedan aquí como historial."""
     geo = pieces()
-    for old in (ROOT / "icons").glob("steam*.icon"):
-        for f in sorted(old.rglob("*"), reverse=True):
-            f.unlink() if f.is_file() else f.rmdir()
-        old.rmdir()
+    clean("steam")
     for name, concept in APPROVED.items():
         spec = CONCEPTS[concept]
-        icon = ROOT / "icons" / f"{name}.icon"
-        (icon / "Assets").mkdir(parents=True, exist_ok=True)
-        for piece, g in geo.items():
-            (icon / "Assets" / f"{piece}.svg").write_text(svg(g), encoding="utf-8")
-        doc = {
-            "features": ["refractivity", "specular-location"],
-            "fill": spec["fill"],
-            "groups": spec["groups"],
-            "supported-platforms": {"squares": "shared"},
-        }
-        (icon / "icon.json").write_text(json.dumps(doc, indent=2), encoding="utf-8")
-        print("ok", icon.relative_to(ROOT))
+        write_icon(name, spec["fill"], spec["groups"], geo)
 
 
 if __name__ == "__main__":

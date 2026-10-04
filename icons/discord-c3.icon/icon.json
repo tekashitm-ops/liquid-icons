@@ -1,0 +1,47 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:0.45490,0.49804,0.96863,1.00000",
+      "extended-srgb:0.33725,0.38431,0.96078,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "name": "clyde",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.35
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.75
+      },
+      "layers": [
+        {
+          "name": "clyde",
+          "image-name": "clyde.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.55000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.6,
+        "depth": 0.5
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
