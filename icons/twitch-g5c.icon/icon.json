@@ -54,8 +54,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.2,
-        "depth": 0.06
+        "strength": 0.12,
+        "depth": 0.04
       },
       "blend-mode": "multiply"
     },

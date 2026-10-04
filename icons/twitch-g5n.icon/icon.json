@@ -21,42 +21,37 @@
   },
   "groups": [
     {
-      "name": "barra",
+      "name": "fantasma",
       "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
       "blur-material": 0.0,
       "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.5
+        "kind": "none",
+        "opacity": 0.0
       },
       "translucency": {
         "enabled": true,
-        "value": 0.8
+        "value": 0.85
       },
       "layers": [
         {
-          "name": "g4-barra-marco",
-          "image-name": "g4-barra-marco.svg",
+          "name": "g5-fantasma-marco",
+          "image-name": "g5-fantasma-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.45000"
+            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.30000"
           }
         },
         {
-          "name": "g4-barra-cara",
-          "image-name": "g4-barra-cara.svg",
+          "name": "g5-fantasma-cara",
+          "image-name": "g5-fantasma-cara.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.15000"
+            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.06000"
           }
         }
       ],
-      "refractivity": {
-        "enabled": true,
-        "strength": 0.4,
-        "depth": 0.1
-      },
       "blend-mode": "plus-lighter"
     },
     {
@@ -75,8 +70,8 @@
       },
       "layers": [
         {
-          "name": "g4-ventanas",
-          "image-name": "g4-ventanas.svg",
+          "name": "g5-ventanas",
+          "image-name": "g5-ventanas.svg",
           "glass": true,
           "fill": {
             "solid": "extended-srgb:1.00000,1.00000,1.00000,0.14000"
@@ -90,50 +85,37 @@
       }
     },
     {
-      "name": "logo",
+      "name": "detras",
       "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.05,
+      "blur-material": 0.2,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.65
+        "opacity": 0.75
       },
       "translucency": {
         "enabled": true,
-        "value": 0.7
+        "value": 0.45
       },
       "layers": [
         {
-          "name": "g4-marco",
-          "image-name": "g4-marco.svg",
+          "name": "g5-detras-marco",
+          "image-name": "g5-detras-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.55000"
+            "solid": "extended-srgb:0.46667,0.17255,0.90980,0.80000"
           }
         },
         {
-          "name": "g4-marco-franja",
-          "image-name": "g4-marco-franja.svg",
+          "name": "g5-detras-cara",
+          "image-name": "g5-detras-cara.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.40000"
-          }
-        },
-        {
-          "name": "g4-cara",
-          "image-name": "g4-cara.svg",
-          "glass": true,
-          "fill": {
-            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.10000"
+            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.15000"
           }
         }
-      ],
-      "refractivity": {
-        "enabled": true,
-        "strength": 0.26,
-        "depth": 0.08
-      }
+      ]
     },
     {
       "name": "luz",
@@ -151,8 +133,8 @@
       },
       "layers": [
         {
-          "name": "g4-luz",
-          "image-name": "g4-luz.svg",
+          "name": "g5-luz",
+          "image-name": "g5-luz.svg",
           "glass": true,
           "fill": {
             "solid": "extended-srgb:1.00000,1.00000,1.00000,0.90000"
