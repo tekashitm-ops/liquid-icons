@@ -1,4 +1,4 @@
-"""Google Chrome: logo oficial de 2022 ajustado al icono de iOS, y conceptos de Liquid Glass (g1-g3).
+"""Google Chrome: logo oficial de 2022 ajustado al icono de iOS, y conceptos de Liquid Glass (g1-g4).
 
 Geometría. El logo de 2022 es geometría pura y simple-icons (brands/googlechrome.svg) solo trae
 una silueta monocroma, así que se construye aquí con la definición de Google: un círculo exterior
@@ -26,6 +26,13 @@ pone Icon Composer. Como mucho 4 grupos.
 - g3 pétalos: como Fotos, el rojo y el verde son pétalos de cristal que se montan sobre el
   amarillo (naranja y lima donde se pisan; el rojo y el verde no se pisan: saldría marrón); el
   centro es un botón de cristal esmerilado.
+- g4 vitral abierto: g1 con todo el cristal. Tres vidrios sueltos (lighting individual: bisel y
+  brillo en todo su borde) separados por rendijas abiertas hasta el borde, sobre una luz más
+  pequeña: un disco de 0.62 R y tres rayos bajo las rendijas. Cada vidrio tiene dos tintes: claro
+  sobre la luz (junto al anillo) y hondo fuera de ella, y su bisel dobla el borde de la luz. Por
+  las rendijas se ve la luz, teñida por la sombra de color de los vidrios; bajo la lente sigue una
+  Y fina de luz que la lente dobla. En claro, bajo la parte de fuera de cada vidrio va su color
+  hondo (sobre el fondo claro solo, todo salía pastel).
 Lo que enseñaron los renders de CI (rondas 1-4):
 - Un grupo delante de otro cristal va sin sombra: la suya oscurecía lo de detrás (el naranja y la
   lima salían rojo oscuro y menta).
@@ -40,6 +47,24 @@ Lo que enseñaron los renders de CI (rondas 1-4):
   ancho; la refracción profunda queda para las lentes, grandes y redondas.
 - Refracción muy profunda (0.85, 0.65) deja bordes con pelusa y colores invertidos en la lente.
 - La luz es blanca de arriba abajo: con un degradado a gris el amarillo salía beige.
+Lo que enseñaron los renders de g4 (rondas g4-1 a g4-5):
+- Detrás de un vidrio, una luz opaca de su mismo tamaño no enseña nada (g1: estampa pastel). Con la
+  luz más pequeña, el vidrio enseña dos tintes y la refracción de su borde: rojo 249,105,105 sobre
+  la luz y 182,28,28 fuera; verde 128,204,158 y 9,94,44.
+- El amarillo sobre lo oscuro sale oliva (148,123,44): lleva ámbar plano debajo (228,169,34).
+- En claro, una placa blanca esmerilada detrás no se ve (rojo 249,94,94 encima y 250,106,106
+  fuera). El color hondo debajo sí: rojo 232,24,33 fuera y 249,104,104 sobre el fondo claro.
+- La lente a (0.85, 0.6) pasa del foco: invierte los lóbulos en manchas (una cara) con bordes
+  peinados. A (0.7, 0.5) dobla la Y sin invertir; esmerilada 0.05 no peina (0.1 desenfoca).
+- Lo que el bisel de un vidrio ve cerca de su borde lo dobla en formas: una junta ancha de la luz
+  (rayos de 56 px, o redondeo de 80) sale como goterón; un hueco oscuro bajo una esquina de 60°, como
+  una mota en su punta. Rayos que se abren hasta el borde, luz recortada a vidrios y rendijas, y
+  esquinas de 28 px.
+- El fondo de color va hasta el canto de las rendijas: metido 8 px, el amarillo sobre lo oscuro
+  de esa franja salía marrón.
+- Probado y descartado (g5): el rojo montado sobre el amarillo y el amarillo sobre el verde en
+  franjas de 32 px. El naranja sale limpio, pero la lima sale menta, el logo pierde la simetría
+  y el borde recto de la franja naranja da costura en seams.py.
 Los conceptos c1-c5 (logo casi opaco) se rechazaron y quedan en el historial de git.
 """
 import math
@@ -81,9 +106,8 @@ HUB4 = R_BLUE + 15    # dentro de este radio (bajo la lente y el anillo) las ren
 SLIT4 = 16.0          # px de las rendijas finas de debajo de la lente (una Y de luz, sin cubo en el centro)
 JOINT4 = 24.0         # px de redondeo de las juntas entrantes de la luz (disco y rayos)
 CORE_RIM4 = 4.0       # px que el fondo de color queda dentro del borde exterior (no asoma)
-# De cada frontera (por su punto de tangencia): el color del casquete, más allá de la recta, y el
-# de la esquina, del lado del centro
-CAP_OF = {270.0: "rojo", 30.0: "amarillo", 150.0: "verde"}
+# De cada frontera (por su punto de tangencia), el color de la esquina, del lado del centro (más
+# allá de la recta va el casquete: rojo en 270°, amarillo en 30°, verde en 150°)
 CORNER_OF = {270.0: "amarillo", 30.0: "verde", 150.0: "rojo"}
 
 # Colores del icono oficial de iOS (mediana del interior de cada pieza): tintes del cristal
