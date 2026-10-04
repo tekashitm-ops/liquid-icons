@@ -25,7 +25,7 @@
           "image-name": "nota.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,0.83922,0.87451,0.40000"
+            "solid": "extended-srgb:1.00000,0.56078,0.65098,0.42000"
           }
         }
       ],

@@ -7,9 +7,10 @@ id 1108187390, "musicCalistoga", 1024 px) con IoU 0.993.
 
 Ronda g (la anterior, c1-c4, era el logo casi opaco y plano: rechazada). Todo es cristal de
 color translúcido que deja ver lo de detrás, y cada pieza de cristal pisa algo que doblar:
-  - g1 "núcleo": la barra y las cabezas son fundas de cristal rojo translúcido; dentro brilla
-    un núcleo rosa (la misma nota encogida 28 px) unido por las plicas, que quedan al aire.
-    El bisel de cada funda dobla y agranda el borde del núcleo. Fondo vino casi negro.
+  - g1 "vitral" (Fotos): la barra es una lámina de cristal fucsia sin esmerilar delante; las dos
+    corcheas (cabeza y plica) son de cristal rojo y sus plicas suben 125 px por debajo de la
+    barra, que las dobla en su bisel. En oscuro la barra se suma como la luz (plus-lighter):
+    donde pisa el rojo sale rosa casi blanco. Fondo vino casi negro con el resplandor rojo.
   - g2 "ondas" (Buscar): la nota en cristal rosado casi transparente, como el engranaje de
     Discord, sobre tres ondas de sonido concéntricas de cristal rosa-rojo que se apagan hacia
     fuera; la nota tuerce las ondas en su bisel. Fondo oscuro de Apple.
@@ -17,14 +18,16 @@ color translúcido que deja ver lo de detrás, y cada pieza de cristal pisa algo
     blanco rosado sobre el degradado oficial; cada copia de delante dobla los bordes de la de
     detrás.
 Parejas claras (gNc): la misma idea sobre fondo claro, con el cristal en rojos de marca.
-Las piezas son siempre trazados de la nota oficial (partidos, encogidos, copiados o
-desplazados) y anillos lisos; el color, el cristal, la luz y la sombra los pone Icon Composer.
+Las piezas son siempre trazados de la nota oficial (partidos, copiados o desplazados) y anillos
+lisos; el color, el cristal, la luz y la sombra los pone Icon Composer.
 Ronda 1 (render): g1 era "lentes" (cabezas de cristal sobre el armazón rojo y un disco de luz):
 la refracción honda de las cabezas borraba la plica en vez de doblarla, el borde del disco dejaba
 un agujero oscuro en la cabeza izquierda y un triángulo suelto en la esquina de la barra, y el
-pico de las cabezas (el trozo de plica sobre el chaflán) se veía como una gota. Se cambió por
-"núcleo". g2: la nota blanca al 0.34 se veía gris humo; ahora rosada al 0.4. g3: cristal más
-claro y más hondo y 36 px entre copias (antes 30), porque la refracción apenas se veía.
+pico de las cabezas se veía como una gota. g2: la nota blanca al 0.34 se veía gris humo. g3: la
+refracción apenas se veía (cristal más claro y más hondo y 36 px entre copias, antes 30).
+Ronda 2: g1 fue "núcleo" (fundas de cristal rojo sobre la nota encogida 28 px y encendida): la
+refracción honda agrandaba el núcleo hasta el borde y las fundas se veían macizas, como un
+caramelo, con picos oscuros en las esquinas. Se cambió por "vitral". g2: la nota pasa a rosa.
 """
 import re
 
@@ -43,13 +46,11 @@ STEM_L = (373.4, 412.7)        # plica izquierda: borde exterior e interior (39 
 STEM_R = (720.4, 759.9)        # plica derecha: borde interior y exterior
 SLOPE = -0.2016                # inclinación de la barra; los bordes de arriba de las cabezas son paralelos
 BEAM_BOTTOM = (431.4, 377.7)   # punto del borde inferior de la barra
-HEAD_CUT = (373.4, 648.0)      # donde empieza el chaflán de cada cabeza (x 373 y 648; x 720 y 578):
-                               # una sola recta paralela a la barra corta las dos sin dejar pico
 CORNER = 14                    # px: redondeo de las esquinas que deja cada corte
 CENTER = (486.8, 501.7)        # centro de la caja de la nota (213.6-759.9, 154.1-849.3)
 
-# g1: grosor de la funda de cristal alrededor del núcleo (4 px en la tecla de 144 px)
-INSET = 28
+# g1: px que cada plica sube por debajo de la barra (la barra mide ~165 px junto a las plicas)
+RISE = 125.0
 # g2: ondas (radio exterior, grosor); periodo de 120 px, más que los ~50-100 px que toma el bisel
 WAVES = [(165, 48), (285, 48), (405, 48)]
 # g3: desplazamiento vertical de cada copia (delante, en medio, detrás): la pila sube hacia atrás
@@ -62,7 +63,7 @@ MUSIC_RED = "#FA243C"   # color de marca (pautas de Apple Music)
 MUSIC_PINK = "#FF3E62"  # el extremo claro del degradado oficial
 MUSIC_DEEP = "#AF192A"  # el rojo de marca oscurecido: cristal de delante sobre fondo claro
 ROSE = "#FF8FA6"        # rosa claro
-GLOW = "#FFA3B6"        # rosa encendido del núcleo de g1
+HOT_PINK = "#FF3D8B"    # rosa fucsia de la barra de g1 (el rosa del icono de Apple Music de 2015)
 BLUSH = "#FFD6DF"       # rosa blanquecino: el cristal casi transparente de g2 y la pila de g3
 WINE_TOP, WINE_BOTTOM = "#3E0816", "#120207"    # fondo de g1: vino casi negro
 BLUSH_TOP, BLUSH_BOTTOM = "#FFF6F8", "#FFE2E9"  # fondo claro rosado de g1c y g3c
@@ -103,22 +104,21 @@ def ring(r_out, width, c=CENTER):
     return Point(c).buffer(r_out, quad_segs=128).difference(Point(c).buffer(r_out - width, quad_segs=128))
 
 
-def shift(point, dy):
-    return point[0], point[1] + dy
+def rod(stem, top):
+    """Plica desde top hacia abajo, con la punta de arriba en semicírculo."""
+    r = (stem[1] - stem[0]) / 2
+    cx = (stem[0] + stem[1]) / 2
+    return unary_union([box(stem[0] - 1, top + r, stem[1] + 1, 1024), Point(cx, top + r).buffer(r, quad_segs=64)])
 
 
 def pieces():
     nota = place(subpath_shapes(D)[1], *FIT)
-    # g1: fundas (barra y cabezas) y núcleo (la nota encogida + las plicas que las unen)
-    barra_raw = nota.intersection(above(BEAM_BOTTOM))
-    cabezas_raw = nota.intersection(below(HEAD_CUT))
-    stems = box(STEM_L[0] - 1, 0, STEM_L[1] + 1, 1024).union(box(STEM_R[0] - 1, 0, STEM_R[1] + 1, 1024))
-    # las plicas entran en cada funda hasta tocar el núcleo: INSET + 12 px en la barra y INSET + 40
-    # en las cabezas (junto a la plica, el núcleo de la cabeza empieza ~46 px por debajo del corte)
-    links = stems.intersection(nota).intersection(below(shift(BEAM_BOTTOM, -INSET - 12))).intersection(
-        above(shift(HEAD_CUT, INSET + 40)))
-    nucleo = soften(solid(unary_union([nota.buffer(-INSET, quad_segs=64), links])), r=8)
-    geo = {"nota": nota, "barra": soften(barra_raw, r=20), "cabezas": soften(cabezas_raw), "nucleo": nucleo}
+    # g1: la barra delante; las corcheas (plica y cabeza) suben por debajo hasta RISE px dentro de ella
+    beam = nota.intersection(above(BEAM_BOTTOM))
+    y_beam = lambda x: BEAM_BOTTOM[1] + SLOPE * (x - BEAM_BOTTOM[0])  # noqa: E731
+    rods = unary_union([rod(st, y_beam(sum(st) / 2) - RISE) for st in (STEM_L, STEM_R)])
+    geo = {"nota": nota, "barra": soften(beam, r=20),
+           "corcheas": solid(nota.difference(beam).union(nota.intersection(rods)))}
     # g2: ondas concéntricas en el centro de la nota
     for i, (r, w) in enumerate(WAVES, 1):
         geo[f"onda{i}"] = ring(r, w)
@@ -145,26 +145,28 @@ def group(name, layers, lighting="individual", blend=None, **kw):
     return g
 
 
-# --- g1: núcleo ---------------------------------------------------------------------------
+# --- g1: vitral ---------------------------------------------------------------------------
 def g1(light=False):
-    """Fundas de cristal rojo sin esmerilar (barra y cabezas) sobre un núcleo rosa encendido.
+    """Barra de cristal rosa sobre las corcheas de cristal rojo, como los pétalos de Fotos.
 
-    Fundas: piezas anchas (barra 160 px, cabezas 200 px) sin partes finas, así que aguantan una
-    refracción honda (0.5, 0.2): el bisel toma lo que hay a ~70 px hacia dentro, el núcleo, y lo
-    agranda hasta el borde. Las plicas (39 px) son del núcleo, que no refracta: sin astillas.
-    Núcleo: cristal esmerilado con sombra de su color (el resplandor); es el respaldo iluminado
-    que doblan las fundas, y en las plicas se ve tal cual.
+    Barra: lámina ancha (165 px) sin esmerilar y con refracción honda (0.45, 0.15), sobre los
+    125 px de plica que suben por debajo: los dobla en su bisel. En oscuro se suma como la luz
+    (plus-lighter): donde pisa las plicas sale rosa casi blanco. Corcheas: cristal rojo poco
+    esmerilado con sombra de su color (el resplandor sobre el vino); refracción baja (0.3, 0.08)
+    porque las plicas miden 39 px.
     """
     if light:
-        case, core = (MUSIC_DEEP, 0.45), (MUSIC_RED, 0.9)
+        beam, notes, blend = (MUSIC_PINK, 0.55), (MUSIC_DEEP, 0.7), None
     else:
-        case, core = (MUSIC_RED, 0.5), (GLOW, 0.92)
+        beam, notes, blend = (HOT_PINK, 0.55), (MUSIC_RED, 0.7), "plus-lighter"
+    barra = glass("barra", fill=beam[0], alpha=beam[1], translucency=0.7, blur=0.0,
+                  refraction=(0.45, 0.15), shadow="layer-color", shadow_opacity=0.5)
+    if blend:
+        barra["blend-mode"] = blend
     return [
-        group("fundas", [("barra", {"solid": color(*case)}), ("cabezas", {"solid": color(*case)})],
-              translucency=0.7, blur=0.0, refraction=(0.5, 0.2), shadow="layer-color", shadow_opacity=0.5,
-              specular="inside"),
-        glass("nucleo", fill=core[0], alpha=core[1], translucency=0.35, blur=0.5,
-              shadow="layer-color", shadow_opacity=0.9),
+        barra,
+        glass("corcheas", fill=notes[0], alpha=notes[1], translucency=0.55, blur=0.1,
+              refraction=(0.3, 0.08), shadow="layer-color", shadow_opacity=0.8, specular="inside"),
     ]
 
 
@@ -179,7 +181,7 @@ def g2(light=False):
     """
     alphas = (0.75, 0.5, 0.32)
     waves = [(f"onda{i}", grad_fill(MUSIC_PINK, MUSIC_RED, a)) for i, a in enumerate(alphas, 1)]
-    note = (MUSIC_DEEP, 0.45) if light else (BLUSH, 0.4)
+    note = (MUSIC_DEEP, 0.45) if light else (ROSE, 0.42)
     return [
         glass("nota", fill=note[0], alpha=note[1], translucency=0.85, blur=0.0,
               refraction=(0.35, 0.12), shadow="neutral", shadow_opacity=0.3),
@@ -212,7 +214,7 @@ def g3(light=False):
 APPROVED = {}
 
 CONCEPTS = {
-    # g1 (núcleo): fundas de cristal rojo que agrandan un núcleo rosa encendido
+    # g1 (vitral, Fotos): barra de cristal rosa sobre las corcheas de cristal rojo
     "applemusic-g1": {"fill": WINE_BG, "groups": g1()},
     "applemusic-g1c": {"fill": BLUSH_BG, "groups": g1(light=True)},
     # g2 (ondas, Buscar): nota de cristal casi transparente sobre ondas de sonido de cristal rosa
