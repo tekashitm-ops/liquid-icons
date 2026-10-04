@@ -73,6 +73,10 @@ def write_icon(name: str, fill, groups: list, pieces: dict) -> Path:
 
 
 def clean(prefix: str) -> None:
-    """Borra de icons/ todos los .icon de una app (antes de escribir los de la ronda actual)."""
-    for old in (ROOT / "icons").glob(f"{prefix}*.icon"):
-        shutil.rmtree(old)
+    """Borra de icons/ los .icon de una app (aprobados y conceptos) antes de escribir los nuevos.
+
+    Solo los suyos: "discord" no toca "discord-ajustes-…".
+    """
+    for pattern in ("oscuro", "claro", "c[0-9]*", "v[0-9]*"):
+        for old in (ROOT / "icons").glob(f"{prefix}-{pattern}.icon"):
+            shutil.rmtree(old)

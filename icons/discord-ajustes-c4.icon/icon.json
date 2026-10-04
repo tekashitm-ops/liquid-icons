@@ -1,0 +1,72 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": "system-light",
+  "groups": [
+    {
+      "name": "clyde",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.2,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.35
+      },
+      "layers": [
+        {
+          "name": "clyde",
+          "image-name": "clyde-eje.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.34510,0.39608,0.94902,0.92000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.3
+      }
+    },
+    {
+      "name": "engranaje",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.05,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.55
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.3
+      },
+      "layers": [
+        {
+          "name": "engranaje",
+          "image-name": "engranaje-anillo.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.34510,0.39608,0.94902,0.90000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.35
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

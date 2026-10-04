@@ -1,0 +1,72 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": "system-light",
+  "groups": [
+    {
+      "name": "engranaje",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.05,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.55
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.35
+      },
+      "layers": [
+        {
+          "name": "engranaje",
+          "image-name": "engranaje-insignia.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.48627,0.48627,0.50196,0.92000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.55,
+        "depth": 0.45
+      }
+    },
+    {
+      "name": "clyde",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.2,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.35
+      },
+      "layers": [
+        {
+          "name": "clyde",
+          "image-name": "clyde-insignia.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.34510,0.39608,0.94902,0.92000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.3
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
