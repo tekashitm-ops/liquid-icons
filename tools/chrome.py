@@ -26,17 +26,20 @@ pone Icon Composer. Como mucho 4 grupos.
 - g3 pétalos: como Fotos, el rojo y el verde son pétalos de cristal que se montan sobre el
   amarillo (naranja y lima donde se pisan; el rojo y el verde no se pisan: saldría marrón); el
   centro es un botón de cristal esmerilado.
-Lo que enseñaron los renders de CI (rondas 1-2):
+Lo que enseñaron los renders de CI (rondas 1-4):
 - Un grupo delante de otro cristal va sin sombra: la suya oscurecía lo de detrás (el naranja y la
   lima salían rojo oscuro y menta).
 - En las esquinas de 60° del borde exterior (donde cada frontera recta llega al círculo), el bisel
   de un borde de cristal toma lo que hay más allá del otro borde: con fondo oscuro, pliegues negros
-  ("rizos") a lo largo de la junta. Por eso ningún borde de cristal acaba en esquina aguda: las
-  rendijas de g1 paran antes del borde (los vidrios son una pieza, lighting combined) y los bordes
-  libres de los pétalos llegan al círculo en ángulo recto.
-- Una cuña de solape más estrecha que lo que alcanza la refracción sale revuelta (un gancho
-  naranja, una gota lima): los pétalos refractan poco y el solape es ancho.
+  ("rizos") a lo largo de la junta (en claro no se ven). Por eso ningún borde de cristal acaba en
+  esquina aguda: las rendijas de g1 paran 64 px antes del borde (los vidrios son una pieza,
+  lighting combined) y los bordes libres de los pétalos llegan al círculo en ángulo recto.
+- El bisel toma lo de ~50 px hacia dentro: una cuña de solape más estrecha sale revuelta (un gancho
+  naranja, una gota lima) y en oscuro arrastra la línea oscura que ictool pone junto a cada borde
+  (colas negras en el fin de las rendijas). Los pétalos y los vidrios refractan poco y el solape es
+  ancho; la refracción profunda queda para las lentes, grandes y redondas.
 - Refracción muy profunda (0.85, 0.65) deja bordes con pelusa y colores invertidos en la lente.
+- La luz es blanca de arriba abajo: con un degradado a gris el amarillo salía beige.
 Los conceptos c1-c5 (logo casi opaco) se rechazaron y quedan en el historial de git.
 """
 import math
@@ -248,16 +251,19 @@ def group(name, layers, translucency, blur, refraction=None, shadow=("none", 0.0
     return g
 
 
-# La luz baja un poco hacia abajo: ictool hace el cristal más transparente abajo (deja ver el 22%
-# de lo de detrás arriba y el 55% abajo, medido en la ronda 1) y el verde salía menta
-LIGHT_FILL = {"linear-gradient": [color(WHITE), color("#D4D6DC")]}
-
-
 def light():
-    """La luz de detrás (solo en oscuro): disco plano, opaco, sin brillo ni refracción, blanco
-    arriba y algo más apagado abajo; proyecta la sombra del logo sobre el fondo."""
-    return group("luz", [layer("luz", "luz", LIGHT_FILL)], translucency=0.0, blur=0.5,
-                 shadow=("neutral", 0.4), specular=False)
+    """La luz de detrás (solo en oscuro): disco blanco plano, opaco, sin brillo ni refracción;
+    proyecta la sombra del logo sobre el fondo. Blanca de arriba abajo: con un degradado a gris
+    (ronda 4) el amarillo de abajo salía beige y el verde, salvia."""
+    return group("luz", [layer("luz", "luz", WHITE)], translucency=0.0, blur=0.5, shadow=("neutral", 0.4),
+                 specular=False)
+
+
+def tint(dark):
+    """Alfa del color de los tres segmentos. ictool deja ver más lo de detrás abajo que arriba (el
+    22% arriba y el 55% abajo con alfa 0.8, medido en la ronda 1): sobre la luz blanca el verde de
+    abajo sale menta; en oscuro, algo más de color."""
+    return 0.78 if dark else 0.75
 
 
 def spec(dark, groups):
@@ -282,7 +288,7 @@ def vitral(dark):
                  refraction=(0.7, 0.5), shadow=("layer-color", 0.3), placement="inside")
     ring = group("anillo", [layer("aro", "aro", WHITE, 0.7)], translucency=0.55, blur=0.35,
                  refraction=(0.3, 0.1), shadow=NONE)
-    panes = group("vidrios", colors("vidrio-{}", 0.75), translucency=0.6, blur=0.0, refraction=(0.2, 0.06),
+    panes = group("vidrios", colors("vidrio-{}", tint(dark)), translucency=0.6, blur=0.0, refraction=(0.2, 0.06),
                   shadow=NONE if dark else BACK_SHADOW, lighting="combined")
     return spec(dark, [lens, ring, panes])
 
@@ -295,7 +301,7 @@ def lupa(dark):
     lens = group("lupa", [layer("azul", "azul", BLUE, 0.72), layer("aro", "aro", WHITE, 0.62)],
                  translucency=0.6, blur=0.0, refraction=(0.6, 0.4), shadow=("neutral", 0.3),
                  lighting="combined")
-    segs = group("colores", colors("{}-centro", 0.75), translucency=0.6, blur=0.0, refraction=(0.45, 0.2),
+    segs = group("colores", colors("{}-centro", tint(dark)), translucency=0.6, blur=0.0, refraction=(0.45, 0.2),
                  shadow=NONE if dark else BACK_SHADOW, lighting="combined")
     return spec(dark, [lens, segs])
 
@@ -306,11 +312,12 @@ def petalos(dark):
     amarillo; refracción suave para que el naranja y la lima se vean en su sitio y solo se doblen
     junto al borde del pétalo. El centro, un botón de cristal esmerilado."""
     center = group("centro", [layer("azul", "azul", BLUE, 0.78), layer("aro", "aro", WHITE, 0.72)],
-                   translucency=0.55, blur=0.3, refraction=(0.45, 0.25), shadow=("neutral", 0.25),
+                   translucency=0.55, blur=0.2, refraction=(0.45, 0.25), shadow=("neutral", 0.25),
                    lighting="combined")
-    front = group("rojo-verde", [layer("rojo", "petalo-rojo", RED, 0.7), layer("verde", "petalo-verde", GREEN, 0.7)],
+    front = group("rojo-verde", [layer("rojo", "petalo-rojo", RED, tint(dark) - 0.05),
+                                 layer("verde", "petalo-verde", GREEN, tint(dark) - 0.05)],
                   translucency=0.6, blur=0.0, refraction=(0.15, 0.05), shadow=NONE, lighting="combined")
-    back = group("amarillo", [layer("amarillo", "petalo-amarillo", YELLOW, 0.75)], translucency=0.6, blur=0.0,
+    back = group("amarillo", [layer("amarillo", "petalo-amarillo", YELLOW, tint(dark))], translucency=0.6, blur=0.0,
                  refraction=(0.4, 0.15), shadow=NONE if dark else BACK_SHADOW)
     return spec(dark, [center, front, back])
 

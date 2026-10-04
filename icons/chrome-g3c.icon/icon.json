@@ -10,7 +10,7 @@
       "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.3,
+      "blur-material": 0.2,
       "shadow": {
         "kind": "neutral",
         "opacity": 0.25
