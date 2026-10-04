@@ -67,6 +67,12 @@ ORB = ((512, 500), 345)
 WAVES = [(165, 48), (285, 48), (405, 48)]
 # g3: desplazamiento vertical de cada copia (delante, en medio, detrás): la pila sube hacia atrás
 STACK = (36, 0, -36)
+# g4: centro de las ondas y del disco de luz; 30 px por debajo del de g2, para que la barra
+# doble una banda de onda y no el hueco oscuro que había justo bajo su borde de arriba
+RING_C4 = (CENTER[0], CENTER[1] + 30)
+DISC_R = 105                   # disco de luz: dentro del hueco de la primera onda (radio 117)
+RISE4 = 70.0                   # g4: las plicas acaban hacia la mitad de la barra (165 px)
+RISE5 = 30.0                   # g5: un trozo corto, lejos de la esquina de arriba de la barra
 
 # Colores
 MUSIC_BG_TOP = (1.0, 0.2439, 0.3882)       # degradado del icono oficial, medido arriba y abajo
@@ -138,6 +144,13 @@ def pieces():
     # g3: copias desplazadas en vertical (la de delante abajo, la de detrás arriba)
     for name, dy in zip(("pila1", "pila2", "pila3"), STACK):
         geo[name] = affinity.translate(nota, 0, dy)
+    # g4: ondas más abajo y disco de luz en su centro; g4 y g5: corcheas que suben menos
+    for i, (r, w) in enumerate(WAVES, 1):
+        geo[f"aro{i}"] = ring(r, w, RING_C4)
+    geo["disco"] = Point(RING_C4).buffer(DISC_R, quad_segs=128)
+    for key, rise in (("corcheas4", RISE4), ("corcheas5", RISE5)):
+        tips = unary_union([rod(st, y_beam(sum(st) / 2) - rise) for st in (STEM_L, STEM_R)])
+        geo[key] = solid(nota.difference(beam).union(nota.intersection(tips)))
     return geo
 
 
@@ -231,6 +244,79 @@ def g3(light=False):
     ]
 
 
+# --- ronda h: g4 (ondas, con los arreglos del juez) y g5 (vitral, con sus defectos arreglados) ---
+def layer(name, fill, tinted=None):
+    """Capa de cristal; tinted: otro relleno solo en el modo tintado (fill-specializations)."""
+    lay = {"name": name, "image-name": f"{name}.svg", "glass": True}
+    if tinted:
+        lay["fill-specializations"] = [{"value": fill}, {"appearance": "tinted", "value": tinted}]
+    else:
+        lay["fill"] = fill
+    return lay
+
+
+def solo(name, fill, alpha, tinted=None, **kw):
+    """glass() de una pieza, con relleno propio en el modo tintado."""
+    g = glass(name, fill=fill, alpha=alpha, **kw)
+    g["layers"] = [layer(name, {"solid": color(fill, alpha)}, tinted)]
+    return g
+
+
+TINT_NOTE = {"solid": color(WHITE, 0.85)}  # en tintado la nota se perdía: ahí, blanca casi opaca
+
+
+def g4(light=False):
+    """Ondas, segunda versión: la nota en dos cristales sobre ondas de cristal encendidas.
+
+    Delante, la barra de cristal fucsia (0.4, 0.12) sobre los 70 px de plica que suben por debajo
+    y sobre la banda de la onda del medio (las ondas bajan 30 px): dentro de la barra se ven dos
+    cristales y la onda torcida. Detrás, las corcheas de cristal rosa casi transparente; su
+    refracción baja a (0.35, 0.09) para quitar el pliegue del centro de las plicas (39 px). Las
+    ondas pasan a cristal claro y encendido (rosa arriba, rojo abajo, apenas esmerilado). Al fondo,
+    un disco de luz esmerilado en el centro de las ondas (como el orbe de g1): la plica izquierda
+    pasa por encima y dobla su borde. Fondo vino de g1: lo que se ve a través ya no es gris.
+    """
+    if light:
+        bar, note, wave, disc = (HOT_PINK, 0.45), (MUSIC_RED, 0.40), (MUSIC_PINK, MUSIC_RED), (ROSE, MUSIC_PINK)
+        alphas, wave_glass, shadow = (0.75, 0.5, 0.32), (0.45, 0.3, 0.45), 0.4
+    else:
+        bar, note, wave, disc = (HOT_PINK, 0.5), (ROSE, 0.42), (ROSE, MUSIC_RED), (WHITE, BLUSH)
+        alphas, wave_glass, shadow = (0.9, 0.7, 0.5), (0.55, 0.1, 0.8), 0.5
+    waves = [(f"aro{i}", grad_fill(*wave, a)) for i, a in enumerate(alphas, 1)]
+    return [
+        solo("barra", *bar, tinted=TINT_NOTE, translucency=0.6, blur=0.0, refraction=(0.4, 0.12),
+             shadow="layer-color", shadow_opacity=0.6),
+        solo("corcheas4", *note, tinted=TINT_NOTE, translucency=0.75, blur=0.0, refraction=(0.35, 0.09),
+             shadow="layer-color", shadow_opacity=shadow),
+        group("aros", waves, translucency=wave_glass[0], blur=wave_glass[1], shadow="layer-color",
+              shadow_opacity=wave_glass[2]),
+        group("disco", [("disco", grad_fill(*disc, 0.75 if light else 0.8))], translucency=0.4,
+              blur=0.5 if light else 0.6, shadow="layer-color", shadow_opacity=0.4 if light else 0.5),
+    ]
+
+
+def g5(light=False):
+    """Vitral, segunda versión: barra fucsia y corcheas de cristal rojo de verdad transparente.
+
+    Las corcheas bajan de 0.75 a 0.5 de color y suben a 0.7 de translucidez, sin esmerilar: a
+    través de ellas se ve el orbe (y el vino donde la cabeza izquierda sale de él). Las plicas
+    suben solo 30 px bajo la barra: su punta ya no cae en la esquina de arriba a la derecha (la
+    mancha) ni se estira por el bisel de los lados (las gotas). En claro, el orbe es de cristal
+    rosa esmerilado sobre el fondo rosado: el cristal rojo tiene por fin algo que doblar.
+    """
+    if light:
+        bar, note, orb = (HOT_PINK, 0.55), (MUSIC_DEEP, 0.5), grad_fill(ROSE, MUSIC_PINK, 0.7)
+    else:
+        bar, note, orb = (HOT_PINK, 0.65), (MUSIC_RED, 0.5), grad_fill(WHITE, BLUSH, 0.85)
+    return [
+        solo("barra", *bar, tinted=TINT_NOTE, translucency=0.65, blur=0.0, refraction=(0.4, 0.12),
+             shadow="layer-color", shadow_opacity=0.6),
+        solo("corcheas5", *note, tinted=TINT_NOTE, translucency=0.7, blur=0.0, refraction=(0.3, 0.08),
+             shadow="layer-color", shadow_opacity=0.6, specular="inside"),
+        group("orbe", [("orbe", orb)], translucency=0.4, blur=0.6, shadow="layer-color", shadow_opacity=0.5),
+    ]
+
+
 APPROVED = {}
 
 CONCEPTS = {
@@ -243,6 +329,12 @@ CONCEPTS = {
     # g3 (capas, Cartera): tres notas de cristal apiladas
     "applemusic-g3": {"fill": MUSIC_BG, "groups": g3()},
     "applemusic-g3c": {"fill": BLUSH_BG, "groups": g3(light=True)},
+    # g4 (ondas 2): barra fucsia y corcheas rosas de cristal sobre ondas encendidas y un disco de luz
+    "applemusic-g4": {"fill": WINE_BG, "groups": g4()},
+    "applemusic-g4c": {"fill": BLUSH_BG, "groups": g4(light=True)},
+    # g5 (vitral 2): la nota de cristal de color, transparente de verdad, ante el orbe de luz
+    "applemusic-g5": {"fill": WINE_BG, "groups": g5()},
+    "applemusic-g5c": {"fill": BLUSH_BG, "groups": g5(light=True)},
 }
 
 

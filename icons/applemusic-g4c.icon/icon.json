@@ -1,0 +1,175 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:1.00000,0.96471,0.97255,1.00000",
+      "extended-srgb:1.00000,0.88627,0.91373,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "name": "barra",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.6
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.6
+      },
+      "layers": [
+        {
+          "name": "barra",
+          "image-name": "barra.svg",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "value": {
+                "solid": "extended-srgb:1.00000,0.23922,0.54510,0.45000"
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "solid": "extended-srgb:1.00000,1.00000,1.00000,0.85000"
+              }
+            }
+          ]
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.12
+      }
+    },
+    {
+      "name": "corcheas4",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.4
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.75
+      },
+      "layers": [
+        {
+          "name": "corcheas4",
+          "image-name": "corcheas4.svg",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "value": {
+                "solid": "extended-srgb:0.98039,0.14118,0.23529,0.40000"
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "solid": "extended-srgb:1.00000,1.00000,1.00000,0.85000"
+              }
+            }
+          ]
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.09
+      }
+    },
+    {
+      "name": "aros",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.3,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.45
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.45
+      },
+      "layers": [
+        {
+          "name": "aro1",
+          "image-name": "aro1.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.24314,0.38431,0.75000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.75000"
+            ]
+          }
+        },
+        {
+          "name": "aro2",
+          "image-name": "aro2.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.24314,0.38431,0.50000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.50000"
+            ]
+          }
+        },
+        {
+          "name": "aro3",
+          "image-name": "aro3.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.24314,0.38431,0.32000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.32000"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "disco",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.5,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.4
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.4
+      },
+      "layers": [
+        {
+          "name": "disco",
+          "image-name": "disco.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.56078,0.65098,0.75000",
+              "extended-srgb:1.00000,0.24314,0.38431,0.75000"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

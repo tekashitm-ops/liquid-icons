@@ -1,0 +1,125 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:1.00000,0.96471,0.97255,1.00000",
+      "extended-srgb:1.00000,0.88627,0.91373,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "name": "barra",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.6
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.65
+      },
+      "layers": [
+        {
+          "name": "barra",
+          "image-name": "barra.svg",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "value": {
+                "solid": "extended-srgb:1.00000,0.23922,0.54510,0.55000"
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "solid": "extended-srgb:1.00000,1.00000,1.00000,0.85000"
+              }
+            }
+          ]
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.12
+      }
+    },
+    {
+      "name": "corcheas5",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "inside",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.6
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.7
+      },
+      "layers": [
+        {
+          "name": "corcheas5",
+          "image-name": "corcheas5.svg",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "value": {
+                "solid": "extended-srgb:0.68627,0.09804,0.16471,0.50000"
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "solid": "extended-srgb:1.00000,1.00000,1.00000,0.85000"
+              }
+            }
+          ]
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.3,
+        "depth": 0.08
+      }
+    },
+    {
+      "name": "orbe",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.6,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.4
+      },
+      "layers": [
+        {
+          "name": "orbe",
+          "image-name": "orbe.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.56078,0.65098,0.70000",
+              "extended-srgb:1.00000,0.24314,0.38431,0.70000"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
