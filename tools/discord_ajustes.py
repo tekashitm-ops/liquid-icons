@@ -64,6 +64,13 @@ def pieces():
         # su esquina; el conjunto queda centrado en el lienzo
         "clyde-insignia": clyde_at(0.80, 414, 390),
         "engranaje-insignia": gear(697, 675, 215, 174, teeth=8, hole=66, fillet=10),
+        # Lente de cristal transparente (ronda 2): el engranaje pisa más a Clyde para deformarlo.
+        # p2: pisa el 24 % y el hueco del eje cae sobre su borde; p3: pisa el 32 % y llega al
+        # ojo derecho. Cada pareja se desplaza para que el conjunto siga centrado.
+        "clyde-p2": clyde_at(0.80, 432, 394),
+        "engranaje-p2": gear(678, 644, 215, 174, teeth=8, hole=66, fillet=10),
+        "clyde-p3": clyde_at(0.80, 448, 434),
+        "engranaje-p3": gear(664, 604, 215, 174, teeth=8, hole=66, fillet=10),
     }
 
 
@@ -79,6 +86,17 @@ def gear_glass(image, fill, alpha=0.92, translucency=0.35, refraction=(0.55, 0.4
     return glass("engranaje", fill=fill, alpha=alpha, translucency=translucency, blur=0.05,
                  refraction=refraction, shadow="neutral", shadow_opacity=0.55, image=image)
 
+
+def lens(image, fill="#FFFFFF", alpha=0.22, translucency=0.85, refraction=(0.75, 0.65), shadow_opacity=0.35):
+    """Engranaje de cristal transparente: casi sin color, sin esmerilar, refracta a Clyde debajo."""
+    return glass("engranaje", fill=fill, alpha=alpha, translucency=translucency, blur=0.0,
+                 refraction=refraction, shadow="neutral", shadow_opacity=shadow_opacity, image=image)
+
+
+# Grados de cristal para la lente
+CLARO = {"alpha": 0.22, "translucency": 0.85, "refraction": (0.75, 0.65), "shadow_opacity": 0.35}
+INVISIBLE = {"alpha": 0.10, "translucency": 0.92, "refraction": (0.95, 0.85), "shadow_opacity": 0.3}
+CON_CUERPO = {"alpha": 0.38, "translucency": 0.75, "refraction": (0.6, 0.5), "shadow_opacity": 0.45}
 
 BG = gradient(discord.DISCORD_BG)
 
@@ -107,6 +125,26 @@ CONCEPTS = {
         clyde_glass("clyde-insignia", light=True),
     ]},
 }
+
+# Ronda 2 (elegida la idea 2): el engranaje como lente de cristal transparente encima de Clyde.
+# vN = oscuro (fondo de Discord); vNc = su pareja clara (fondo claro, Clyde morado, lente gris).
+LENS_VARIANTS = {
+    "v1": ("p2", CLARO),
+    "v2": ("p2", INVISIBLE),
+    "v3": ("p3", CLARO),
+    "v4": ("p3", INVISIBLE),
+    "v5": ("p2", CON_CUERPO),
+    "v6": ("insignia", CLARO),  # posición original
+}
+for v, (pos, grade) in LENS_VARIANTS.items():
+    CONCEPTS[f"discord-ajustes-{v}"] = {"fill": BG, "groups": [
+        lens(f"engranaje-{pos}", **grade),
+        clyde_glass(f"clyde-{pos}"),
+    ]}
+    CONCEPTS[f"discord-ajustes-{v}c"] = {"fill": "system-light", "groups": [
+        lens(f"engranaje-{pos}", fill=GRAY_ON_LIGHT, **grade),
+        clyde_glass(f"clyde-{pos}", light=True),
+    ]}
 
 
 def main(names=None):
