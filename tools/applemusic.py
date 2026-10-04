@@ -52,7 +52,9 @@ Ronda h (el juez eligió g2 y pidió más; g1-g3 se quedan tal cual para compara
   de g2 (radios 117, 165, 237) corrían a 3-4 px de las plicas y del borde de la barra (astillas y
   rayas). h2: la punta redonda de 30 px brillaba como un punto en la esquina de la barra sobre las
   ondas (sobre el orbe liso de g5 no se ve): g4 lleva plicas de punta plana de 10 px. h3: ondas
-  claras más limpias (sin esmerilar) en g4c; el orbe de g5 en tintado tapaba la nota.
+  claras más limpias (sin esmerilar) en g4c; el orbe de g5 en tintado tapaba la nota. h4: la
+  esquina de la barra encerraba el vino de fuera de las ondas en un óvalo oscuro (un punto en la
+  tecla): ondas recolocadas (ver RING_C4); notas de las parejas claras algo más rojas.
 """
 import re
 
@@ -84,17 +86,19 @@ ORB = ((512, 500), 345)
 WAVES = [(165, 48), (285, 48), (405, 48)]
 # g3: desplazamiento vertical de cada copia (delante, en medio, detrás): la pila sube hacia atrás
 STACK = (36, 0, -36)
-# g4: centro de las ondas y del disco de luz; 30 px por debajo del de g2, para que la barra
-# doble una banda de onda y no el hueco oscuro que había justo bajo su borde de arriba
-RING_C4 = (CENTER[0], CENTER[1] + 30)
-# g4: ondas (radio exterior, grosor) y disco, con huecos de 47-60 px. Ningún borde de círculo va
-# casi paralelo a un borde de la nota (ronda h1: los radios 117, 165 y 237 de g2 corrían a 3-4 px
-# de las plicas y del borde de abajo de la barra y dejaban astillas y rayas; ronda h2: el 178
-# cruzaba la plica izquierda justo bajo la barra y dejaba una gota): el disco (95) y la segunda
-# onda (250) caen en medio de las plicas; la primera cruza la plica izquierda 23 px por debajo de
-# la barra (155) y 33 px por dentro de ella (203)
-WAVES4 = [(203, 48), (298, 48), (400, 48)]
-DISC_R = 95
+# g4: ondas (radio exterior, grosor) y disco de luz, con su centro a la derecha y por debajo del de
+# g2 (que es el de la caja de la nota), puestos para que:
+#  - ningún borde de círculo vaya casi paralelo a un borde de la nota más de ~37 px a menos de 6 px
+#    (h1: los radios 117, 165 y 237 de g2 corrían a 3-4 px de las plicas y del borde de abajo de la
+#    barra: astillas y rayas);
+#  - ninguno cruce una plica a menos de 18 px del borde de la barra (h2: una gota bajo la barra);
+#  - la esquina de arriba a la derecha de la barra (a 456 px del centro) quede solo 28 px fuera de
+#    la última onda: con 60-70 px fuera, el bisel de la esquina encerraba el vino en un óvalo oscuro
+#    (un punto en la tecla); con poco fuera, la esquina enseña la onda doblada, como en g2;
+#  - la barra pise la primera y la segunda onda (remolinos) y el disco pase bajo la plica izquierda.
+RING_C4 = (495.0, 525.0)
+WAVES4 = [(244, 48), (336, 48), (428, 48)]   # huecos de 44 px
+DISC_R = 141                                  # 55 px hasta la primera onda
 # g5: px que cada plica sube por debajo de la barra (punta redonda); con 70 la punta se veía dentro
 # de la barra como una gota. Con 30 no se ve sobre el orbe liso de g5, pero sobre las ondas de g4
 # la punta izquierda brillaba como un punto: g4 lleva plicas de punta plana que suben solo STUB px,
@@ -310,12 +314,12 @@ def g4(light=False):
     corcheas de cristal rosa casi transparente, con 10 px de plica bajo la barra; su refracción
     baja a (0.35, 0.09) para quitar el pliegue del centro de las plicas (39 px). Las ondas, de
     cristal claro encendido (rosa arriba, rojo abajo, apenas esmerilado) y con brillo de su color.
-    Al fondo, un disco de luz esmerilado en el centro de las ondas (como el orbe de g1): su borde
-    pasa por el medio de la plica izquierda, que lo dobla. Fondo vino de g1: lo que se ve a través
-    de la nota ya no es gris.
+    Al fondo, un disco de luz esmerilado en el centro de las ondas (como el orbe de g1): la plica
+    izquierda pasa por encima y dobla su borde arriba y abajo. Fondo vino de g1: lo que se ve a
+    través de la nota ya no es gris.
     """
     if light:
-        bar, note = (HOT_PINK, 0.6), (MUSIC_RED, 0.5)
+        bar, note = (HOT_PINK, 0.6), (MUSIC_RED, 0.58)
         wave, alphas, wave_glass = (ROSE, MUSIC_RED), (0.85, 0.62, 0.42), (0.4, 0.05, 0.45)
         disc = group("disco", [("disco", grad_fill(WHITE, WHITE, 0.95))], translucency=0.3, blur=0.5,
                      shadow="neutral", shadow_opacity=0.35)
@@ -350,7 +354,7 @@ def g5(light=False):
     orbe blanco y el mismo aro sobre el fondo rosado: el cristal rojo tiene por fin algo que doblar.
     """
     if light:
-        bar, note, orb, shadow = (HOT_PINK, 0.55), (MUSIC_RED, 0.5), grad_fill(WHITE, PEARL, 0.92), "neutral"
+        bar, note, orb, shadow = (HOT_PINK, 0.55), (MUSIC_RED, 0.58), grad_fill(WHITE, PEARL, 0.92), "neutral"
     else:
         bar, note, orb, shadow = (HOT_PINK, 0.65), (MUSIC_RED, 0.45), grad_fill(WHITE, BLUSH, 0.85), "layer-color"
     return [
