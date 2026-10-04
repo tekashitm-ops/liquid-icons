@@ -1,0 +1,77 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:1.00000,1.00000,1.00000,1.00000",
+      "extended-srgb:0.94510,0.91765,1.00000,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "name": "glitch-delante",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.45
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.5
+      },
+      "layers": [
+        {
+          "name": "glitch-delante",
+          "image-name": "glitch-delante.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.72000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.12
+      }
+    },
+    {
+      "name": "glitch-detras",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.2,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.4
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.45
+      },
+      "layers": [
+        {
+          "name": "glitch-detras",
+          "image-name": "glitch-detras.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.81961,0.70196,1.00000,0.80000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.3,
+        "depth": 0.1
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

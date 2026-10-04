@@ -1,0 +1,77 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:0.10196,0.07843,0.14902,1.00000",
+      "extended-srgb:0.05490,0.05490,0.06275,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "name": "losa",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.65
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.6
+      },
+      "layers": [
+        {
+          "name": "losa",
+          "image-name": "losa.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.55000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.12
+      }
+    },
+    {
+      "name": "cara",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.5,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.3
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.25
+      },
+      "layers": [
+        {
+          "name": "cara",
+          "image-name": "cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.95000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.2,
+        "depth": 0.06
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

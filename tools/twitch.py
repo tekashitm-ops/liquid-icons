@@ -3,60 +3,53 @@
 Trazado: brands/twitch.svg (recursos de marca, brand.twitch.tv vía simple-icons), sin
 deformar: solo escala uniforme y posición. Ajustado contra el icono de la App Store
 («Twitch: Live Streaming», id 460177396, 1024 px) con IoU 0.992 en la silueta del bocadillo
-y 0.978 en la cara blanca. Ese icono dibuja los ojos 13 px más abajo (y el izquierdo 13 px
-más a la derecha) que el logo de marca, por eso los ojos solo coinciden con IoU 0.67: se
-conserva el dibujo de marca.
-Piezas: la silueta, el marco (silueta menos cara), la cara blanca, los ojos y el glitch
-monocromo oficial (marco + ojos). Cada concepto las apila en grupos de cristal distintos
-para que la pieza de delante refracte el borde de la de detrás donde se pisan:
-c1 fiel al icono de iOS, c2 la cara como ventana de cristal claro (lente de Vista Previa),
-c3 el glitch de cristal morado sobre la cara blanca (cristal de color de Fotos).
+y 0.978 en la cara blanca (los ojos se dejan como en el logo de marca).
 
-Cambios en c1/c1c tras el panel (eligió c1) y el escéptico (render de CI anterior):
-- Costuras: c1c tenía dos líneas rectas de 1 px en el halo de la sombra, a ~9 px de la silueta
-  (x=196, y 338-794 y x=827, y 214-572, +5 R / +9 G), y una más débil a 8 px de la cara
-  (x=350); en c1, x=192 y x=831 a +1-3 niveles. Son el borde de la caja a la que ictool recorta
-  la sombra de cada capa. Ahora todas las capas van a lienzo completo (write_icon con
-  full_bounds=True: cuatro puntos casi transparentes en las esquinas) y, por si la costura
-  tiene otra causa, la silueta de c1c pasa de sombra de color de capa (0.5) a neutra (0.35).
-- Punta de la cola: el bisel concentraba el brillo en un destello de 1 px justo bajo la punta
-  de 45° (359,898). Se redondea solo esa punta con radio TIP_R = 3 px (recorta 4.8 px de la
-  punta; IoU con el trazado de marca 0.99997). La muesca de la cara no se toca.
-- Más cristal en c1: el bocadillo negro baja de alfa 1.0 a 0.9 y su translucidez de 0.25 a
-  0.35, así se ve algo del morado a través del marco (negro ahumado: estimado 4.2:1 contra el
-  fondo arriba y 3.8:1 en la cola, antes 4.3:1). La cara sigue a alfa 1.0 y refracción
-  0.3/0.1 (~19:1 contra el marco; más profunda, su borde superior traería el morado de fuera:
-  encima solo hay 51 px de marco). En c1c el morado se queda a alfa 0.95 / translucidez 0.3:
-  más transparente bajaría de ~3.5:1 abajo, donde el cristal se aclara.
-- c4/c4c (alternativa para comparar): igual que c1/c1c salvo UN parámetro, la refracción
-  del bocadillo, de 0.3/0.1 a 0.4/0.15 (el máximo de la regla del proyecto): bisel más ancho y
-  brillante. El bocadillo no tiene trazos finos (lo más estrecho es la cola, 128 px, y su
-  punta ya va redondeada) y detrás solo hay el fondo liso. Si sale limpio, sustituye a c1.
+Conceptos g (Liquid Glass al máximo: todas las piezas son cristal de color translúcido y cada
+cristal tiene algo detrás que refractar). gN = oscuro (negro de Twitch, para la tecla);
+gNc = su pareja clara (cristal morado sobre blanco, para un futuro modo día/noche).
+- g1 «glitch doble»: dos copias del logo desplazadas como un glitch. Delante, el glitch
+  (marco + ojos) de cristal lila transparente; detrás, el bocadillo entero de cristal morado
+  profundo, 36 px abajo a la derecha. Por la cara hueca se ve la copia de detrás, y el bisel
+  del marco de delante dobla los bordes de la de detrás donde los pisa.
+- g2 «cara de luz»: el bocadillo es una losa de cristal violeta con los ojos huecos; detrás,
+  la cara de cristal blanco esmerilado brilla a través del violeta. Los ojos son ventanas de
+  cristal claro al fondo, y su bisel dobla el borde de la cara. En claro, la cara de detrás
+  es morado profundo (blanco sobre blanco no se vería).
+- g3 «bloque de cristal»: el glitch de cristal morado encendido dentro de un bloque de cristal
+  transparente con la forma del bocadillo (Vista Previa / engranaje de Discord): el bisel del
+  bloque aumenta y dobla el marco morado que tiene debajo.
+Los conceptos c (logo casi opaco, rechazados: «no tiene Liquid Glass») siguen en el historial.
 """
 import re
 
+from shapely import affinity
 from shapely.geometry import Point
 
 from brand import place, subpath_shapes
-from liquid import ROOT, auto_gradient, clean, color, glass, write_icon
+from liquid import ROOT, clean, color, glass, write_icon
 
 D = re.search(r' d="([^"]+)"', (ROOT / "brands" / "twitch.svg").read_text(encoding="utf-8")).group(1)
 FIT = (29.899, 29.899, 153.177, 181.0)  # escala x, escala y, desplazamiento x, y (lienzo de 1024)
 
 TWITCH_PURPLE = "#9146FF"   # color de marca
-TWITCH_BG = "#9246FF"       # fondo del icono oficial de iOS (medido, plano)
-TWITCH_BLACK = "#000000"    # marco y ojos del icono oficial
 TWITCH_DARK = "#0E0E10"     # fondo del tema oscuro de Twitch
+# Escala de morados de Twitch (Core UI): claros para el cristal sobre negro, profundos para
+# el de detrás
+LAVENDER = "#BF94FF"
+LILAC = "#D1B3FF"
+VIOLET = "#A970FF"
+DEEP = "#772CE8"
+DEEPER = "#5C16C5"
+DEEPEST = "#451093"
 
-WINDOW_OVER = 6    # px que la ventana de cristal pisa el marco (sin rendija entre piezas)
-FACE_UNDER = 10    # px que la cara blanca se mete bajo el marco de cristal
-FILLET = 12        # px: redondea las esquinas cóncavas de la ventana (la refracción no se pliega)
 MITRE = 1.5        # las esquinas rectas se quedan vivas; la punta de 45° de la cola se chaflana
-TIP_R = 3          # px: radio con el que se redondea solo la punta de 45° de la cola (c1)
+TIP_R = 3          # px: radio con el que se redondea solo la punta de 45° de la cola
 TIP_ZONE = 30      # px alrededor de la punta en los que se aplica (el resto queda intacto)
-
-BEVEL = (0.3, 0.1)        # refracción del bocadillo en c1/c1c (bisel que mira ~50 px)
-BEVEL_DEEP = (0.4, 0.15)  # c4/c4c: bisel más ancho, tope de la regla (mira ~100 px)
+FILLET = 12        # px: redondea las esquinas cóncavas (la refracción no se pliega en ellas)
+GLITCH = 18        # px: cada copia de g1 se desplaza 18 px en diagonal (36 px entre las dos)
+BLOCK = 26         # px que el bloque de cristal de g3 sobresale del glitch
+PANE = 8           # px que la ventana de cada ojo de g2 pisa la losa alrededor del hueco
 
 
 def grow(geom, px):
@@ -64,130 +57,127 @@ def grow(geom, px):
     return geom.buffer(px, join_style="mitre", mitre_limit=MITRE)
 
 
-def fillet_concave(geom, r):
+def fillet_concave(geom, r=FILLET):
     """Cierre morfológico: rellena con un radio r solo las esquinas cóncavas."""
     return geom.buffer(r, quad_segs=32).buffer(-r, quad_segs=32)
 
 
+def soften(geom, r):
+    """Apertura morfológica: redondea con un radio r solo las esquinas convexas."""
+    return geom.buffer(-r, quad_segs=16).buffer(r, quad_segs=16)
+
+
 def round_tip(geom, r=TIP_R, zone=TIP_ZONE):
-    """Redondea con radio r solo la punta más baja (la de 45° de la cola): apertura
-    morfológica dentro de un círculo alrededor de la punta. Sin ella el bisel junta su brillo
-    en un destello de 1 px en el vértice; las demás esquinas siguen vivas."""
+    """Redondea con radio r solo la punta más baja (la de 45° de la cola): sin ella el bisel
+    junta su brillo en un destello de 1 px en el vértice; las demás esquinas siguen vivas."""
     tip = max(geom.exterior.coords, key=lambda p: p[1])
     area = Point(tip).buffer(zone, quad_segs=32)
-    opened = geom.buffer(-r, quad_segs=16).buffer(r, quad_segs=16)
-    return geom.difference(area).union(opened.intersection(area))
+    return geom.difference(area).union(soften(geom, r).intersection(area))
+
+
+def shift(geom, d):
+    return affinity.translate(geom, d, d)
 
 
 def pieces():
     eye_l, eye_r, outer, inner = (place(s, *FIT) for s in subpath_shapes(D))
     eyes = eye_l.union(eye_r)
-    frame = outer.difference(inner)
+    slab = fillet_concave(round_tip(outer))            # bocadillo entero, sin rincones vivos
+    mark = fillet_concave(round_tip(outer).difference(inner).union(eyes))  # glitch (marco + ojos)
     return {
-        "glitch": round_tip(outer),            # silueta completa del bocadillo (punta redondeada)
-        "cara": inner.difference(eyes),        # cara blanca con los ojos huecos
-        "marco": frame,
-        "ojos": eyes,
-        "marca": frame.union(eyes),            # el glitch monocromo oficial
-        # Ventana de cristal en el sitio de la cara, 6 px sobre el marco: su bisel dobla el
-        # borde negro del marco. Queda a 45 px del borde exterior del marco (la refracción
-        # 0.3/0.08 mira unos 40 px), así no trae trozos de morado de fuera.
-        "ventana": fillet_concave(grow(inner, WINDOW_OVER), FILLET),
-        # Cara blanca que sigue 10 px bajo el marco de cristal: el marco deja verla y la dobla.
-        # Queda a 40 px del borde exterior del marco (la refracción 0.3/0.07 mira unos 35 px)
-        "cara-fondo": grow(inner, FACE_UNDER),
+        # g1: el glitch delante, arriba a la izquierda; el bocadillo detrás, abajo a la derecha
+        "glitch-delante": shift(mark, -GLITCH),
+        "glitch-detras": shift(slab, GLITCH),
+        # g2: losa con los ojos huecos, cara con los ojos huecos detrás y una ventana por ojo
+        "losa": fillet_concave(round_tip(outer).difference(eyes)),
+        "cara": fillet_concave(inner.difference(eyes), 8),
+        "ventanas": soften(grow(eyes, PANE), 4),
+        # g3: el glitch dentro del bloque de cristal (el bocadillo agrandado BLOCK px)
+        "glitch": mark,
+        "bloque": fillet_concave(grow(round_tip(outer), BLOCK), 20),
     }
 
 
-# --- Concepto 1 (fiel): cara blanca de cristal sobre el bocadillo negro, como el oficial ---
+def vidrio(name, fill, alpha, translucency, blur, refraction=None, shadow="neutral",
+           shadow_opacity=0.5, specular="automatic", blend=None, fill_to=None):
+    """glass() con dos palancas más: modo de fusión del grupo y relleno en degradado (de
+    fill arriba a fill_to abajo, con el mismo alfa)."""
+    g = glass(name, fill=fill, alpha=alpha, translucency=translucency, blur=blur,
+              refraction=refraction, shadow=shadow, shadow_opacity=shadow_opacity, specular=specular)
+    if blend:
+        g["blend-mode"] = blend
+    if fill_to:
+        g["layers"][0]["fill"] = {"linear-gradient": [color(fill, alpha), color(fill_to, alpha)]}
+    return g
 
-def face_white():
-    """La cara blanca, delante; por sus ojos huecos se ve el negro de detrás."""
-    return glass("cara", alpha=1.0, translucency=0.2, blur=0.25, refraction=(0.3, 0.1))
 
+# --- g1: glitch doble ---
 
-def silhouette(fill=TWITCH_BLACK, light=False, refraction=BEVEL):
-    """El bocadillo entero detrás de la cara (sin rendijas entre negro y blanco).
-    Sombra neutra en los dos: la de color de capa dejaba costuras rectas en el halo de c1c.
-    En oscuro, cristal negro ahumado (alfa 0.9): deja ver un poco del morado de detrás."""
+def g1(light=False, front_refraction=(0.35, 0.12), blend=None):
+    """Delante el glitch de cristal claro sin esmerilar; detrás el bocadillo de cristal de
+    color, que es lo que se ve por la cara hueca y lo que el marco de delante dobla."""
     if light:
-        return glass("glitch", fill=fill, alpha=0.95, translucency=0.3, blur=0.3,
-                     refraction=refraction, shadow_opacity=0.35)
-    return glass("glitch", fill=fill, alpha=0.9, translucency=0.35, blur=0.3,
-                 refraction=refraction, shadow_opacity=0.45)
+        front = vidrio("glitch-delante", TWITCH_PURPLE, 0.72, 0.5, 0.0, front_refraction,
+                       shadow="layer-color", shadow_opacity=0.45, blend=blend)
+        back = vidrio("glitch-detras", LILAC, 0.8, 0.45, 0.2, (0.3, 0.1),
+                      shadow="layer-color", shadow_opacity=0.4)
+    else:
+        front = vidrio("glitch-delante", LILAC, 0.62, 0.55, 0.0, front_refraction,
+                       shadow="layer-color", shadow_opacity=0.5, blend=blend)
+        back = vidrio("glitch-detras", DEEP, 0.85, 0.4, 0.2, (0.3, 0.1),
+                      shadow="layer-color", shadow_opacity=0.75)
+    return [front, back]
 
 
-# --- Concepto 2 (ventana, como la lente de Vista Previa): la cara es un cristal transparente ---
+# --- g2: cara de luz ---
 
-def eyes_front(fill=TWITCH_BLACK, light=False):
-    """Ojos delante de la ventana, nítidos (nada que doblar detrás: la ventana es lisa)."""
+def g2(light=False, panes=True):
+    """Losa violeta translúcida delante de la cara esmerilada; ventanas claras en los ojos."""
+    windows = vidrio("ventanas", "#FFFFFF", 0.14, 0.9, 0.0, (0.25, 0.08), shadow_opacity=0.3)
     if light:
-        return glass("ojos", fill=fill, alpha=0.95, translucency=0.3, blur=0.2,
-                     refraction=(0.2, 0.06), shadow="layer-color")
-    return glass("ojos", fill=fill, alpha=1.0, translucency=0.2, blur=0.2, refraction=(0.2, 0.06))
+        slab = vidrio("losa", TWITCH_PURPLE, 0.62, 0.55, 0.0, (0.35, 0.12),
+                      shadow="layer-color", shadow_opacity=0.45)
+        face = vidrio("cara", DEEPEST, 0.92, 0.3, 0.5, (0.2, 0.06), shadow_opacity=0.25)
+    else:
+        slab = vidrio("losa", TWITCH_PURPLE, 0.55, 0.6, 0.0, (0.35, 0.12),
+                      shadow="layer-color", shadow_opacity=0.65)
+        face = vidrio("cara", "#FFFFFF", 0.95, 0.25, 0.5, (0.2, 0.06), shadow_opacity=0.3)
+    return ([windows] if panes else []) + [slab, face]
 
 
-def window(light=False):
-    """Ventana de cristal claro, sin esmerilar: deja ver el fondo y su borde dobla el marco.
-    En oscuro, un velo blanco sobre el morado (lila); en claro, un velo morado sobre el blanco."""
+# --- g3: bloque de cristal ---
+
+def g3(light=False, block_refraction=(0.45, 0.2)):
+    """Bloque transparente (casi sin color, sin esmerilar) sobre el glitch encendido."""
     if light:
-        return glass("ventana", fill=TWITCH_PURPLE, alpha=0.15, translucency=0.85, blur=0.0,
-                     refraction=(0.3, 0.08), shadow_opacity=0.3, specular="inside")
-    return glass("ventana", alpha=0.4, translucency=0.8, blur=0.0,
-                 refraction=(0.3, 0.08), shadow_opacity=0.3, specular="inside")
+        block = vidrio("bloque", LAVENDER, 0.22, 0.85, 0.0, block_refraction, shadow_opacity=0.4)
+        mark = vidrio("glitch", TWITCH_PURPLE, 0.88, 0.4, 0.3, None,
+                      shadow="layer-color", shadow_opacity=0.5)
+    else:
+        block = vidrio("bloque", "#EDE3FF", 0.16, 0.88, 0.0, block_refraction, shadow_opacity=0.35)
+        mark = vidrio("glitch", VIOLET, 0.88, 0.45, 0.3, None,
+                      shadow="layer-color", shadow_opacity=0.8)
+    return [block, mark]
 
 
-def frame_back(fill=TWITCH_BLACK, light=False):
-    if light:
-        return glass("marco", fill=fill, alpha=0.95, translucency=0.3, blur=0.3,
-                     refraction=(0.3, 0.1), shadow="layer-color")
-    return glass("marco", fill=fill, alpha=1.0, translucency=0.25, blur=0.3,
-                 refraction=(0.3, 0.1), shadow_opacity=0.45)
-
-
-# --- Concepto 3 (cristal de color, como los pétalos de Fotos): el glitch es cristal morado ---
-
-def mark_purple(light=False):
-    """Glitch oficial de cristal morado delante de la cara blanca: donde la pisa (el borde
-    interior del marco y los ojos) se ve más claro, y su bisel interior dobla ese borde.
-    Sombra cromática: en el fondo oscuro deja un halo morado."""
-    return glass("marca", fill=TWITCH_PURPLE, alpha=0.92 if light else 1.0, translucency=0.35,
-                 blur=0.0, refraction=(0.3, 0.07), shadow="layer-color",
-                 shadow_opacity=0.5 if light else 0.6)
-
-
-def face_under():
-    return glass("cara-fondo", alpha=1.0, translucency=0.15, blur=0.3, refraction=(0.2, 0.08),
-                 shadow_opacity=0.4)
-
-
-BG = {"solid": color(TWITCH_BG)}          # el morado plano del icono oficial
-BG_AUTO = auto_gradient(TWITCH_PURPLE)    # el mismo morado con el degradado automático de Apple
-BG_DARK = {"solid": color(TWITCH_DARK)}   # negro de Twitch (system-dark es más claro arriba: < 3:1)
+# Negro de Twitch con un poco de morado arriba: el cristal tiene un degradado que doblar
+BG_DARK = {"linear-gradient": [color("#1A1426"), color(TWITCH_DARK)]}
+BG_LIGHT = {"linear-gradient": [color("#FFFFFF"), color("#F1EAFF")]}
 
 APPROVED = {}
 
 CONCEPTS = {
-    # c1 (fiel al icono de iOS): fondo morado, bocadillo negro y cara blanca de cristal
-    "twitch-c1": {"fill": BG, "groups": [face_white(), silhouette()]},
-    # su pareja clara: fondo claro de Apple y bocadillo de cristal morado
-    "twitch-c1c": {"fill": "system-light", "groups": [face_white(), silhouette(TWITCH_PURPLE, light=True)]},
-    # c4 (alternativa de c1): solo cambia la refracción del bocadillo, 0.3/0.1 -> 0.4/0.15
-    "twitch-c4": {"fill": BG, "groups": [face_white(), silhouette(refraction=BEVEL_DEEP)]},
-    "twitch-c4c": {"fill": "system-light", "groups": [
-        face_white(), silhouette(TWITCH_PURPLE, light=True, refraction=BEVEL_DEEP),
-    ]},
-    # c2 (ventana): la cara es cristal transparente; se ve el morado detrás y su borde
-    # dobla el del marco negro; los ojos flotan delante
-    "twitch-c2": {"fill": BG_AUTO, "groups": [eyes_front(), window(), frame_back()]},
-    "twitch-c2c": {"fill": "system-light", "groups": [
-        eyes_front(TWITCH_PURPLE, light=True), window(light=True), frame_back(TWITCH_PURPLE, light=True),
-    ]},
-    # c3 (cristal morado): el glitch de cristal morado sobre el negro de Twitch, delante de
-    # la cara blanca, que sigue bajo el marco; el cristal cambia de tono según lo que pisa
-    # (descartado el cristal ahumado sobre morado: en plano se veía apagado)
-    "twitch-c3": {"fill": BG_DARK, "groups": [mark_purple(), face_under()]},
-    "twitch-c3c": {"fill": "system-light", "groups": [mark_purple(light=True), face_under()]},
+    "twitch-g1": {"fill": BG_DARK, "groups": g1()},
+    "twitch-g1c": {"fill": BG_LIGHT, "groups": g1(light=True)},
+    "twitch-g2": {"fill": BG_DARK, "groups": g2()},
+    "twitch-g2c": {"fill": BG_LIGHT, "groups": g2(light=True)},
+    "twitch-g3": {"fill": BG_DARK, "groups": g3()},
+    "twitch-g3c": {"fill": BG_LIGHT, "groups": g3(light=True)},
+    # Pruebas de la ronda 1 (se borran solas al escribir sin ellas)
+    "twitch-v1": {"fill": BG_DARK, "groups": g1(blend="plus-lighter")},
+    "twitch-v2": {"fill": BG_DARK, "groups": g1(front_refraction=(0.45, 0.2))},
+    "twitch-v3": {"fill": BG_DARK, "groups": g2(panes=False)},
+    "twitch-v4": {"fill": BG_DARK, "groups": g3(block_refraction=(0.6, 0.35))},
 }
 
 

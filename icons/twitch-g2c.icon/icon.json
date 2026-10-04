@@ -1,0 +1,107 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:1.00000,1.00000,1.00000,1.00000",
+      "extended-srgb:0.94510,0.91765,1.00000,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "name": "ventanas",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.3
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.9
+      },
+      "layers": [
+        {
+          "name": "ventanas",
+          "image-name": "ventanas.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.14000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.25,
+        "depth": 0.08
+      }
+    },
+    {
+      "name": "losa",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.45
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.55
+      },
+      "layers": [
+        {
+          "name": "losa",
+          "image-name": "losa.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.62000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.12
+      }
+    },
+    {
+      "name": "cara",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.5,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.25
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.3
+      },
+      "layers": [
+        {
+          "name": "cara",
+          "image-name": "cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.27059,0.06275,0.57647,0.92000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.2,
+        "depth": 0.06
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
