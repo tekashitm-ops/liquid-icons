@@ -1,0 +1,17 @@
+{
+  "defaultVariant": "oscuro",
+  "icons": [
+    {
+      "id": "steam",
+      "name": "Steam",
+      "match": {
+        "names": ["Steam"],
+        "appIdSuffixes": ["\\Steam\\Steam.exe"]
+      },
+      "variants": {
+        "oscuro": "steam-oscuro",
+        "claro": "steam-claro"
+      }
+    }
+  ]
+}

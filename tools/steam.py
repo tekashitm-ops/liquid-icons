@@ -90,6 +90,13 @@ def eje_blanco():
     return glass("eje", alpha=0.92, translucency=0.2, blur=0.1, refraction=(0.35, 0.3), specular="inside")
 
 
+APPROVED = {
+    # v10 (aprobada): colores de Steam sobre su fondo; biela y eje en cian de cristal.
+    "steam-oscuro": "steam-v10",
+    # v11 (guardada para el futuro modo claro): estilo Fotos, fondo System Light.
+    "steam-claro": "steam-v11",
+}
+
 CONCEPTS = {
     # Biela de cristal azul claro, sin esmerilar: deforma nítidamente el círculo pequeño.
     "steam-v7": {"fill": gradient(STEAM_BG), "groups": [
@@ -148,12 +155,14 @@ CONCEPTS = {
 
 
 def main():
+    """Escribe en icons/ solo los aprobados; el resto de conceptos quedan aquí como historial."""
     geo = pieces()
     for old in (ROOT / "icons").glob("steam*.icon"):
         for f in sorted(old.rglob("*"), reverse=True):
             f.unlink() if f.is_file() else f.rmdir()
         old.rmdir()
-    for name, spec in CONCEPTS.items():
+    for name, concept in APPROVED.items():
+        spec = CONCEPTS[concept]
         icon = ROOT / "icons" / f"{name}.icon"
         (icon / "Assets").mkdir(parents=True, exist_ok=True)
         for piece, g in geo.items():

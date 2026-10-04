@@ -37,6 +37,17 @@ jobs:
                 echo "::warning::fallo $name $r"
               fi
             done
+            # Tamaño de tecla de Stream Deck: 72 pt @2x = 144 px. Se renderiza a ese tamaño
+            # (no se reduce desde 1024) porque el motor adapta los efectos al tamaño del icono.
+            for r in Default Dark; do
+              if "$ICTOOL" "$icon" --export-image --output-file "renders/$name-$r-key.png" \
+                   --platform iOS --rendition "$r" --width 72 --height 72 --scale 2 \
+                   --design-generation 27; then
+                echo "ok $name $r key"
+              else
+                echo "::warning::fallo $name $r key"
+              fi
+            done
           done
           ls -la renders
 
