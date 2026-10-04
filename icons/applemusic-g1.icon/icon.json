@@ -18,7 +18,7 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.5
+        "opacity": 0.6
       },
       "translucency": {
         "enabled": true,
@@ -30,30 +30,29 @@
           "image-name": "barra.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,0.23922,0.54510,0.55000"
+            "solid": "extended-srgb:1.00000,0.23922,0.54510,0.60000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.45,
-        "depth": 0.15
-      },
-      "blend-mode": "plus-lighter"
+        "strength": 0.4,
+        "depth": 0.12
+      }
     },
     {
       "name": "corcheas",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "inside",
-      "blur-material": 0.1,
+      "blur-material": 0.35,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.8
+        "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.55
+        "value": 0.5
       },
       "layers": [
         {
@@ -61,7 +60,7 @@
           "image-name": "corcheas.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.98039,0.14118,0.23529,0.70000"
+            "solid": "extended-srgb:1.00000,0.83922,0.87451,0.78000"
           }
         }
       ],

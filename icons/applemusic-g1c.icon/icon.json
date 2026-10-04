@@ -18,7 +18,7 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.5
+        "opacity": 0.6
       },
       "translucency": {
         "enabled": true,
@@ -36,8 +36,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.45,
-        "depth": 0.15
+        "strength": 0.4,
+        "depth": 0.12
       }
     },
     {
@@ -52,7 +52,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.55
+        "value": 0.5
       },
       "layers": [
         {
