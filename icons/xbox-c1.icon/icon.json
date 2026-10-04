@@ -1,0 +1,44 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "solid": "extended-srgb:0.10196,0.10588,0.11765,1.00000"
+  },
+  "groups": [
+    {
+      "name": "logo",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.3,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.6
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.25
+      },
+      "layers": [
+        {
+          "name": "logo",
+          "image-name": "logo.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.41569,0.72157,0.03922,0.95000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.2
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

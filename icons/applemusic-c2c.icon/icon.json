@@ -1,0 +1,72 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": "system-light",
+  "groups": [
+    {
+      "name": "cabezas",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "inside",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.45
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.35
+      },
+      "layers": [
+        {
+          "name": "cabezas",
+          "image-name": "cabezas.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.68627,0.09804,0.16471,1.00000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.2
+      }
+    },
+    {
+      "name": "armazon",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.3,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.25
+      },
+      "layers": [
+        {
+          "name": "armazon",
+          "image-name": "armazon.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.98039,0.14118,0.23529,1.00000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.3,
+        "depth": 0.2
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
