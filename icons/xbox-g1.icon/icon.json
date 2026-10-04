@@ -30,7 +30,7 @@
           "image-name": "canica.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.08000"
+            "solid": "extended-srgb:0.60784,0.94118,0.04314,0.06000"
           }
         }
       ],
@@ -123,7 +123,7 @@
           "image-name": "nucleo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.04314,0.22745,0.04314,0.80000"
+            "solid": "extended-srgb:0.03922,0.25882,0.03922,0.85000"
           }
         }
       ]

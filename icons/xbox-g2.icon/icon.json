@@ -60,10 +60,7 @@
           "image-name": "logo-detras.svg",
           "glass": true,
           "fill": {
-            "linear-gradient": [
-              "extended-srgb:0.60784,0.94118,0.04314,0.85000",
-              "extended-srgb:0.82353,0.92549,0.07843,0.85000"
-            ]
+            "solid": "extended-srgb:0.60784,0.94118,0.04314,0.85000"
           }
         }
       ]
