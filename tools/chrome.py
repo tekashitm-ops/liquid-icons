@@ -106,16 +106,16 @@ SPOKE4, SPOKE_RIM4 = GAP4 + 16, GAP4 + 36
 # Y SPOKE_SIDE4 px más del lado de la esquina: el bisel del vidrio del casquete mira más allá de la
 # rendija y, si ve lo oscuro de debajo del vecino, el amarillo sale oliva (105,92,35; ronda g4-5)
 SPOKE_SIDE4 = 40.0
-SEAL4 = 24.0          # px de cierre de la silueta de los vidrios: la luz de las rendijas acaba en ella
-                      # (hasta el borde salían tablas blancas cortadas en recto por fuera del logo; cortada
-                      # a 26 px del borde, el hueco oscuro de la punta daba oliva al amarillo, ronda g4-6)
-DARK_Y4 = 9.0         # px de la Y oscura de debajo de la lente (a 16 px, una pelota con costuras)
+MOUTH4 = 50.0         # px alrededor de cada rendija que llena la luz, hasta el círculo exterior: la boca
+                      # entre las esquinas redondas queda a ras del círculo (hasta el borde, solo en el
+                      # ancho de la rendija, salían tablas blancas cortadas en recto por fuera del logo;
+                      # cortada antes, el hueco oscuro de la boca daba oliva al amarillo y dedos oscuros en
+                      # la esquina de 60° de cada vidrio, rondas g4-6 y g4-7)
+DARK_Y4, DARK_Y_R4 = 8.0, 100.0  # px de ancho y de largo de la Y oscura de debajo de la lente (de 16 px
+                      # y hasta el borde de la lente, su bisel la envolvía en una pelota con costuras peinadas)
 LENS_HOLE4 = R_BLUE - 30  # bajo la lente, dentro de este radio no hay vidrios: solo luz y la Y oscura
 GAP_ALPHA4 = 0.85     # la luz de las rendijas, algo apagada: espacio iluminado, no papel
-# Claro: banda de color hondo junto al borde (de R - RIM_BAND4 a R - CORE_RIM4) y tres vetas grises
-# bajo el centro de cada vidrio (lo que el cristal deja ver y su bisel dobla)
-RIM_BAND4 = 70.0
-VEIN4, VEIN_R4 = 40.0, (260.0, 380.0)
+RIM_BAND4 = 70.0      # claro: banda de color hondo junto al borde (de R - RIM_BAND4 a R - CORE_RIM4)
 HUB4 = R_BLUE + 15    # dentro de este radio (bajo la lente y el anillo) las rendijas son finas y centradas
 SLIT4 = 16.0          # px de las rendijas finas de debajo de la lente (una Y de luz, sin cubo en el centro)
 JOINT4 = 24.0         # px de redondeo de las juntas entrantes de la luz (disco y rayos)
@@ -132,8 +132,7 @@ YELLOW4, BLUE4 = "#FFD23F", "#1A7FFF"
 # Fondo de color bajo la parte de fuera de cada vidrio (claro), y el ámbar bajo el amarillo (oscuro:
 # el cristal amarillo sobre negro sale oliva, ronda g4-1: 148,123,44)
 CORE_RED, CORE_AMBER, CORE_GREEN, CORE_AMBER_DARK = "#C8102E", "#F59E00", "#00873C", "#C77800"
-VEIN_GREY, DARK_Y = "#A8A8AE", "#1C1C1E"  # claro: vetas bajo los vidrios (con #CFCFCF casi no se
-                                          # verían a través del cristal) y la Y oscura bajo la lente
+DARK_Y = "#1C1C1E"    # claro: la Y oscura bajo la lente (el fondo de la pareja oscura)
 
 
 def circle(c, r):
@@ -333,31 +332,26 @@ def panes4(sw):
 
 
 def dark_y():
-    """La Y de debajo de la lente, fina y oscura: la lente la enseña azul hondo sobre azul claro y
-    su bisel la dobla. Acaba redonda 25 px antes del borde de la lente: hasta él, el bisel del
-    anillo la tomaba en manchas grises (ronda g4-6)."""
-    r = R_BLUE - 25 - DARK_Y4 / 2
+    """La Y de debajo de la lente, fina y oscura: la lente la enseña azul hondo sobre azul claro.
+    Corta, de punta redonda y lejos del bisel de la lente: hasta su borde, el bisel la envolvía
+    (rondas g4-6 y g4-7) y el del anillo la tomaba en manchas grises (148-193 en su parte baja)."""
+    r = DARK_Y_R4 - DARK_Y4 / 2
     lines = [LineString(boundary(t + ROTATION, reach=R)).intersection(circle(CENTER, r)) for t in TANGENTS]
     return _polygons(unary_union([l.buffer(DARK_Y4 / 2, quad_segs=32) for l in lines]))
 
 
-def seal(panes):
-    """La silueta de los vidrios con las bocas de las rendijas cerradas (redondas, a ras)."""
-    g = unary_union(list(panes.values()))
-    return g.buffer(SEAL4, quad_segs=64).buffer(-SEAL4, quad_segs=64).intersection(circle(CENTER, R - LIGHT_INSET))
-
-
 def gap_light(sw, panes):
-    """Lo que se ve de la luz en las rendijas (fuera de HUB4), hasta la silueta cerrada."""
-    return _polygons(gaps4(sw).intersection(seal(panes)).difference(circle(CENTER, HUB4))
-                     .difference(unary_union(list(panes.values()))))
+    """Lo que se ve de la luz en las rendijas (fuera de HUB4), con la boca de cada rendija llena
+    hasta el círculo exterior (sin hueco oscuro entre las esquinas redondas de los vidrios)."""
+    near = gaps4(sw).buffer(MOUTH4, quad_segs=32).intersection(circle(CENTER, R - LIGHT_INSET))
+    return _polygons(near.difference(circle(CENTER, HUB4)).difference(unary_union(list(panes.values()))))
 
 
 def light4(sw, panes):
     """La luz de g4 bajo los vidrios y la lente, sin las rendijas (van aparte, más apagadas) ni la
     Y oscura. Bajo los vidrios llega hasta el borde (con un hueco oscuro bajo la esquina de 60°,
-    su bisel lo aumentaba en un punto, ronda g4-3); en las rendijas acaba antes."""
-    keep = unary_union([*panes.values(), circle(CENTER, HUB4), gaps4(sw).intersection(seal(panes))])
+    su bisel lo aumentaba en un punto, ronda g4-3)."""
+    keep = unary_union([*panes.values(), gap_light(sw, panes), circle(CENTER, HUB4)])
     full = _solid(light_shape(R_RING - GAP4 / 2, SPOKE_SIDE4).intersection(keep))
     return _polygons(full.difference(gap_light(sw, panes)).difference(dark_y()))
 
@@ -365,16 +359,17 @@ def light4(sw, panes):
 def slit_light(sw, panes):
     """La luz de las rendijas, 3 px metida bajo los vidrios (bajo la luz opaca: sin junta)."""
     full = _solid(light_shape(R_RING - GAP4 / 2, SPOKE_SIDE4).intersection(
-        unary_union([*panes.values(), gaps4(sw).intersection(seal(panes))])))
+        unary_union([*panes.values(), gap_light(sw, panes)])))
     return _polygons(gap_light(sw, panes).buffer(3, quad_segs=16).intersection(full))
 
 
 def cores(panes, dist):
     """El fondo de color de fuera de cada vidrio: el vidrio menos la luz (disco y rayos), hasta el
     canto de las rendijas y CORE_RIM4 px dentro del borde exterior. Metido 8 px también en las
-    rendijas, el amarillo sobre lo oscuro de esa franja salía marrón (ronda g4-2)."""
+    rendijas, el amarillo sobre lo oscuro de esa franja salía marrón (ronda g4-2). Redondeo de solo
+    6 px: con 16 quedaba un hueco oscuro bajo la esquina del amarillo en la boca de la rendija."""
     lit, rim = light_shape(dist, SPOKE_SIDE4), circle(CENTER, R - CORE_RIM4)
-    return {k: _polygons(fillet(v.difference(lit).intersection(rim), FILLET)) for k, v in panes.items()}
+    return {k: _polygons(fillet(v.difference(lit).intersection(rim), 6.0)) for k, v in panes.items()}
 
 
 def rim_bands(panes):
@@ -383,13 +378,6 @@ def rim_bands(panes):
     band = annulus(R - RIM_BAND4, R - CORE_RIM4)
     return {k: _polygons(fillet(v.intersection(band), FILLET)) for k, v in panes.items()}
 
-
-def veins():
-    """Claro: tres vetas grises de VEIN4 px, radiales por el centro de cada vidrio (lo que su
-    cristal deja ver y su bisel dobla), de punta redonda."""
-    r0, r1 = VEIN_R4[0] + VEIN4 / 2, VEIN_R4[1] - VEIN4 / 2
-    return unary_union([LineString([_at(r0, t + ROTATION), _at(r1, t + ROTATION)]).buffer(VEIN4 / 2, quad_segs=32)
-                        for t in TANGENTS])
 
 
 def pieces():
@@ -423,9 +411,8 @@ def pieces():
         "luz4": light4(sw, p4),
         "rendijas4": slit_light(sw, p4),
         **{f"fondo-{k}": v for k, v in cores(p4, R_RING - GAP4 / 2).items()},
-        # g4c: banda honda junto al borde, vetas bajo el centro de cada vidrio y la Y oscura
+        # g4c: banda honda junto al borde y la Y oscura
         **{f"banda-{k}": v for k, v in rim_bands(p4).items()},
-        "vetas": veins(),
         "y-oscura": dark_y(),
     }
 
@@ -526,13 +513,13 @@ def petalos(dark):
 
 
 # --- g4 vitral abierto -----------------------------------------------------------------------------
-def abierto(dark, back_light="banda"):
+def abierto(dark):
     """g1 con todo el cristal: vidrios sueltos (individual: bisel y brillo propios en cada uno) con
     rendijas abiertas hasta el borde, sobre una luz más pequeña (disco de 0.72 R y tres rayos bajo
     las rendijas, anchos del lado de la esquina): cada vidrio se ve claro sobre la luz y hondo fuera
     de ella, y su bisel dobla el borde de la luz. Lente azul sobre luz con una Y oscura que dobla.
     En oscuro, fuera de la luz se ve el fondo oscuro (rojo y verde hondos) salvo bajo el amarillo, que
-    lleva ámbar. En claro, una banda honda junto al borde y una veta gris bajo cada vidrio."""
+    lleva ámbar. En claro, una banda honda junto al borde."""
     names = ("rojo", "amarillo", "verde")
     # Lente: (0.85, 0.6) pasa del foco: invertía los lóbulos en tres manchas (una cara) con bordes
     # peinados (ronda g4-1). Azul más lleno: al 0.62 salía celeste pálido (158,201,255). Sin el
@@ -558,9 +545,10 @@ def abierto(dark, back_light="banda"):
                      translucency=0.0, blur=0.0, shadow=NONE, specular=False)
         return {"fill": "system-dark", "groups": [lens, ring, panes, back]}
     # Claro: la placa esmerilada blanca (ronda g4-1) no se veía sobre el fondo claro; con el color
-    # hondo bajo todo el fuera de cada vidrio, salía liso (ronda g4-5). Ahora tres tintes: sobre el
-    # fondo claro, sobre la veta gris y sobre la banda honda del borde; y la Y oscura bajo la lente
-    back = group("fondo", [*[layer(k, f"{back_light}-{k}", c, glass=False)
+    # hondo bajo todo el fuera de cada vidrio, salía liso (ronda g4-5). Ahora el cristal enseña el
+    # fondo claro y, junto al borde, la banda honda; vidrios más llenos (0.85) y menos translúcidos
+    # (0.45) para que sobre el fondo claro no salgan pastel. Y la Y oscura bajo la lente
+    back = group("fondo", [*[layer(k, f"banda-{k}", c, glass=False)
                              for k, c in zip(names, (CORE_RED, CORE_AMBER, CORE_GREEN))],
                            layer("y", "y-oscura", DARK_Y, glass=False)],
                  translucency=0.0, blur=0.0, shadow=NONE, specular=False)
@@ -578,7 +566,6 @@ CONCEPTS = {
     "chrome-g3c": petalos(dark=False),
     "chrome-g4": abierto(dark=True),
     "chrome-g4c": abierto(dark=False),
-    "chrome-g4cx": abierto(dark=False, back_light="fondo"),
 }
 
 
