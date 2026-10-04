@@ -7,10 +7,11 @@ id 1108187390, "musicCalistoga", 1024 px) con IoU 0.993.
 
 Ronda g (la anterior, c1-c4, era el logo casi opaco y plano: rechazada). Todo es cristal de
 color translúcido que deja ver lo de detrás, y cada pieza de cristal pisa algo que doblar:
-  - g1 "vitral" (Fotos, y el eje aprobado de Steam): la barra es una lámina de cristal fucsia
-    sin esmerilar delante; las dos corcheas (cabeza y plica) son de cristal rosa blanquecino
-    esmerilado y sus plicas suben 125 px por debajo de la barra, que las tiñe y las dobla en su
-    bisel. Fondo vino casi negro.
+  - g1 "vitral" (Fotos, vidriera ante la luz): la barra es una lámina de cristal fucsia sin
+    esmerilar delante; las dos corcheas (cabeza y plica) son de cristal rojo y sus plicas suben
+    125 px por debajo de la barra, que las mezcla y las dobla en su bisel. Detrás, un orbe de
+    cristal rosa blanquecino esmerilado (la luz, como el orbe de iTunes) del que asoman la
+    esquina de la barra y la cabeza izquierda. Fondo vino casi negro.
   - g2 "ondas" (Buscar): la nota en cristal rosado casi transparente, como el engranaje de
     Discord, sobre tres ondas de sonido concéntricas de cristal rosa-rojo que se apagan hacia
     fuera; la nota tuerce las ondas en su bisel. Fondo oscuro de Apple.
@@ -32,6 +33,9 @@ Ronda 3: el vitral oscuro (barra fucsia "plus-lighter" sobre corcheas rojas) se 
 de color sobre fondo oscuro liso no enseña nada y la suma de la barra apenas se notaba sobre las
 plicas. Ahora las corcheas son el respaldo claro (como la pieza blanca de Steam) y la barra se
 mezcla normal. g2: la nota rosa se confundía con las ondas en la tecla; vuelve a rosa blanquecino.
+Ronda 4: el vitral con corcheas claras (rosa blanquecino al 0.78 sobre el vino) se veía malva gris,
+como plástico. Lo que sí se ve como cristal es el vitral claro (g1c): cristal de color con luz
+detrás. En oscuro esa luz la pone ahora el orbe, y las corcheas vuelven a rojo.
 """
 import re
 
@@ -55,6 +59,10 @@ CENTER = (486.8, 501.7)        # centro de la caja de la nota (213.6-759.9, 154.
 
 # g1: px que cada plica sube por debajo de la barra (la barra mide ~165 px junto a las plicas)
 RISE = 125.0
+# g1: el orbe de luz; su borde cruza solo piezas anchas: la esquina de arriba a la derecha de la
+# barra (asoma 133 x 106 px; cruza su borde de arriba en x 625 y el de la derecha en y 260) y la
+# cabeza izquierda (asoma por abajo a la izquierda); las plicas quedan dentro
+ORB = ((512, 500), 345)
 # g2: ondas (radio exterior, grosor); periodo de 120 px, más que los ~50-100 px que toma el bisel
 WAVES = [(165, 48), (285, 48), (405, 48)]
 # g3: desplazamiento vertical de cada copia (delante, en medio, detrás): la pila sube hacia atrás
@@ -122,7 +130,8 @@ def pieces():
     y_beam = lambda x: BEAM_BOTTOM[1] + SLOPE * (x - BEAM_BOTTOM[0])  # noqa: E731
     rods = unary_union([rod(st, y_beam(sum(st) / 2) - RISE) for st in (STEM_L, STEM_R)])
     geo = {"nota": nota, "barra": soften(beam, r=20),
-           "corcheas": solid(nota.difference(beam).union(nota.intersection(rods)))}
+           "corcheas": solid(nota.difference(beam).union(nota.intersection(rods))),
+           "orbe": Point(ORB[0]).buffer(ORB[1], quad_segs=128)}
     # g2: ondas concéntricas en el centro de la nota
     for i, (r, w) in enumerate(WAVES, 1):
         geo[f"onda{i}"] = ring(r, w)
@@ -151,24 +160,30 @@ def group(name, layers, lighting="individual", blend=None, **kw):
 
 # --- g1: vitral ---------------------------------------------------------------------------
 def g1(light=False):
-    """Barra de cristal fucsia sobre las corcheas, como el eje de Steam sobre la pieza blanca.
+    """Vidriera ante la luz: barra de cristal fucsia sobre las corcheas de cristal rojo.
 
     Barra: lámina ancha (165 px) sin esmerilar con refracción (0.4, 0.12), sobre los 125 px de
-    plica que suben por debajo: donde las pisa se ven a través, teñidas y dobladas en su bisel;
-    en el centro deja ver el fondo. Corcheas: en oscuro, cristal rosa blanquecino esmerilado (el
-    respaldo iluminado, como la nota blanca del icono oficial pero translúcida); en claro, cristal
-    rojo oscuro de marca. Refracción baja (0.3, 0.08) porque las plicas miden 39 px.
+    plica que suben por debajo: donde las pisa, los dos colores se mezclan y el bisel las dobla.
+    Corcheas: refracción baja (0.3, 0.08) porque las plicas miden 39 px.
+    En oscuro, detrás, el orbe: un disco de cristal rosa blanquecino esmerilado (la luz, como el
+    orbe de iTunes) del que asoman la esquina de la barra y la cabeza izquierda: dentro del orbe
+    el cristal de color brilla con la luz que lo atraviesa, fuera se ve el vino a través, y el
+    bisel dobla el borde del orbe donde lo cruza. En claro la luz es el propio fondo: sin orbe.
     """
     if light:
-        beam, notes = (MUSIC_PINK, 0.55), (MUSIC_DEEP, 0.7)
-    else:
-        beam, notes = (HOT_PINK, 0.6), (BLUSH, 0.78)
+        return [
+            glass("barra", fill=MUSIC_PINK, alpha=0.55, translucency=0.7, blur=0.0,
+                  refraction=(0.4, 0.12), shadow="layer-color", shadow_opacity=0.6),
+            glass("corcheas", fill=MUSIC_DEEP, alpha=0.7, translucency=0.5, blur=0.1,
+                  refraction=(0.3, 0.08), shadow="layer-color", shadow_opacity=0.8, specular="inside"),
+        ]
     return [
-        glass("barra", fill=beam[0], alpha=beam[1], translucency=0.7, blur=0.0,
+        glass("barra", fill=HOT_PINK, alpha=0.65, translucency=0.65, blur=0.0,
               refraction=(0.4, 0.12), shadow="layer-color", shadow_opacity=0.6),
-        glass("corcheas", fill=notes[0], alpha=notes[1], translucency=0.5, blur=0.35 if not light else 0.1,
-              refraction=(0.3, 0.08), shadow="layer-color", shadow_opacity=0.5 if not light else 0.8,
-              specular="inside"),
+        glass("corcheas", fill=MUSIC_RED, alpha=0.75, translucency=0.5, blur=0.05,
+              refraction=(0.3, 0.08), shadow="layer-color", shadow_opacity=0.7, specular="inside"),
+        group("orbe", [("orbe", grad_fill(WHITE, BLUSH, 0.85))], translucency=0.4, blur=0.6,
+              shadow="layer-color", shadow_opacity=0.5),
     ]
 
 
@@ -198,7 +213,8 @@ def g3(light=False):
     Cada copia dobla en su bisel los bordes de la de detrás (a 36 px, dentro de lo que toma el
     bisel con (0.4, 0.15)). La de delante sin esmerilar; las de detrás cada vez más esmeriladas.
     Ronda 3: con fuerza 0.5 las plicas de la copia de delante (39 px) tenían un pliegue recto de
-    2 px en el centro, donde se juntan los dos biseles; con 0.4 se suaviza.
+    2 px en el centro, donde se juntan los dos biseles; con 0.4 desaparece en oscuro. En claro
+    (cristal rojo sobre rosa) seguía marcado con 0.4: ahí (0.3, 0.1).
     """
     if light:
         tints = ((MUSIC_RED, 0.45), (MUSIC_PINK, 0.45), (ROSE, 0.45))
@@ -207,7 +223,7 @@ def g3(light=False):
     shadow = "layer-color" if light else "neutral"
     return [
         glass("pila1", fill=tints[0][0], alpha=tints[0][1], translucency=0.8, blur=0.0,
-              refraction=(0.4, 0.15), shadow=shadow, shadow_opacity=0.35),
+              refraction=(0.3, 0.1) if light else (0.4, 0.15), shadow=shadow, shadow_opacity=0.35),
         glass("pila2", fill=tints[1][0], alpha=tints[1][1], translucency=0.65, blur=0.15,
               refraction=(0.4, 0.12), shadow=shadow, shadow_opacity=0.35),
         glass("pila3", fill=tints[2][0], alpha=tints[2][1], translucency=0.6, blur=0.4,
