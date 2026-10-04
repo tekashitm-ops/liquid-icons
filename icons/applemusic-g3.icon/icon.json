@@ -22,7 +22,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.7
+        "value": 0.8
       },
       "layers": [
         {
@@ -30,7 +30,37 @@
           "image-name": "pila1.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.50000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.35000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.5,
+        "depth": 0.18
+      }
+    },
+    {
+      "name": "pila2",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.15,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.35
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.65
+      },
+      "layers": [
+        {
+          "name": "pila2",
+          "image-name": "pila2.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,0.83922,0.87451,0.45000"
           }
         }
       ],
@@ -41,48 +71,18 @@
       }
     },
     {
-      "name": "pila2",
-      "lighting": "individual",
-      "specular": true,
-      "specular-highlight-placement": "automatic",
-      "blur-material": 0.2,
-      "shadow": {
-        "kind": "neutral",
-        "opacity": 0.35
-      },
-      "translucency": {
-        "enabled": true,
-        "value": 0.6
-      },
-      "layers": [
-        {
-          "name": "pila2",
-          "image-name": "pila2.svg",
-          "glass": true,
-          "fill": {
-            "solid": "extended-srgb:1.00000,0.83922,0.87451,0.50000"
-          }
-        }
-      ],
-      "refractivity": {
-        "enabled": true,
-        "strength": 0.35,
-        "depth": 0.1
-      }
-    },
-    {
       "name": "pila3",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.45,
+      "blur-material": 0.4,
       "shadow": {
         "kind": "neutral",
         "opacity": 0.4
       },
       "translucency": {
         "enabled": true,
-        "value": 0.55
+        "value": 0.6
       },
       "layers": [
         {

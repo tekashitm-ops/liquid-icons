@@ -22,7 +22,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.7
+        "value": 0.8
       },
       "layers": [
         {
@@ -30,7 +30,37 @@
           "image-name": "pila1.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.98039,0.14118,0.23529,0.55000"
+            "solid": "extended-srgb:0.98039,0.14118,0.23529,0.45000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.5,
+        "depth": 0.18
+      }
+    },
+    {
+      "name": "pila2",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.15,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.35
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.65
+      },
+      "layers": [
+        {
+          "name": "pila2",
+          "image-name": "pila2.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,0.24314,0.38431,0.45000"
           }
         }
       ],
@@ -41,14 +71,14 @@
       }
     },
     {
-      "name": "pila2",
+      "name": "pila3",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.2,
+      "blur-material": 0.4,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.35
+        "opacity": 0.4
       },
       "translucency": {
         "enabled": true,
@@ -56,41 +86,11 @@
       },
       "layers": [
         {
-          "name": "pila2",
-          "image-name": "pila2.svg",
-          "glass": true,
-          "fill": {
-            "solid": "extended-srgb:1.00000,0.24314,0.38431,0.50000"
-          }
-        }
-      ],
-      "refractivity": {
-        "enabled": true,
-        "strength": 0.35,
-        "depth": 0.1
-      }
-    },
-    {
-      "name": "pila3",
-      "lighting": "individual",
-      "specular": true,
-      "specular-highlight-placement": "automatic",
-      "blur-material": 0.45,
-      "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.4
-      },
-      "translucency": {
-        "enabled": true,
-        "value": 0.55
-      },
-      "layers": [
-        {
           "name": "pila3",
           "image-name": "pila3.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,0.56078,0.65098,0.50000"
+            "solid": "extended-srgb:1.00000,0.56078,0.65098,0.45000"
           }
         }
       ]
