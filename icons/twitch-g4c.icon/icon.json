@@ -48,14 +48,14 @@
           "image-name": "g4-barra-cara.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.16000"
+            "solid": "extended-srgb:0.46667,0.17255,0.90980,0.60000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
         "strength": 0.4,
-        "depth": 0.12
+        "depth": 0.1
       },
       "blend-mode": "multiply"
     },
@@ -131,8 +131,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.15
+        "strength": 0.26,
+        "depth": 0.08
       }
     },
     {
