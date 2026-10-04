@@ -144,14 +144,6 @@
           "fill": {
             "solid": "extended-srgb:1.00000,1.00000,1.00000,0.90000"
           }
-        },
-        {
-          "name": "g5-luz-cola",
-          "image-name": "g5-luz-cola.svg",
-          "glass": true,
-          "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.60000"
-          }
         }
       ]
     }

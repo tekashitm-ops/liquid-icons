@@ -298,6 +298,8 @@ STREAK = (34, 133)  # g4: raya de luz bajo el chaflán, de 24 a 94 px dentro de 
 SLIVER = (23, 79)   # raya de luz bajo la hipotenusa de la cola, de 16 a 56 px dentro de ella
 CORNER = 113        # g4c: esquina blanca de la cara de luz, 80 px desde su esquina (en x + y)
 INSET = 14          # px que las rayas de luz quedan dentro del borde de su pieza
+TAIL_TOP = 776      # g4: la raya de la cola empieza aquí: más arriba, el bisel del borde de arriba del
+                    # marco de abajo (712) doblaba su punta en un garabato
 
 
 def diag_band(c0, c1):
@@ -328,7 +330,10 @@ def g4_pieces(outer, inner, eyes):
     xr = body.bounds[2]
     raw = shift(body.intersection(band), BAR_SHIFT, 0).intersection(box(0, 0, BAR_END, 1024))
     bar = soften(raw, BAR_R).union(raw.intersection(box(BAR_END - 30, BAND[0], BAR_END, BAND[0] + 20)))
-    lit = shift(face, LIT_SHIFT, LIT_SHIFT).difference(eyes).intersection(box(0, 0, 1024, BAND[0]))
+    # la luz se corre a la derecha y abajo, pero arriba llega al borde de la cara: el hueco en L
+    # hacía en las esquinas de la cara, bajo su bisel, dos manchas oscuras; queda el de la izquierda
+    lit = shift(face, LIT_SHIFT, LIT_SHIFT).union(shift(face, LIT_SHIFT, 0))
+    lit = lit.difference(eyes).intersection(box(0, 0, 1024, BAND[0]))
     corner = lit.intersection(diag_band(0, sum(lit.bounds[:2]) + CORNER))
     # luz bajo la barra: la cara de la franja corrida, con la punta de la muesca cortada y redonda
     under = shift(face.intersection(band), BAR_SHIFT, 0).difference(box(0, NOTCH_CUT, 1024, 1024))
@@ -352,19 +357,19 @@ def g4_pieces(outer, inner, eyes):
         "g4-luz-barra": under.union(box(LIT_LEFT, BAND[0], x0, fb)),
         "g4c-luz-barra": under.union(box(LIT_LEFT_C, BAND[0], x0, fb)),
         "g4-luz-chaflan": streak(frame, CHAMFER + STREAK[0], CHAMFER + STREAK[1]),
-        "g4-luz-cola": streak(body, HYPOT - SLIVER[1], HYPOT - SLIVER[0],
-                              box(0, BAND[1] + 12, 1024, 1024)),
+        "g4-luz-cola": streak(body, HYPOT - SLIVER[1], HYPOT - SLIVER[0], box(0, TAIL_TOP, 1024, 1024)),
         "g4c-luz": lit.difference(corner),
         "g4c-luz-esquina": corner,
     }
 
 
-def g4(light=False, face_front=False):
+def g4(light=False):
     """Delante la barra de cristal violeta casi transparente (en claro, morado que se multiplica),
     con brillo del color de la capa; luego las ventanas de los ojos, de cristal morado; luego el logo
     entero de cristal morado transparente (cara casi incolora) con luz individual, así la cara tiene
     su propio bisel contra el marco y dobla el borde de la luz de detrás; detrás, las luces.
-    face_front: la cara pasa al grupo de las ventanas y el logo vuelve a luz combinada (prueba).
+    Con la cara en el grupo de las ventanas (y luz combinada en el logo), su bisel traía el hueco
+    de la luz a su borde de arriba en rayitas.
     Refracción del logo 0.26/0.08: a 0.35/0.15 su borde de arriba traía la cara iluminada (a 75 px)
     y los huecos de los ojos (a 141 px) en rayitas. Barra a 0.3/0.04: a 0.4/0.1 y 0.35/0.08 su
     punta derecha se doblaba en una mancha oscura y un rizo, y a 0.3/0.06 aún hacía un gancho."""
@@ -380,19 +385,18 @@ def g4(light=False, face_front=False):
     else:
         bar_c, bar_a, bar_mix, bar_glow = VIOLET, 0.5, "plus-lighter", 0.5
         frame_c, frame_a, band_a, glow = TWITCH_PURPLE, 0.38, 0.3, 0.65
-        bar_face, bar_face_a, win_c, win_a = "#FFFFFF", 0.15, TWITCH_PURPLE, 0.22
-        lights = [capa("g4-luz", "#FFFFFF", 0.9), capa("g4-luz-barra", "#FFFFFF", 0.55),
+        bar_face, bar_face_a, win_c, win_a = LAVENDER, 0.18, TWITCH_PURPLE, 0.22
+        # la luz bajo la barra a 0.8: a 0.55 la cara de la barra salía gris (172,165,186)
+        lights = [capa("g4-luz", "#FFFFFF", 0.9), capa("g4-luz-barra", "#FFFFFF", 0.8),
                   capa("g4-luz-chaflan", "#FFFFFF", 0.7), capa("g4-luz-cola", "#FFFFFF", 0.6)]
     bar = grupo("barra", [capa("g4-barra-marco", bar_c, bar_a), capa("g4-barra-cara", bar_face, bar_face_a)],
                 0.8, 0.0, (0.3, 0.04), "layer-color", bar_glow, blend=bar_mix, lighting="combined")
     face = capa("g4-cara", LAVENDER, 0.1)
     # sin sombra en las ventanas: hacía un bisel gris alrededor de los ojos
-    windows = grupo("ventanas", [capa("g4-ventanas", win_c, win_a)] + ([face] if face_front else []),
+    windows = grupo("ventanas", [capa("g4-ventanas", win_c, win_a)],
                     0.9, 0.0, (0.25, 0.08), "neutral", 0.0)
-    logo = grupo("logo", [capa("g4-marco", frame_c, frame_a), capa("g4-marco-franja", frame_c, band_a)]
-                 + ([] if face_front else [face]),
-                 0.7, 0.05, (0.26, 0.08), "layer-color", glow,
-                 lighting="combined" if face_front else "individual")
+    logo = grupo("logo", [capa("g4-marco", frame_c, frame_a), capa("g4-marco-franja", frame_c, band_a),
+                          face], 0.7, 0.05, (0.26, 0.08), "layer-color", glow)
     backing = grupo("luz", lights, 0.3, 0.5, None, "neutral", 0.3)
     return [bar, windows, logo, backing]
 
@@ -402,7 +406,6 @@ def g4(light=False, face_front=False):
 GHOST = 32       # px: cada copia se corre 32 px en diagonal (64 px entre las dos): la franja de fondo
                  # que deja ver el fantasma es más ancha que lo que alcanza su bisel (a 40 px la
                  # plegaba en una varilla oscura)
-TAIL_TRIM = 16   # px que la cola de detrás queda dentro de la del fantasma (sin astilla)
 
 
 def g5_pieces(outer, inner, eyes, g=GHOST):
@@ -412,16 +415,18 @@ def g5_pieces(outer, inner, eyes, g=GHOST):
     cae bajo la cara del fantasma (fuera, la franja de luz de arriba y la de la derecha hacían cuatro
     marcos anidados) y los ojos justo bajo las ventanas (un solo par de ojos, que las ventanas
     agrandan). La cara del fantasma entera es la luz: por ella se ve la cara de detrás, blanca, y el
-    marco de detrás, morado encendido. La cola de detrás, recortada TAIL_TRIM px dentro de la del
-    fantasma, y una raya de luz bajo su hipotenusa: la cola tiene dos tintes y se ve en la tecla.
+    marco de detrás, morado encendido. Bajo la banda de abajo y la cola del fantasma, la copia de
+    detrás llega a sus bordes: la cola se ve morada en la tecla.
     Las diagonales del logo caen sobre sí mismas al correrlo en diagonal; el borde izquierdo de
-    detrás cruza el chaflán del fantasma y el de abajo cruza su diagonal: ahí su bisel los dobla."""
+    detrás cruza el chaflán del fantasma y su borde de abajo: ahí su bisel lo dobla."""
     body, face = base_shapes(outer, inner)
     front, front_face = shift(body, -g, g), shift(face, -g, g)
     back, back_face = shift(body, g, -g), shift(face, g, -g)
     eyes_f = shift(eyes, -g, g)
-    root = 770.4  # raíz de la cola (borde de abajo del bocadillo)
-    back =back.difference(box(0, root - g, 1024, 1024).difference(front.buffer(-TAIL_TRIM)))
+    # bajo la banda de abajo y la cola del fantasma, la copia de detrás se rellena hasta sus bordes
+    # (como en g1): con su propia cola recortada 16 px dentro, el bisel estrecho de la cola la
+    # doblaba en una gota, y una raya de luz debajo salía como una mancha blanca
+    back = back.union(front.intersection(box(back.bounds[0], 700, 1024, 1024)))
     hole = back_face.intersection(front_face)
     return {
         "g5-fantasma-marco": front.difference(front_face),
@@ -430,8 +435,6 @@ def g5_pieces(outer, inner, eyes, g=GHOST):
         "g5-detras-marco": back.difference(hole.difference(eyes_f)),
         "g5-detras-cara": hole.difference(eyes_f),
         "g5-luz": front_face.difference(eyes_f),
-        "g5-luz-cola": streak(front, HYPOT - SLIVER[1], HYPOT - SLIVER[0],
-                              box(0, root - g + INSET, 1024, 1024)),
     }
 
 
@@ -445,12 +448,10 @@ def g5(light=False):
     if light:
         ghost_c, ghost_a, mix, ghost_glow = TWITCH_PURPLE, 0.75, "multiply", 0.2
         back_c, back_a, face_a, glow = DEEP, 0.85, 0.12, 0.45
-        sliver = capa("g5-luz-cola", DEEP, 0.6)
     else:
         # violeta (no lila): sobre el negro el lila salía gris (la cola, 29,23,41)
         ghost_c, ghost_a, mix, ghost_glow = VIOLET, 0.5, "plus-lighter", 0.5
         back_c, back_a, face_a, glow = DEEP, 0.8, 0.15, 0.75
-        sliver = capa("g5-luz-cola", "#FFFFFF", 0.6)
     ghost = grupo("fantasma", [capa("g5-fantasma-marco", ghost_c, ghost_a),
                                capa("g5-fantasma-cara", ghost_c, 0.06)],
                   0.8, 0.0, (0.2, 0.04), "layer-color", ghost_glow, blend=mix, lighting="combined")
@@ -459,7 +460,7 @@ def g5(light=False):
     back = grupo("detras", [capa("g5-detras-marco", back_c, back_a),
                             capa("g5-detras-cara", LAVENDER, face_a)],
                  0.45, 0.2, None, "layer-color", glow, lighting="combined")
-    backing = grupo("luz", [capa("g5-luz", "#FFFFFF", 0.9), sliver], 0.3, 0.5, None, "neutral", 0.3)
+    backing = grupo("luz", [capa("g5-luz", "#FFFFFF", 0.9)], 0.3, 0.5, None, "neutral", 0.3)
     return [ghost, windows, back, backing]
 
 
@@ -486,8 +487,6 @@ CONCEPTS = {
     "twitch-g4c": {"fill": BG4_LIGHT, "groups": g4(light=True)},
     "twitch-g5": {"fill": BG4_DARK, "groups": g5()},
     "twitch-g5c": {"fill": BG4_LIGHT, "groups": g5(light=True)},
-    # prueba: la cara en el grupo de las ventanas (luz combinada en el logo)
-    "twitch-g4x": {"fill": BG4_DARK, "groups": g4(face_front=True)},
 }
 
 
