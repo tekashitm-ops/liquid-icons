@@ -60,6 +60,19 @@ def check_key_render(path: Path) -> None:
                  "falta la conversión a sRGB del render")
 
 
+def check_icon_document(path: Path) -> None:
+    """Normas de Apple para el .icon: como mucho 4 grupos y todas las capas con su imagen."""
+    if not path.exists():
+        sys.exit(f"Falta {path.parent.name}: el icono aprobado tiene que estar en icons/")
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    if len(doc["groups"]) > 4:
+        sys.exit(f"{path.parent.name} tiene {len(doc['groups'])} grupos; Apple permite como mucho 4")
+    for group in doc["groups"]:
+        for layer in group["layers"]:
+            if not (path.parent / "Assets" / layer["image-name"]).exists():
+                sys.exit(f"{path.parent.name}: falta la imagen {layer['image-name']}")
+
+
 def replace_dir(new: Path, target: Path) -> None:
     """Sustituye target por new; si algo falla, deja target como estaba."""
     old = target.with_name(target.name + ".anterior")
@@ -90,6 +103,7 @@ def main() -> None:
             sys.exit(f"{icon['id']} no tiene la variante por defecto '{default_variant}'")
         for icon_name in icon["variants"].values():
             check_key_render(renders / f"{icon_name}-Default-key.png")
+            check_icon_document(ROOT / "icons" / f"{icon_name}.icon" / "icon.json")
 
     # 2) Montar la biblioteca y el paquete nuevos aparte
     lib_new = PLUGIN / ".library.nuevo"

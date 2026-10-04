@@ -11,6 +11,21 @@ jobs:
     runs-on: xcode-27
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Elegir los iconos que renderizar
+        # En un push solo los .icon que cambian (así cada prueba tarda menos); todos si cambia
+        # el propio render, en el primer push de una rama o al lanzarlo a mano
+        run: |
+          before="${{ github.event.before }}"
+          if [ "${{ github.event_name }}" = "push" ] && git cat-file -e "$before^{commit}" 2>/dev/null \
+             && ! git diff --name-only "$before" HEAD | grep -qE '^(tools/to_srgb\.swift|\.github/workflows/render\.yml)$'; then
+            git diff --name-only "$before" HEAD -- icons | cut -d/ -f2 | grep '\.icon$' | sort -u > iconos.txt || true
+          else
+            ls -d icons/*.icon | xargs -n1 basename > iconos.txt
+          fi
+          echo "iconos a renderizar:"; cat iconos.txt
 
       - name: Localizar ictool
         run: |
@@ -27,7 +42,9 @@ jobs:
         run: |
           mkdir -p renders
           key_failed=
-          for icon in icons/*.icon; do
+          while read -r dir; do
+            icon="icons/$dir"
+            [ -d "$icon" ] || continue  # borrado en este push
             name="$(basename "$icon" .icon)"
             for r in Default Dark TintedLight TintedDark ClearLight ClearDark; do
               if "$ICTOOL" "$icon" --export-image --output-file "renders/$name-$r.png" \
@@ -51,15 +68,17 @@ jobs:
                 key_failed=1
               fi
             done
-          done
+          done < iconos.txt
           ls -la renders
           [ -z "${key_failed:-}" ]
 
       - name: Pasar a sRGB de 8 bits (ColorSync)
         # ictool exporta en Display P3 a 16 bits; Stream Deck no gestiona color y necesita sRGB
         run: |
-          swift tools/to_srgb.swift renders/*.png
-          sips -g bitsPerSample -g space -g profile renders/*-key.png
+          if ls renders/*.png >/dev/null 2>&1; then
+            swift tools/to_srgb.swift renders/*.png
+            sips -g bitsPerSample -g space -g profile renders/*-key.png
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
