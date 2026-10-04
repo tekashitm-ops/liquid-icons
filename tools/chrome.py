@@ -1,78 +1,39 @@
-"""Google Chrome: logo oficial de 2022 reconstruido y ajustado al icono de iOS, y montaje de los .icon.
+"""Google Chrome: logo oficial de 2022 ajustado al icono de iOS, y conceptos de Liquid Glass (g1-g3).
 
-El logo de 2022 es geometría pura y simple-icons (brands/googlechrome.svg) solo trae una silueta
-monocroma, así que se construye aquí con la definición de Google: un círculo exterior de radio R,
-el círculo blanco de radio R/2 y tres fronteras rectas, cada una la mitad de un lado del triángulo
-equilátero inscrito en el círculo exterior (son tangentes al círculo blanco). El círculo azul va
-centrado. Ajustado por colores contra el icono de la App Store (Google Chrome, id 535886823,
-1024 px): R = 409.25, círculo blanco R/2 (la proporción oficial, sin tocar), azul 166.25, giro 0.
-IoU por color: rojo 0.991, amarillo 0.983 (el brillo especular de su borde interior no pasa el
-umbral de color), verde 0.990, azul 0.995, anillo blanco 0.983; silueta completa 0.992.
+Geometría. El logo de 2022 es geometría pura y simple-icons (brands/googlechrome.svg) solo trae
+una silueta monocroma, así que se construye aquí con la definición de Google: un círculo exterior
+de radio R, el círculo blanco de radio R/2 y tres fronteras rectas, cada una la mitad de un lado
+del triángulo equilátero inscrito en el círculo exterior (son tangentes al círculo blanco). El
+círculo azul va centrado. Ajustado por colores contra el icono de la App Store (Google Chrome,
+id 535886823, 1024 px): R = 409.25, círculo blanco R/2, azul 166.25, giro 0. IoU por color: rojo
+0.991, amarillo 0.983, verde 0.990, azul 0.995, anillo blanco 0.983; silueta completa 0.992.
 
-Piezas: los tres segmentos, el azul y una base blanca debajo de todo (el fondo blanco del icono
-oficial recortado al logo: es el anillo blanco y hace que el cristal de color se vea como en el
-oficial también sobre el fondo oscuro). Ninguna lleva sombras, degradados ni brillos: los pone
-Icon Composer.
-Conceptos (cN oscuro para la tecla, cNc su pareja clara):
-- c1 fiel al oficial: segmentos de cristal de color en un grupo y el azul delante; debajo de cada
-  cristal, su copia plana (ver ronda 2).
-- c2 Fotos: el amarillo es un pétalo de cristal transparente delante; el rojo y el verde se meten
-  9° debajo de él, así que a través del pétalo se ven sus cuñas (naranja y lima) y su borde las
-  dobla, como los pétalos de Fotos.
-- c3 lente: el azul es una lente transparente de refracción profunda sobre su azul plano; su
-  borde muestra, doblados, el anillo blanco y el remolino de colores que la rodean (Vista Previa).
-- c4 (prueba de c1): c1 con un solo cambio, los segmentos con iluminación "combined" (ver abajo).
+Para el cristal, los tres colores siguen por debajo del anillo y del azul hasta el centro (el
+"remolino"): cada frontera recta se continúa, sin esquina, con un arco que nace tangente en el
+círculo blanco y llega al centro, donde las tres se encuentran a 120°. Así cada cristal del centro
+tiene detrás colores y curvas que su bisel dobla (sobre un color liso la refracción no se ve).
 
-Ronda 2 de c1/c1c (el panel eligió c1; un escéptico midió el render de CI y lo rechazó):
-- Marcas rectas de 1 px fuera del logo (las "L" en x=145/878 con y=295, y la raya de y=933): ictool
-  recorta la sombra de cada capa a la caja de su contenido más unos 12 px (son las cajas del rojo y
-  del verde/amarillo). Ahora todas las capas ocupan el lienzo entero (write_icon(full_bounds=True):
-  cuatro puntos casi transparentes en las esquinas, fuera de la máscara del icono).
-- Pliegues oscuros a lo largo de verde/rojo y verde/amarillo (con una muesca en la punta de abajo),
-  contornos grises de 4 px a los dos lados del anillo blanco y un contorno negro de 3-4 px
-  alrededor del logo. Todo esto solo sale en el render oscuro. Medido, es siempre la misma banda de
-  ~4 px que ictool dibuja con fondo oscuro justo FUERA de cada capa de cristal (con fondo claro va
-  dentro de la pieza y se lee como su borde). Va teñida del color de la capa y es algo más fuerte
-  con más opacidad de sombra (lente de c3 a 0.6 frente al azul de c1 a 0.5). El fondo plano de la
-  lente de c3, que no tiene sombra, no le suma nada. Todo apunta a que es el núcleo de la sombra del
-  grupo; sin ictool no se puede comprobar, y por eso está c4. Cae sobre lo que haya detrás: el verde
-  (pliegue), el anillo blanco (contorno gris) o el fondo (contorno negro; xbox-c1 y youtube-oscuro
-  también lo tienen). Por eso en c1 el azul y los segmentos van sin sombra. La única sombra (neutra, 0.35) la proyecta un disco oculto ("sombra", R-8) detrás de la
-  base opaca, que tapa su banda; no la proyecta la base, porque llega casi al borde y su banda
-  saldría fuera. c1c (fondo claro) mantiene las sombras de color: allí no hay banda y el icono
-  oficial tiene ese halo verde, amarillo y azul.
-- Debajo de cada cristal de color va su copia plana y opaca (fondo-rojo, -amarillo, -verde y
-  -azul, sin sombra ni brillo). El cristal conserva el color de Chrome (el verde salía desvaído,
-  35,175,93 frente a 0,158,64, por el blanco de debajo) y lo que se ve por las juntas es color, no
-  blanco ni oscuro. El fondo verde se mete 3 px debajo del rojo y del amarillo, así no queda una
-  rendija de antialias. El verde de cristal no se mete: con translucidez 0.5 se vería a través del
-  rojo.
-- La base blanca de c1 llega a R-1.5 (antes R-8). El borde del cristal queda sobre blanco o color
-  en vez de sobre el fondo oscuro, y la ventana de abajo funciona hasta el borde. Sigue acabando
-  dentro del borde del cristal, así que no deja halo blanco.
-- Cristal más rico, como el material del icono oficial. Medido, el oficial tiene el cuerpo, una
-  banda que se aclara hacia el borde (~12 px) y un labio de ~6 px de color en el mismo borde. Aquí
-  los fondos planos acaban 14 px antes del borde exterior (y el del azul, 14 px antes del suyo). En
-  esa ventana el cristal, más translúcido (0.5; alfa 0.92 los segmentos y 0.9 el azul), deja ver el
-  blanco de debajo esmerilado (blur 0.3), y el bisel, que toma el contenido de ~50-100 px hacia
-  dentro, pinta el labio del color de la pieza y dobla el borde de la ventana. El azul refracta
-  (0.4, 0.15): pieza grande, redonda y lejos del borde del lienzo, y su bisel toma su propio fondo.
-  Los segmentos se quedan en (0.3, 0.1), lo mínimo: tienen puntas muy finas donde tocan el anillo.
-  Junto al anillo no se deja ventana, porque esas puntas quedarían blancas.
-- c4/c4c (alternativa con un solo parámetro distinto): lighting "combined" en el grupo de
-  segmentos. Los tres se iluminan como una sola pieza de cristal, así que el bisel solo recorre el
-  círculo exterior y el anillo, como en el icono oficial, que tiene juntas limpias y la banda
-  clara continua a través de ellas. Además, la pieza de cristal ya no tiene puntas finas. Si la
-  banda de sombra no fuera la causa de los pliegues, c4 los quita igual; si "combined" hace algo
-  raro con los colores por capa, c1 queda como respaldo.
+Conceptos (gN oscuro para la tecla, gNc su pareja clara). Todo el logo es cristal de color
+translúcido; detrás del cristal de color va una luz (un disco blanco plano) para que brille
+como una vidriera sobre el fondo oscuro. Piezas blancas y planas: el color, el cristal, la luz
+y las sombras los pone Icon Composer. Como mucho 4 grupos.
+- g1 vitral: los tres colores son vidrios separados por rendijas de luz que llegan al centro;
+  el azul es una lente gruesa de cristal azul por la que se ven, doblados, los tres colores y
+  las rendijas que se juntan debajo; el anillo es cristal esmerilado.
+- g2 lupa: el anillo y el centro son una sola lente gruesa de cristal transparente (como la lupa
+  de Vista Previa) que aumenta lo que tiene detrás: el disco azul de cristal y los tres colores.
+- g3 pétalos: como Fotos, el rojo y el verde son pétalos de cristal que se montan sobre el
+  amarillo (naranja y lima donde se pisan; el rojo y el verde no se pisan: saldría marrón) y el
+  centro es un botón de cristal (anillo y azul en una pieza) sobre el remolino de colores.
+Los conceptos c1-c5 (logo casi opaco) se rechazaron y quedan en el historial de git.
 """
 import math
 
 from shapely import affinity
-from shapely.geometry import Point, Polygon
-from shapely.ops import unary_union
+from shapely.geometry import LineString, Point, Polygon
+from shapely.ops import polygonize, unary_union
 
-from liquid import WHITE, clean, color, glass, write_icon
+from liquid import WHITE, clean, color, write_icon
 
 # Medidas en el lienzo de 1024 (ajustadas por colores contra el icono oficial de iOS)
 CENTER = (512.0, 512.0)
@@ -81,19 +42,16 @@ R_RING = R / 2        # círculo blanco: la mitad exacta, como en el logo oficia
 R_BLUE = 166.25       # círculo azul (en iOS algo mayor que el 9.5/24 del SVG de 2022)
 ROTATION = 0.0        # grados; el ajuste da -0.2, se deja recto como el oficial
 TANGENTS = (270.0, 30.0, 150.0)  # dónde tocan las fronteras el círculo blanco (grados, y hacia abajo)
-
 RES = 256             # segmentos por cuarto de círculo: curvas suaves a cualquier tamaño
-BASE_INSET = 8        # px: la base blanca de c2/c3 acaba un poco antes del borde para no dejar halo blanco
-OVERLAP = 9.0         # grados que el rojo y el verde se meten debajo del pétalo amarillo (~58 px)
 
-# c1 (ronda 2): copias planas debajo del cristal y ventanas de blanco bajo su borde
-BASE_INSET_FIEL = 1.5  # px: base blanca de c1 casi hasta el borde (dentro del borde del cristal: sin halo)
-OUTER_WINDOW = 14      # px antes del borde exterior donde acaban los fondos planos: banda clara del bisel
-BLUE_WINDOW = 14       # px antes del borde del azul donde acaba su fondo plano
-UNDERLAP = 3           # px que el fondo verde se mete debajo del rojo y del amarillo (sin rendijas)
-SHADOW_INSET = 8       # px: disco que proyecta la sombra de c1; su banda de ~4 px queda 2.5 px dentro de la base
+# Cristal
+GAP = 14              # px de rendija de luz entre los vidrios de g1 (2 px en la tecla)
+FILLET = 10           # px de redondeo de las esquinas de los vidrios y pétalos (sin esquirlas)
+LIGHT_INSET = 18      # px antes del borde donde acaba la luz: el bisel exterior la dobla
+PETAL = 11.0          # grados que el rojo y el verde se montan sobre el amarillo en g3 (~79 px fuera)
+R_BLUE_LENS = 132     # disco azul de g2, más pequeño: la lupa lo aumenta
 
-# Colores del icono oficial de iOS (mediana del interior de cada pieza)
+# Colores del icono oficial de iOS (mediana del interior de cada pieza) y tintes del cristal
 RED, YELLOW, GREEN, BLUE = "#F71C1C", "#FFC100", "#00A141", "#0078F3"
 
 
@@ -101,9 +59,17 @@ def circle(c, r):
     return Point(c).buffer(r, quad_segs=RES)
 
 
+def annulus(r0, r1):
+    return circle(CENTER, r1).difference(circle(CENTER, r0))
+
+
+def _u(angle):
+    return math.cos(math.radians(angle)), math.sin(math.radians(angle))
+
+
 def _beyond(angle, dist, size=3000):
     """Semiplano más allá de la recta tangente al círculo de radio dist en ese ángulo."""
-    ux, uy = math.cos(math.radians(angle)), math.sin(math.radians(angle))
+    ux, uy = _u(angle)
     px, py = -uy, ux
     ox, oy = CENTER[0] + ux * dist, CENTER[1] + uy * dist
     return Polygon([(ox + px * size, oy + py * size), (ox + px * size + ux * size, oy + py * size + uy * size),
@@ -118,16 +84,19 @@ def _sector(a0, a1, r=2000):
 
 
 def _polygons(g):
-    """Solo las partes con área (las intersecciones dejan a veces líneas sueltas), soldadas en una:
-    el casquete y la esquina de un segmento quedan separados por una rendija de redondeo que en el
-    render sería una costura (y un bisel de cristal) atravesando el segmento."""
+    """Solo las partes con área (las intersecciones dejan a veces líneas sueltas), soldadas en una."""
     parts = [p for p in getattr(g, "geoms", [g]) if p.geom_type in ("Polygon", "MultiPolygon")]
     g = unary_union([q for p in parts for q in getattr(p, "geoms", [p])])
     return g.buffer(0.05, join_style="mitre").buffer(-0.05, join_style="mitre")
 
 
+def fillet(g, r=FILLET):
+    """Redondea las esquinas, vivas y entrantes: el bisel de cristal no trae esquirlas."""
+    return g.buffer(-r, quad_segs=64).buffer(2 * r, quad_segs=64).buffer(-r, quad_segs=64)
+
+
 def segments():
-    """Rojo, amarillo y verde: cada uno es el casquete más allá de un lado del triángulo inscrito
+    """Rojo, amarillo y verde oficiales: el casquete más allá de un lado del triángulo inscrito
     más la esquina del triángulo que queda fuera del círculo blanco."""
     t1, t2, t3 = (a + ROTATION for a in TANGENTS)
     disk, ring = circle(CENTER, R), circle(CENTER, R_RING)
@@ -139,230 +108,170 @@ def segments():
     return {"rojo": _polygons(red), "amarillo": _polygons(yellow), "verde": _polygons(green)}
 
 
-def tuck(piece, front, degrees):
-    """La pieza más una cuña que se mete debajo de la de delante (girándola sobre el centro).
+def boundary(t, n=720):
+    """Frontera entre dos colores, del centro hacia fuera: el arco de radio R_RING/2 que sale del
+    centro y llega tangente al círculo blanco en el punto de tangencia, y luego la recta oficial
+    hasta más allá del círculo exterior. Sin esquina en el punto de tangencia."""
+    rho = R_RING / 2
+    cx, cy = CENTER[0] + rho * _u(t)[0], CENTER[1] + rho * _u(t)[1]
+    arc = [(cx + rho * _u(t - 180 + 180 * i / n)[0], cy + rho * _u(t - 180 + 180 * i / n)[1]) for i in range(n + 1)]
+    dx, dy = _u(t + 90)
+    return arc + [(arc[-1][0] + dx * 900, arc[-1][1] + dy * 900)]
 
-    Girar mantiene la frontera tangente al círculo blanco: la cuña nace en el anillo y se abre
-    hasta el borde exterior. Se recorta con la pieza de delante para que nunca asome."""
-    wedges = [affinity.rotate(piece, s * degrees, origin=CENTER).intersection(front) for s in (1, -1)]
-    return _polygons(unary_union([piece, *wedges]))
+
+def swirl():
+    """Los tres colores hasta el centro: el disco exterior cortado por las tres fronteras.
+    Fuera del círculo blanco coinciden con los segmentos oficiales."""
+    official = segments()
+    lines = unary_union([LineString(boundary(t + ROTATION)) for t in TANGENTS] + [circle(CENTER, R).exterior])
+    faces = [f for f in polygonize(lines) if f.area > 1000]
+    out = {}
+    for name, seg in official.items():
+        out[name] = _polygons(max(faces, key=lambda f: f.intersection(seg).area))
+    return out
+
+
+def gaps(width):
+    """Las tres fronteras como rendijas de width px, de la punta del centro al borde."""
+    return unary_union([LineString(boundary(t + ROTATION)).buffer(width / 2, cap_style="flat", quad_segs=32)
+                        for t in TANGENTS])
+
+
+def overlap_wedge(piece, into, degrees, r_min):
+    """Cuña de piece que se monta sobre into: piece girada sobre el centro, recortada con into.
+    Girar mantiene la frontera tangente al círculo blanco; la cuña nace bajo el anillo (r_min)."""
+    wedges = [affinity.rotate(piece, s * degrees, origin=CENTER).intersection(into) for s in (1, -1)]
+    return max(wedges, key=lambda w: w.area).intersection(annulus(r_min, R))
 
 
 def pieces():
-    seg = segments()
-    window = circle(CENTER, R - OUTER_WINDOW)
-    # El verde (el de más atrás) con 3 px de más debajo del rojo y del amarillo
-    green_under = _polygons(unary_union([
-        seg["verde"], seg["verde"].buffer(UNDERLAP).intersection(unary_union([seg["rojo"], seg["amarillo"]]))]))
+    sw = swirl()
+    disk = circle(CENTER, R)
+    vidrio = {k: _polygons(fillet(v.difference(gaps(GAP)).intersection(disk))) for k, v in sw.items()}
+    petals = {
+        "rojo": fillet(unary_union([sw["rojo"], overlap_wedge(sw["rojo"], sw["amarillo"], PETAL, R_RING - 16)])),
+        "verde": fillet(unary_union([sw["verde"], overlap_wedge(sw["verde"], sw["amarillo"], PETAL, R_RING - 16)])),
+    }
     return {
-        **seg,
+        # Los tres colores hasta el centro (g2, y el amarillo de g3)
+        **{f"{k}-centro": v for k, v in sw.items()},
+        # g1: vidrios con rendijas de luz entre ellos
+        **{f"vidrio-{k}": v for k, v in vidrio.items()},
+        # g3: el rojo y el verde con la cuña que se monta sobre el amarillo
+        **{f"petalo-{k}": _polygons(v.intersection(disk)) for k, v in petals.items()},
         "azul": circle(CENTER, R_BLUE),
-        # Base blanca bajo todo el logo: el anillo blanco que se ve y el blanco de detrás del cristal
-        "base": circle(CENTER, R - BASE_INSET),
-        # Concepto Fotos: rojo y verde con la cuña que se mete debajo del pétalo amarillo
-        "rojo-solapa": tuck(seg["rojo"], seg["amarillo"], OVERLAP),
-        "verde-solapa": tuck(seg["verde"], seg["amarillo"], OVERLAP),
-        # c1 (ronda 2): copias planas de cada pieza, acabadas antes del borde (la ventana de blanco)
-        "fondo-rojo": _polygons(seg["rojo"].intersection(window)),
-        "fondo-amarillo": _polygons(seg["amarillo"].intersection(window)),
-        "fondo-verde": _polygons(green_under.intersection(window)),
-        "fondo-azul": circle(CENTER, R_BLUE - BLUE_WINDOW),
-        "base-fiel": circle(CENTER, R - BASE_INSET_FIEL),
-        "sombra": circle(CENTER, R - SHADOW_INSET),
-        # c5: el anillo blanco como parte del cristal azul (una sola pieza de cristal hasta R_RING)
-        "anillo": circle(CENTER, R_RING),
+        "aro": annulus(R_BLUE, R_RING),             # el anillo blanco solo
+        "azul-lupa": circle(CENTER, R_BLUE_LENS),   # g2: azul más pequeño detrás de la lupa
+        "aro-lupa": annulus(R_BLUE_LENS, R_RING),   # g2: la parte blanca de la lupa
+        "centro-lupa": circle(CENTER, R_BLUE_LENS),  # g2: la parte transparente de la lupa
+        "luz": circle(CENTER, R - LIGHT_INSET),     # la luz de detrás del cristal de color
     }
 
 
-def group(name, layers, **kw):
-    """Un grupo de Liquid Glass con varias piezas, cada una con su color (de delante hacia atrás)."""
-    g = glass(name, **kw)
-    g["layers"] = [{"name": n, "image-name": f"{image}.svg", "glass": True, "fill": {"solid": color(fill, alpha)}}
-                   for n, image, fill, alpha in layers]
+# --- Grupos y capas con las claves de Icon Composer ----------------------------------------------
+def layer(name, image, fill, alpha=1.0, glass=True, blend=None, opacity=None):
+    out = {"name": name, "image-name": f"{image}.svg", "glass": glass,
+           "fill": {"solid": color(fill, alpha)} if isinstance(fill, str) else fill}
+    if blend:
+        out["blend-mode"] = blend
+    if opacity is not None:
+        out["opacity"] = opacity
+    return out
+
+
+def group(name, layers, translucency, blur, refraction=None, shadow=("none", 0.0), specular=True,
+          placement="automatic", lighting="individual", blend=None, opacity=None):
+    """Un grupo de Liquid Glass (de delante hacia atrás) con todas sus claves a mano."""
+    g = {
+        "name": name,
+        "lighting": lighting,
+        "specular": specular,
+        "specular-highlight-placement": placement,
+        "blur-material": blur,
+        "shadow": {"kind": shadow[0], "opacity": shadow[1]},
+        "translucency": {"enabled": translucency > 0, "value": translucency},
+        "layers": layers,
+    }
+    if refraction:
+        g["refractivity"] = {"enabled": True, "strength": refraction[0], "depth": refraction[1]}
+    if blend:
+        g["blend-mode"] = blend
+    if opacity is not None:
+        g["opacity"] = opacity
     return g
 
 
-WHITE_BG = {"solid": color(WHITE)}  # el fondo del icono oficial
+def light(shadow=("neutral", 0.35)):
+    """La luz de detrás: disco blanco plano, opaco, sin brillo ni refracción; da la sombra del logo."""
+    return group("luz", [layer("luz", "luz", WHITE)], translucency=0.0, blur=0.5, shadow=shadow,
+                 specular=False)
 
 
-# --- Concepto 1: fiel al icono oficial de iOS (ronda 2) ------------------------------------------
-def blue_fiel(shadow="none", shadow_opacity=0.0):
-    """Azul de cristal translúcido sobre su fondo plano (14 px más pequeño). En el centro es el azul
-    de Chrome; en el borde deja ver el blanco de debajo (la banda clara del oficial) y el bisel lo
-    dobla. Refracción (0.4, 0.15): pieza grande, redonda y a 346 px del borde del lienzo; su bisel
-    toma ~50-100 px hacia dentro, dentro de su propio fondo, así que no trae trozos de otro color.
-    Sin sombra en oscuro (su banda dibujaba un contorno gris en el anillo); con la de su color en
-    claro (el halo azul del anillo del oficial)."""
-    return glass("azul", fill=BLUE, alpha=0.9, translucency=0.5, blur=0.3, refraction=(0.4, 0.15),
-                 shadow=shadow, shadow_opacity=shadow_opacity)
+def tri(prefix, tints, alpha):
+    return [layer(k, f"{prefix}{k}" if prefix else f"{k}-centro", c, alpha)
+            for k, c in zip(("rojo", "amarillo", "verde"), tints)]
 
 
-def segments_fiel(shadow="none", shadow_opacity=0.0, lighting="individual"):
-    """Los tres segmentos en un grupo de cristal de color, translúcido sobre sus fondos planos.
-    Refracción mínima (0.3, 0.1): cada segmento acaba en una punta muy fina junto al anillo.
-    lighting="combined" (c4) los ilumina como una sola pieza: sin bisel en las juntas."""
-    g = group("segmentos", [("rojo", "rojo", RED, 0.92), ("amarillo", "amarillo", YELLOW, 0.92),
-                            ("verde", "verde", GREEN, 0.92)],
-              translucency=0.5, blur=0.3, refraction=(0.3, 0.1), shadow=shadow, shadow_opacity=shadow_opacity)
-    g["lighting"] = lighting
-    return g
+# --- g1 vitral ----------------------------------------------------------------------------------
+def vitral(dark):
+    """Lente azul (refracción profunda: pieza grande y redonda), anillo esmerilado, vidrios con
+    rendijas y la luz detrás. La lente ve debajo los tres colores y las rendijas juntándose."""
+    tints = (RED, YELLOW, GREEN)
+    lens = group("lente", [layer("azul", "azul", BLUE, 0.72)], translucency=0.55, blur=0.0,
+                 refraction=(0.7, 0.5), shadow=("layer-color", 0.5), placement="inside")
+    ring = group("anillo", [layer("aro", "aro", WHITE, 0.78)], translucency=0.5, blur=0.5,
+                 refraction=(0.3, 0.1), shadow=("neutral", 0.3))
+    panes = group("vidrios", tri("vidrio-", tints, 0.8 if dark else 0.85), translucency=0.55, blur=0.0,
+                  refraction=(0.45, 0.2), shadow=("none", 0.0) if dark else ("layer-color", 0.45))
+    return {"fill": "system-dark" if dark else "system-light", "groups": [lens, ring, panes, light()]}
 
 
-def flat(name, layers):
-    """Grupo plano: opaco, sin sombra (sin la banda de ~4 px), sin brillo y sin refracción."""
-    g = group(name, layers, translucency=0.0, blur=0.5, shadow="none", shadow_opacity=0.0)
-    g["specular"] = False
-    return g
+# --- g2 lupa ------------------------------------------------------------------------------------
+def lupa(dark):
+    """Lupa: anillo y centro como una sola lente transparente (lighting combined: un solo cuerpo
+    de cristal, un solo bisel en el borde del anillo), refracción muy profunda; detrás, el azul
+    (más pequeño: la lupa lo aumenta) y los tres colores hasta el centro."""
+    lens = group("lupa", [layer("aro", "aro-lupa", WHITE, 0.55), layer("centro", "centro-lupa", WHITE, 0.08)],
+                 translucency=0.8, blur=0.0, refraction=(0.85, 0.65), shadow=("neutral", 0.45),
+                 lighting="combined")
+    blue = group("azul", [layer("azul", "azul-lupa", BLUE, 0.85)], translucency=0.45, blur=0.2,
+                 refraction=(0.4, 0.2), shadow=("layer-color", 0.45))
+    segs = group("colores", tri("", (RED, YELLOW, GREEN), 0.8), translucency=0.5, blur=0.0,
+                 refraction=(0.4, 0.15), shadow=("layer-color", 0.4))
+    return {"fill": "system-dark" if dark else "system-light", "groups": [lens, blue, segs, light()]}
 
 
-# Copias planas de los segmentos bajo el cristal (el verde, detrás, con 3 px bajo los otros dos)
-FONDOS = [("fondo-rojo", "fondo-rojo", RED, 1.0), ("fondo-amarillo", "fondo-amarillo", YELLOW, 1.0),
-          ("fondo-verde", "fondo-verde", GREEN, 1.0)]
-
-
-def blue_backing():
-    """El azul plano bajo el cristal azul, en su grupo delante de los segmentos (como en c3)."""
-    return flat("fondo-azul", [("fondo-azul", "fondo-azul", BLUE, 1.0)])
-
-
-def base_fiel():
-    """Base de c1: los fondos planos delante y el blanco (el anillo y las ventanas) detrás, hasta R-1.5."""
-    return flat("base", [*FONDOS, ("base", "base-fiel", WHITE, 1.0)])
-
-
-def shadow_caster():
-    """Disco oculto detrás de la base opaca: la única sombra de c1 (neutra, suave). La base tapa
-    su banda de ~4 px, que con la sombra en la base saldría como contorno negro fuera del logo."""
-    g = glass("sombra", fill=WHITE, translucency=0.0, blur=0.5, shadow="neutral", shadow_opacity=0.35)
-    g["specular"] = False
-    return g
-
-
-def fiel(dark, lighting="individual"):
-    """c1 (oscuro) o c1c (claro, el fondo blanco es el anillo); lighting distinto para c4/c4c."""
-    if dark:
-        return {"fill": "system-dark",
-                "groups": [blue_fiel(), blue_backing(), segments_fiel(lighting=lighting), base_fiel(),
-                           shadow_caster()]}
-    return {"fill": WHITE_BG,
-            "groups": [blue_fiel("layer-color", 0.5), blue_backing(),
-                       segments_fiel("layer-color", 0.5, lighting), flat("fondos", FONDOS)]}
-
-
-# --- Base y segmentos de c2/c3 (sin cambios) -----------------------------------------------------
-def segments_official():
-    """Los tres segmentos en un solo grupo de cristal de color, con sombra del color de cada uno (c3)."""
-    return group("segmentos", [("rojo", "rojo", RED, 0.97), ("amarillo", "amarillo", YELLOW, 0.97),
-                               ("verde", "verde", GREEN, 0.97)],
-                 translucency=0.3, blur=0.3, refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.5)
-
-
-def base(extra=()):
-    """Base blanca (el anillo), opaca y sin refracción: el blanco del anillo queda limpio.
-
-    extra: piezas planas que van encima de la base, debajo de un cristal transparente, para que
-    ese cristal conserve el color de Chrome y solo cambie lo que dobla su borde."""
-    return group("base", [*extra, ("base", "base", WHITE, 1.0)],
-                 translucency=0.0, blur=0.5, shadow="neutral", shadow_opacity=0.35)
-
-
-# --- Concepto 2: Fotos (pétalo amarillo de cristal delante del rojo y del verde) ---------------
-def blue_photos():
-    return glass("azul", fill=BLUE, alpha=0.95, translucency=0.35, blur=0.2, refraction=(0.35, 0.15),
-                 shadow="layer-color", shadow_opacity=0.5)
-
-
-def yellow_petal():
-    """Pétalo amarillo de cristal claro y sin esmerilar: se ven debajo las cuñas del rojo y el verde
-    (naranja y lima) y su borde las dobla. Refracción moderada: es grande, pero su borde exterior
-    queda a 103 px del borde del lienzo y las fronteras acaban en el borde del logo."""
-    return glass("amarillo", fill=YELLOW, alpha=0.85, translucency=0.6, blur=0.0, refraction=(0.35, 0.12),
-                 shadow="layer-color", shadow_opacity=0.55)
-
-
-# Debajo del pétalo transparente, el amarillo plano (en el grupo de la base): el pétalo sigue siendo
-# del amarillo de Chrome (sobre la base blanca saldría desvaído) y solo cambia donde están las cuñas.
-PETAL_BACKING = ("fondo-amarillo", "amarillo", YELLOW, 1.0)
-
-
-def red_green_tucked():
-    """Rojo y verde con sus cuñas debajo del amarillo; no se pisan entre ellos (rojo sobre verde
-    daría marrón), así que comparten grupo."""
-    return group("rojo-verde", [("rojo", "rojo-solapa", RED, 0.97), ("verde", "verde-solapa", GREEN, 0.97)],
-                 translucency=0.3, blur=0.3, refraction=(0.3, 0.1), shadow="layer-color", shadow_opacity=0.5)
-
-
-# --- Concepto 3: lente (el azul como una canica de cristal transparente) ------------------------
-def blue_lens():
-    """Lente azul transparente, sin esmerilar, con refracción profunda (pieza grande, redonda y lisa,
-    a 346 px del borde del lienzo): su borde recoge el anillo blanco y el remolino de colores.
-    No más profunda: con (0.75, 0.55) el bisel se comería medio azul y lo haría parecer pequeño."""
-    return glass("azul", fill=BLUE, alpha=0.75, translucency=0.65, blur=0.0, refraction=(0.6, 0.3),
-                 shadow="layer-color", shadow_opacity=0.6, specular="inside")
-
-
-def lens_backing():
-    """El azul plano y opaco debajo de la lente transparente: el centro sigue siendo del azul de
-    Chrome y lo que cambia es el borde, que muestra lo que rodea a la lente. Va en su propio grupo,
-    delante de los segmentos, para que el bisel interior de los segmentos no traiga trozos de azul."""
-    return glass("fondo-lente", fill=BLUE, translucency=0.0, blur=0.5, shadow="none", shadow_opacity=0.0,
-                 image="azul")
+# --- g3 pétalos ---------------------------------------------------------------------------------
+def petalos(dark):
+    """Fotos: rojo y verde delante, montados sobre el amarillo; el centro, un botón de cristal."""
+    center = group("centro", [layer("azul", "azul", BLUE, 0.85), layer("aro", "aro", WHITE, 0.82)],
+                   translucency=0.45, blur=0.1, refraction=(0.55, 0.35), shadow=("neutral", 0.4),
+                   lighting="combined")
+    front = group("rojo-verde", [layer("rojo", "petalo-rojo", RED, 0.72), layer("verde", "petalo-verde", GREEN, 0.72)],
+                  translucency=0.6, blur=0.0, refraction=(0.5, 0.25), shadow=("layer-color", 0.5))
+    back = group("amarillo", [layer("amarillo", "amarillo-centro", YELLOW, 0.82)], translucency=0.5, blur=0.0,
+                 refraction=(0.45, 0.2), shadow=("layer-color", 0.45))
+    return {"fill": "system-dark" if dark else "system-light", "groups": [center, front, back, light()]}
 
 
 APPROVED = {}
 
-# --- c5 (ronda 3): c4 sin los dos defectos que quedaban ------------------------------------------
-# El escéptico de c4 midió (1) el rojo volviéndose marrón y el amarillo oliva en las juntas: el
-# esmerilado 0.3 y la translucidez 0.5 mezclaban los fondos planos vecinos; y (2) contornos grises
-# de 3-4 px a los dos lados del anillo blanco: la banda oscura que ictool dibuja junto a cada borde
-# de cristal caía sobre el blanco opaco. En c5 el cristal es nítido (blur 0, translucidez 0.2) y el
-# anillo blanco forma parte del grupo del azul: el borde de ese cristal es el exterior del anillo,
-# así que su banda cae sobre los segmentos de color (como el canto del anillo del oficial) y no hay
-# borde de cristal sobre el blanco.
-def blue_ring():
-    g = group("azul", [("azul", "azul", BLUE, 0.95), ("anillo", "anillo", WHITE, 1.0)],
-              translucency=0.2, blur=0.0, refraction=(0.35, 0.12), shadow="none", shadow_opacity=0.0)
-    return g
-
-
-def segments_clean():
-    g = group("segmentos", [("rojo", "rojo", RED, 0.95), ("amarillo", "amarillo", YELLOW, 0.95),
-                            ("verde", "verde", GREEN, 0.95)],
-              translucency=0.2, blur=0.0, refraction=(0.3, 0.1), shadow="none", shadow_opacity=0.0)
-    g["lighting"] = "combined"
-    return g
-
-
-def fiel_limpio(dark):
-    """Máximo 4 grupos (norma de Apple): los fondos planos del azul y del anillo van en el grupo de la
-    base, detrás de los segmentos; no se solapan con ellos, así que el orden no cambia nada."""
-    backing = [("fondo-azul", "fondo-azul", BLUE, 1.0), ("fondo-anillo", "anillo", WHITE, 1.0)]
-    if dark:
-        base = flat("base", [*backing, *FONDOS, ("base", "base-fiel", WHITE, 1.0)])
-        return {"fill": "system-dark", "groups": [blue_ring(), segments_clean(), base, shadow_caster()]}
-    return {"fill": WHITE_BG, "groups": [blue_ring(), segments_clean(), flat("fondos", [*backing, *FONDOS])]}
-
-
 CONCEPTS = {
-    "chrome-c5": fiel_limpio(dark=True),
-    "chrome-c5c": fiel_limpio(dark=False),
-    # c1 (fiel al oficial): fondo oscuro de Apple, base blanca con los fondos planos, segmentos y
-    # azul de cristal sin sombra, y la sombra de un disco oculto
-    "chrome-c1": fiel(dark=True),
-    # c1c: el icono oficial de iOS (fondo blanco, el anillo es el fondo), con sombras de color
-    "chrome-c1c": fiel(dark=False),
-    # c4/c4c: c1/c1c con un solo cambio, los segmentos iluminados como una sola pieza ("combined")
-    "chrome-c4": fiel(dark=True, lighting="combined"),
-    "chrome-c4c": fiel(dark=False, lighting="combined"),
-    # c2 (Fotos): pétalo amarillo de cristal claro delante del rojo y el verde, que se meten debajo
-    "chrome-c2": {"fill": "system-dark", "groups": [blue_photos(), yellow_petal(), red_green_tucked(),
-                                                    base([PETAL_BACKING])]},
-    "chrome-c2c": {"fill": "system-light", "groups": [blue_photos(), yellow_petal(), red_green_tucked(),
-                                                      base([PETAL_BACKING])]},
-    # c3 (lente): el azul como lente transparente sobre su azul plano
-    "chrome-c3": {"fill": "system-dark", "groups": [blue_lens(), lens_backing(), segments_official(), base()]},
-    "chrome-c3c": {"fill": "system-light", "groups": [blue_lens(), lens_backing(), segments_official(), base()]},
+    "chrome-g1": vitral(dark=True),
+    "chrome-g1c": vitral(dark=False),
+    "chrome-g2": lupa(dark=True),
+    "chrome-g2c": lupa(dark=False),
+    "chrome-g3": petalos(dark=True),
+    "chrome-g3c": petalos(dark=False),
 }
+
+# Pruebas de la ronda 1 (se borran después): g3 sin la luz detrás; g1 con los vidrios en multiplicar
+_x1 = petalos(dark=True)
+_x1["groups"] = _x1["groups"][:3]
+_x2 = vitral(dark=True)
+_x2["groups"][2]["blend-mode"] = "multiply"
+CONCEPTS["chrome-gx1"] = _x1
+CONCEPTS["chrome-gx2"] = _x2
 
 
 def main(names=None):
@@ -372,7 +281,7 @@ def main(names=None):
     targets = {n: n for n in names} if names else APPROVED
     for name, concept in targets.items():
         spec = CONCEPTS[concept]
-        # Capas a lienzo completo: ictool ya no recorta la sombra a la caja de cada pieza
+        # Capas a lienzo completo: ictool no recorta la sombra a la caja de cada pieza
         write_icon(name, spec["fill"], spec["groups"], geo, full_bounds=True)
 
 

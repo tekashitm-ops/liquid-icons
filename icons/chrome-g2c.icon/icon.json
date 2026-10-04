@@ -1,0 +1,151 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": "system-light",
+  "groups": [
+    {
+      "name": "lupa",
+      "lighting": "combined",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.45
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.8
+      },
+      "layers": [
+        {
+          "name": "aro",
+          "image-name": "aro-lupa.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.55000"
+          }
+        },
+        {
+          "name": "centro",
+          "image-name": "centro-lupa.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.08000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.85,
+        "depth": 0.65
+      }
+    },
+    {
+      "name": "azul",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.2,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.45
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.45
+      },
+      "layers": [
+        {
+          "name": "azul",
+          "image-name": "azul-lupa.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.00000,0.47059,0.95294,0.85000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.2
+      }
+    },
+    {
+      "name": "colores",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.4
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.5
+      },
+      "layers": [
+        {
+          "name": "rojo",
+          "image-name": "rojo-centro.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.96863,0.10980,0.10980,0.80000"
+          }
+        },
+        {
+          "name": "amarillo",
+          "image-name": "amarillo-centro.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,0.75686,0.00000,0.80000"
+          }
+        },
+        {
+          "name": "verde",
+          "image-name": "verde-centro.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.00000,0.63137,0.25490,0.80000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.15
+      }
+    },
+    {
+      "name": "luz",
+      "lighting": "individual",
+      "specular": false,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.5,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.35
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0.0
+      },
+      "layers": [
+        {
+          "name": "luz",
+          "image-name": "luz.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,1.00000"
+          }
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
