@@ -66,8 +66,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.5,
-        "depth": 0.14
+        "strength": 0.6,
+        "depth": 0.22
       }
     },
     {
@@ -75,7 +75,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.25,
+      "blur-material": 0.0,
       "shadow": {
         "kind": "neutral",
         "opacity": 0.5
@@ -87,7 +87,7 @@
       "layers": [
         {
           "name": "luz",
-          "image-name": "liquido-g4.svg",
+          "image-name": "liquido-e9.svg",
           "glass": true,
           "fill": {
             "linear-gradient": [

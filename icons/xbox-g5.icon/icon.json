@@ -66,8 +66,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.45,
-        "depth": 0.1
+        "strength": 0.5,
+        "depth": 0.14
       }
     },
     {
@@ -75,7 +75,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.6,
+      "blur-material": 0.25,
       "shadow": {
         "kind": "neutral",
         "opacity": 0.5
@@ -87,10 +87,13 @@
       "layers": [
         {
           "name": "luz",
-          "image-name": "caustica-g4.svg",
+          "image-name": "liquido-g4.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.60784,0.94118,0.04314,0.85000"
+            "linear-gradient": [
+              "extended-srgb:0.60784,0.94118,0.04314,0.85000",
+              "extended-srgb:0.82353,0.92549,0.07843,0.85000"
+            ]
           }
         }
       ]
@@ -107,7 +110,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.55
+        "value": 0.2
       },
       "layers": [
         {
@@ -115,7 +118,7 @@
           "image-name": "xluz-g5.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.93725,1.00000,0.84706,0.85000"
+            "solid": "extended-srgb:0.94902,1.00000,0.87843,1.00000"
           }
         },
         {
@@ -123,7 +126,10 @@
           "image-name": "nucleo-g4.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.03922,0.25882,0.03922,0.65000"
+            "linear-gradient": [
+              "extended-srgb:0.03922,0.25882,0.03922,0.55000",
+              "extended-srgb:0.11765,0.43137,0.07059,0.55000"
+            ]
           }
         }
       ]
