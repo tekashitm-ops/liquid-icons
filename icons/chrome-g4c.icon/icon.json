@@ -10,7 +10,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "inside",
-      "blur-material": 0.1,
+      "blur-material": 0.05,
       "shadow": {
         "kind": "layer-color",
         "opacity": 0.5

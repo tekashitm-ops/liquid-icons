@@ -71,8 +71,11 @@ FILLET = 16           # px de redondeo de las esquinas libres de los pétalos
 GAP4 = 20.0           # px de rendija abierta, del centro hasta pasado el borde exterior
 FILLET4 = 20.0        # px de redondeo de las esquinas de los vidrios (en el borde y en el centro)
 LIGHT_R4 = 0.62 * R   # radio de la luz de detrás (en claro, lo de dentro de él va sin fondo de color)
-SPOKE4 = GAP4 + 16    # px de ancho de los rayos de luz: 8 px por debajo del canto de cada vidrio
-SPOKE_END4 = 20.0     # px antes del borde exterior donde acaba cada rayo
+# Rayos de luz bajo las rendijas: se abren de SPOKE4 px (8 px bajo el canto de cada vidrio: con
+# 18 px la junta con el disco salía como un goterón, ronda g4-1) a SPOKE_RIM4 en el borde, por el
+# que salen sin punta: con el fin redondo a 20 px del borde quedaba un hueco oscuro bajo la
+# esquina de 60° de cada vidrio, que su bisel aumentaba en un punto (ronda g4-3)
+SPOKE4, SPOKE_RIM4 = GAP4 + 16, GAP4 + 36
 HUB4 = R_BLUE + 15    # dentro de este radio (bajo la lente y el anillo) las rendijas son finas y centradas
 SLIT4 = 16.0          # px de las rendijas finas de debajo de la lente (una Y de luz, sin cubo en el centro)
 JOINT4 = 24.0         # px de redondeo de las juntas entrantes de la luz (disco y rayos)
@@ -230,15 +233,20 @@ def strip(sw, t, width):
 
 
 def spokes(dist):
-    """Tres rayos de luz de SPOKE4 px a lo largo de las rectas de las fronteras, con el eje a dist
-    px del centro (el de la rendija o el del solape), hasta SPOKE_END4 px antes del borde (fin redondo)."""
+    """Tres rayos de luz a lo largo de las rectas de las fronteras, con el eje a dist px del centro
+    (el de la rendija): de SPOKE4 px en el punto de tangencia a SPOKE_RIM4 en el borde exterior,
+    recortados a LIGHT_INSET de él."""
     out = []
+    s1 = math.sqrt(R ** 2 - dist ** 2)                     # del punto de tangencia al borde
     for t in TANGENTS:
         (ux, uy), (dx, dy) = _u(t + ROTATION), _u(t + ROTATION + 90)
         ox, oy = CENTER[0] + ux * dist, CENTER[1] + uy * dist
-        s = math.sqrt((R - SPOKE_END4) ** 2 - dist ** 2) - SPOKE4 / 2
-        out.append(LineString([(ox, oy), (ox + dx * s, oy + dy * s)]).buffer(SPOKE4 / 2, quad_segs=32))
-    return unary_union(out)
+        pts = []
+        for s, w in ((0.0, SPOKE4), (s1 + 40, SPOKE_RIM4 + (SPOKE_RIM4 - SPOKE4) * 40 / s1)):
+            pts.append(((ox + dx * s + ux * w / 2, oy + dy * s + uy * w / 2),
+                        (ox + dx * s - ux * w / 2, oy + dy * s - uy * w / 2)))
+        out.append(Polygon([pts[0][0], pts[1][0], pts[1][1], pts[0][1]]))
+    return unary_union(out).intersection(circle(CENTER, R - LIGHT_INSET))
 
 
 def light_shape(dist):
@@ -260,12 +268,23 @@ def gap4(sw, t, width=GAP4):
     return strip(sw, t, width).difference(circle(CENTER, HUB4))
 
 
+def gaps4(sw):
+    """Las tres rendijas de g4 enteras: de un lado fuera de HUB4 y la Y fina dentro."""
+    return unary_union([gap4(sw, t) for t in TANGENTS] + [inner_slits()])
+
+
 def panes4(sw):
     """g4: tres vidrios sueltos. Cada frontera es una rendija abierta de GAP4 px hasta pasado el borde
     exterior, que se come el color de la esquina; el del casquete guarda el borde oficial. Bajo la
     lente, las tres rendijas siguen finas: una Y de luz que la lente dobla."""
-    gaps = unary_union([gap4(sw, t) for t in TANGENTS] + [inner_slits()])
-    return {k: _polygons(fillet(v.difference(gaps), FILLET4)) for k, v in sw.items()}
+    return {k: _polygons(fillet(v.difference(gaps4(sw)), FILLET4)) for k, v in sw.items()}
+
+
+def light4(sw, panes):
+    """La luz de g4 recortada a los vidrios y a las rendijas: en el borde, los rayos se abren más que
+    la rendija y si no asomaban, blancos, por las esquinas redondeadas de los vidrios."""
+    keep = unary_union([*panes.values(), gaps4(sw).intersection(circle(CENTER, R - LIGHT_INSET))])
+    return _polygons(light_shape(R_RING - GAP4 / 2).intersection(keep))
 
 
 def cores(panes, dist):
@@ -304,7 +323,7 @@ def pieces():
         # g4: vidrios sueltos con rendijas abiertas, la luz de detrás (rayos en el eje de las
         # rendijas) y el fondo de color de la parte de fuera de cada vidrio
         **{f"panel-{k}": v for k, v in p4.items()},
-        "luz4": light_shape(R_RING - GAP4 / 2),
+        "luz4": light4(sw, p4),
         **{f"fondo-{k}": v for k, v in cores(p4, R_RING - GAP4 / 2).items()},
     }
 
@@ -414,9 +433,9 @@ def abierto(dark):
     lleva ámbar. En claro, bajo la parte de fuera de cada vidrio, su color hondo."""
     names = ("rojo", "amarillo", "verde")
     # Lente: (0.85, 0.6) pasa del foco: invertía los lóbulos en tres manchas (una cara) con bordes
-    # peinados (ronda g4-1). Azul más lleno: al 0.62 salía celeste pálido (158,201,255). Un poco
-    # esmerilada (0.1, como la barra de Steam) para que los bordes de los lóbulos no salgan peinados
-    lens = group("lente", [layer("azul", "azul", BLUE4, 0.72)], translucency=0.6, blur=0.1,
+    # peinados (ronda g4-1). Azul más lleno: al 0.62 salía celeste pálido (158,201,255). Apenas
+    # esmerilada para que los bordes de los lóbulos no salgan peinados (con 0.1, desenfocados: g4-3)
+    lens = group("lente", [layer("azul", "azul", BLUE4, 0.72)], translucency=0.6, blur=0.05,
                  refraction=(0.7, 0.5), shadow=("layer-color", 0.5), placement="inside")
     # Anillo: el injerto de g2, algo de refracción y poco esmerilado (bandas limpias a 2x, ronda g4-1)
     ring = group("anillo", [layer("aro", "aro", WHITE, 0.7)], translucency=0.55, blur=0.15,
