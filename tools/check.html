@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Comprobación de capas</title>
+<style>
+  body { margin: 0; padding: 20px; background: #111; color: #ddd; font: 13px system-ui, sans-serif; display: flex; gap: 20px; flex-wrap: wrap; }
+  figure { margin: 0; } figcaption { margin-top: 6px; }
+  .stack { position: relative; width: 400px; height: 400px; background: linear-gradient(#158abd, #091b3f); }
+  .stack img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .l1 { filter: drop-shadow(0 0 0 #000); } .l2 { opacity: .85; } .l3 { opacity: .7; }
+  .tint img:nth-child(1) { filter: sepia(1) saturate(6) hue-rotate(-50deg); }
+  .tint img:nth-child(2) { filter: sepia(1) saturate(6) hue-rotate(60deg); }
+  .tint img:nth-child(3) { filter: sepia(1) saturate(6) hue-rotate(180deg); opacity: .8; }
+</style>
+<figure><div class="stack" id="flat"></div><figcaption>Capas juntas (plano)</figcaption></figure>
+<figure><div class="stack tint" id="sep"></div><figcaption>Cada capa en un color</figcaption></figure>
+<script>
+  const icon = new URLSearchParams(location.search).get('icon') || 'steam';
+  for (const id of ['flat', 'sep']) for (const f of ['1-manivela', '2-eje', '3-biela']) {
+    const i = new Image(); i.src = `../icons/${icon}.icon/Assets/${f}.svg`; document.getElementById(id).appendChild(i);
+  }
+</script>
