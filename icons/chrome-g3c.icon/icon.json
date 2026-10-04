@@ -10,10 +10,10 @@
       "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.05,
+      "blur-material": 0.3,
       "shadow": {
         "kind": "neutral",
-        "opacity": 0.2
+        "opacity": 0.25
       },
       "translucency": {
         "enabled": true,
@@ -25,7 +25,7 @@
           "image-name": "azul.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.00000,0.47059,0.95294,0.74000"
+            "solid": "extended-srgb:0.00000,0.47059,0.95294,0.78000"
           }
         },
         {
@@ -33,14 +33,14 @@
           "image-name": "aro.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.70000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.72000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.55,
-        "depth": 0.35
+        "strength": 0.45,
+        "depth": 0.25
       }
     },
     {
@@ -63,7 +63,7 @@
           "image-name": "petalo-rojo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.96863,0.10980,0.10980,0.72000"
+            "solid": "extended-srgb:0.96863,0.10980,0.10980,0.70000"
           }
         },
         {
@@ -71,14 +71,14 @@
           "image-name": "petalo-verde.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.00000,0.63137,0.25490,0.72000"
+            "solid": "extended-srgb:0.00000,0.63137,0.25490,0.70000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.45,
-        "depth": 0.22
+        "strength": 0.3,
+        "depth": 0.1
       }
     },
     {
@@ -89,11 +89,11 @@
       "blur-material": 0.0,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.45
+        "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.55
+        "value": 0.6
       },
       "layers": [
         {
@@ -101,14 +101,14 @@
           "image-name": "petalo-amarillo.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,0.75686,0.00000,0.80000"
+            "solid": "extended-srgb:1.00000,0.75686,0.00000,0.75000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
         "strength": 0.4,
-        "depth": 0.18
+        "depth": 0.15
       }
     }
   ],
