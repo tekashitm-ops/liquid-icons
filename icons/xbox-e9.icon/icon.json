@@ -66,8 +66,38 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.32,
-        "depth": 0.08
+        "strength": 0.3,
+        "depth": 0.07
+      }
+    },
+    {
+      "name": "x",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.12,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.4
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.5
+      },
+      "layers": [
+        {
+          "name": "x",
+          "image-name": "xvidrio-g4.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:0.01961,0.22745,0.15686,0.82000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.12
       }
     },
     {
@@ -95,32 +125,15 @@
               "extended-srgb:0.82353,0.92549,0.07843,0.85000"
             ]
           }
-        }
-      ]
-    },
-    {
-      "name": "nucleo",
-      "lighting": "individual",
-      "specular": true,
-      "specular-highlight-placement": "automatic",
-      "blur-material": 0.6,
-      "shadow": {
-        "kind": "neutral",
-        "opacity": 0.4
-      },
-      "translucency": {
-        "enabled": true,
-        "value": 0.55
-      },
-      "layers": [
+        },
         {
-          "name": "nucleo",
+          "name": "fondo",
           "image-name": "nucleo-g4.svg",
-          "glass": true,
+          "glass": false,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:0.03922,0.25882,0.03922,0.55000",
-              "extended-srgb:0.11765,0.43137,0.07059,0.55000"
+              "extended-srgb:0.04314,0.24706,0.04314,1.00000",
+              "extended-srgb:0.10196,0.40000,0.07843,1.00000"
             ]
           }
         }

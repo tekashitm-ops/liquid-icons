@@ -91,8 +91,9 @@ X_TOP_REACH = 185  # px desde el cruce: los brazos de arriba acaban de frente al
 G4_SCALE = 0.82        # esfera del logo de 315 px de radio
 G4_TIP = {"abajo": 30, "izquierda": 16, "derecha": 16}  # px (el arco 8): puntas romas. En la punta
                        # de abajo el bisel dejaba una gota lima y luego dos orejas (cara de gato)
-NUCLEO4_R = 345        # el corazón llega bajo el anillo de la canica: el bisel de los pies ve verde
-                       # hondo y no el fondo oscuro de fuera (manchas oscuras en los pies)
+NUCLEO4_R = 351        # el fondo y el líquido llenan la canica hasta su borde: el bisel de los pies
+                       # ve verde y no el fondo oscuro de fuera (manchas oscuras en los pies). Con 345
+                       # el canto del líquido dejaba otra raya concéntrica junto al de la canica
 # La luz de dentro es un líquido lima que llena la canica hasta LEVEL_Y, recortado a las piezas (el
 # hueco de la X sigue hondo). Es una forma propia: su borde recto cruza en ángulo las laterales y
 # los flancos de la de abajo, y el bisel de cada pieza lo dobla. La copia de cada pieza recortada a
@@ -161,7 +162,7 @@ def tidy(geom, r=8, min_area=4000):
     return unary_union([q for q in getattr(g, "geoms", [g]) if q.area > min_area])
 
 
-def liquid(parts, clip=False):
+def liquid(parts, clip=False, level=LEVEL_Y):
     """g4: el líquido lima bajo LEVEL_Y y el haz de luz del arco.
 
     Sin recortar (clip=False) llena la canica entera bajo el nivel: se ve a través de las piezas,
@@ -170,10 +171,10 @@ def liquid(parts, clip=False):
     logo = unary_union(list(parts.values()))
     region = logo if clip else disk(NUCLEO4_R)
     f = LEVEL_FILLET
-    low = region.intersection(box(0, LEVEL_Y, 1024, 1024))
+    low = region.intersection(box(0, level, 1024, 1024))
     # redondear solo junto al nivel: abrirlo todo cortaba los pies finos de las laterales
     low = unary_union([low.buffer(-f, quad_segs=32).buffer(f, quad_segs=32),
-                       region.intersection(box(0, LEVEL_Y + 3 * f, 1024, 1024))])
+                       region.intersection(box(0, level + 3 * f, 1024, 1024))])
     t = np.tan(np.radians(BEAM_ANGLE))
     cx, cy = CENTER
     wedge = Polygon([(cx, cy), (cx - t * cy, 0), (cx + t * cy, 0)])
@@ -200,7 +201,7 @@ def pieces():
         "logo-g4": logo4,                                        # g4, g5: las piezas
         "nucleo-g4": disk(NUCLEO4_R),                            # g4, g5: el corazón hondo
         "liquido-g4": liquid(parts4),                            # g4, g5: el líquido y el haz
-        "liquido-e9": liquid(parts4, clip=True),                 # exploración: recortado
+        "liquido-e9": liquid(parts4, level=545),                 # exploración: nivel más bajo
         "xvidrio-g4": x_glass(logo4, RADIUS * G4_SCALE),         # g4, g5: la X de cristal
         "luz-canica": glow(small, RADIUS * MARBLE_SCALE),         # g1: la luz de dentro
         "nucleo": disk(RADIUS * MARBLE_SCALE),                   # g1: el corazón verde hondo
@@ -348,10 +349,11 @@ def g3(light_bg=False):
 MARBLE4_REFRACTION = (0.5, 0.07)   # borde estrecho y fuerte. Con (0.55, 0.25) o (0.38, 0.13) la
                                    # canica ampliaba el logo hasta llenar el anillo, hinchaba el
                                    # arco en un tulipán y rizaba los brazos en pies
-PIECE4_REFRACTION = (0.35, 0.10)   # el bisel amplía el interior de la pieza: con (0.5, 0.14) el
-                                   # nivel se hundía junto a los cantos de las laterales (copas con
-                                   # pie) y la punta oscura de la de abajo quedaba en una gota
-X4_REFRACTION = (0.3, 0.08)        # la X de cristal también dobla el nivel en sus brazos
+PIECE4_REFRACTION = (0.3, 0.07)    # el bisel amplía el interior de la pieza y oscurece su canto:
+                                   # con (0.5, 0.14) el nivel se hundía junto a los cantos de las
+                                   # laterales (copas con pie) y la punta oscura de la de abajo
+                                   # quedaba en una gota; con (0.35, 0.10), en un ojo con borde lima
+X4_REFRACTION = (0.35, 0.12)       # la X de cristal, poco esmerilada, dobla el nivel en sus brazos
 
 
 def marble4(tint, alpha, shadow_opacity):
@@ -374,7 +376,8 @@ def lake(liquid_paint, back_paint, image="liquido-g4", blur=0.25, shadow_opacity
     return g
 
 
-def g4(light_bg=False, x_light=False, piece_refraction=PIECE4_REFRACTION, x_refraction=X4_REFRACTION):
+def g4(light_bg=False, x_light=False, piece_refraction=PIECE4_REFRACTION, x_refraction=X4_REFRACTION,
+       liquid_image="liquido-g4"):
     """Canica / piezas de cristal verde / X de cristal / líquido lima que llena media canica.
 
     La canica está medio llena de un líquido lima que brilla (más amarillo abajo). No va recortado
@@ -386,41 +389,29 @@ def g4(light_bg=False, x_light=False, piece_refraction=PIECE4_REFRACTION, x_refr
     de la bola de Xbox 360); el líquido asoma apenas por sus brazos de abajo.
     """
     if light_bg:
-        x = (group("x", "xvidrio-g4", fill(WHITE, 0.92), translucency=0.3, blur=0.5,
+        x = (group("x", "xvidrio-g4", fill(WHITE, 0.92), translucency=0.3, blur=0.35,
                    refraction=x_refraction, shadow="neutral", shadow_opacity=0.3) if x_light else
-             group("x", "xvidrio-g4", fill("#BFF0A8", 0.6), translucency=0.6, blur=0.3,
+             group("x", "xvidrio-g4", fill("#BFF0A8", 0.6), translucency=0.6, blur=0.12,
                    refraction=x_refraction, shadow="neutral", shadow_opacity=0.3))
         return {"fill": LIGHT_BG, "groups": [
             marble4(XBOX_LIME, 0.08, 0.35),
             group("piezas", "logo-g4", fill(XBOX_GREEN, 0.6), translucency=0.75, blur=0.0,
                   refraction=piece_refraction, shadow="layer-color", shadow_opacity=0.8),
             x,
-            lake(fill("#5DB80A", 0.9, "#86CC0C"), fill("#E2F5DA"), shadow_opacity=0.4),
+            lake(fill("#5DB80A", 0.9, "#86CC0C"), fill("#E2F5DA"), liquid_image, shadow_opacity=0.4),
         ]}
-    # X oscura con tinte verde azulado: con verde casi negro, el lima de detrás daba oliva
-    x = (group("x", "xvidrio-g4", fill("#F2FFE0", 0.92), translucency=0.3, blur=0.5,
+    # X oscura con tinte verde azulado: con #04301A el lima de detrás daba oliva (55,107,21), y
+    # esmerilada 0.3 borraba el nivel en sus brazos
+    x = (group("x", "xvidrio-g4", fill("#F2FFE0", 0.92), translucency=0.3, blur=0.35,
                refraction=x_refraction, shadow="neutral", shadow_opacity=0.4) if x_light else
-         group("x", "xvidrio-g4", fill("#04301A", 0.8), translucency=0.5, blur=0.3,
+         group("x", "xvidrio-g4", fill("#053A28", 0.82), translucency=0.5, blur=0.12,
                refraction=x_refraction, shadow="neutral", shadow_opacity=0.4))
     return {"fill": DARK_BG, "groups": [
         marble4(XBOX_LIME, 0.12, 0.4),
         group("piezas", "logo-g4", fill(XBOX_GREEN, 0.38), translucency=0.8, blur=0.0,
               refraction=piece_refraction, shadow="layer-color", shadow_opacity=1.0),
         x,
-        lake(fill(XBOX_LIME, 0.85, XBOX_GLOW), fill("#0B3F0B", 1.0, "#1A6614")),
-    ]}
-
-
-def e9():
-    """Exploración: el líquido recortado a las piezas (ronda 7) con refracción suave."""
-    return {"fill": DARK_BG, "groups": [
-        marble4(XBOX_LIME, 0.12, 0.4),
-        group("piezas", "logo-g4", fill(XBOX_GREEN, 0.38), translucency=0.8, blur=0.0,
-              refraction=(0.32, 0.08), shadow="layer-color", shadow_opacity=1.0),
-        group("luz", "liquido-e9", fill(XBOX_LIME, 0.85, XBOX_GLOW), translucency=0.3, blur=0.25,
-              shadow="neutral", shadow_opacity=0.5),
-        group("nucleo", "nucleo-g4", fill("#0A420A", 0.55, "#1E6E12"), translucency=0.55, blur=0.6,
-              shadow="neutral", shadow_opacity=0.4),
+        lake(fill(XBOX_LIME, 0.85, XBOX_GLOW), fill("#0B3F0B", 1.0, "#1A6614"), liquid_image),
     ]}
 
 
@@ -432,8 +423,8 @@ CONCEPTS = {
     "xbox-g3": g3(), "xbox-g3c": g3(light_bg=True),
     "xbox-g4": g4(), "xbox-g4c": g4(light_bg=True),
     "xbox-g5": g4(x_light=True), "xbox-g5c": g4(light_bg=True, x_light=True),
-    "xbox-e9": e9(),
-    "xbox-e10": g4(piece_refraction=(0.5, 0.14), x_refraction=(0.4, 0.12)),
+    "xbox-e9": g4(liquid_image="liquido-e9"),
+    "xbox-e10": g4(piece_refraction=(0.25, 0.05)),
 }
 
 
