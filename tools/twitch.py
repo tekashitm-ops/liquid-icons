@@ -308,7 +308,9 @@ def g4(light=False):
     de cristal violeta (marco más transparente que en g3 y cara casi incolora), con la franja que
     pisa la barra más clara; detrás, la cara iluminada corrida, que el marco y la barra doblan.
     Refracción del logo 0.26/0.08: a 0.35/0.15 su borde de arriba traía la cara iluminada (a 75 px)
-    y los huecos de los ojos (a 141 px) en rayitas."""
+    y los huecos de los ojos (a 141 px) en rayitas. Barra a 0.3/0.06: a 0.4/0.1 y 0.35/0.08 su
+    punta derecha (la parte que sobresale del logo, sobre el fondo) se doblaba en una mancha oscura
+    y un rizo."""
     if light:
         bar_c, bar_a, bar_mix, bar_glow = TWITCH_PURPLE, 0.5, "multiply", 0.45
         frame_c, frame_a, band_a, glow = TWITCH_PURPLE, 0.6, 0.42, 0.4
@@ -318,7 +320,7 @@ def g4(light=False):
         frame_c, frame_a, band_a, glow = TWITCH_PURPLE, 0.55, 0.4, 0.65
         lit, lit_a, bar_face, bar_face_a = "#FFFFFF", 0.9, "#FFFFFF", 0.15
     bar = grupo("barra", [capa("g4-barra-marco", bar_c, bar_a), capa("g4-barra-cara", bar_face, bar_face_a)],
-                0.8, 0.0, (0.35, 0.08), "layer-color", bar_glow, blend=bar_mix, lighting="combined")
+                0.8, 0.0, (0.3, 0.06), "layer-color", bar_glow, blend=bar_mix, lighting="combined")
     windows = grupo("ventanas", [capa("g4-ventanas", "#FFFFFF", 0.14)], 0.9, 0.0, (0.25, 0.08),
                     "neutral", 0.3)
     logo = grupo("logo", [capa("g4-marco", frame_c, frame_a), capa("g4-marco-franja", frame_c, band_a),
@@ -371,15 +373,17 @@ def g5(light=False):
     banda limpia de cristal sobre el fondo. Lo que se dobla son los ojos de detrás, bajo las
     ventanas (0.3/0.1)."""
     p = "g5"
+    # Fantasma violeta (no lila): sobre el negro el lila salía gris (la cola, 29,23,41); con brillo
+    # del color de la capa, la cola y la franja de fondo se leen como cristal morado
     if light:
-        ghost_c, ghost_a, mix = TWITCH_PURPLE, 0.35, "multiply"
+        ghost_c, ghost_a, mix, ghost_glow = TWITCH_PURPLE, 0.5, "multiply", 0.35
         back_c, back_a, face_a, lit, glow = DEEP, 0.85, 0.12, "#FFFFFF", 0.45
     else:
-        ghost_c, ghost_a, mix = LILAC, 0.3, "plus-lighter"
+        ghost_c, ghost_a, mix, ghost_glow = VIOLET, 0.4, "plus-lighter", 0.5
         back_c, back_a, face_a, lit, glow = DEEP, 0.8, 0.15, "#FFFFFF", 0.75
     ghost = grupo("fantasma", [capa("g5-fantasma-marco", ghost_c, ghost_a),
                                capa("g5-fantasma-cara", ghost_c, 0.06)],
-                  0.85, 0.0, None, "none", 0.0, blend=mix, lighting="combined")
+                  0.85, 0.0, None, "layer-color", ghost_glow, blend=mix, lighting="combined")
     windows = grupo("ventanas", [capa("g5-ventanas", "#FFFFFF", 0.14)], 0.9, 0.0, (0.3, 0.1),
                     "neutral", 0.3)
     back = grupo("detras", [capa(f"{p}-detras-marco", back_c, back_a),
@@ -394,7 +398,8 @@ BG_DARK = {"linear-gradient": [color("#1A1426"), color(TWITCH_DARK)]}
 BG_LIGHT = {"linear-gradient": [color("#FFFFFF"), color("#F1EAFF")]}
 # g4/g5: degradado en diagonal más rico (morado arriba a la izquierda), para que el cristal
 # tenga algo que teñir y doblar
-BG4_DARK = diagonal("#2E1858", "#0B0A10")
+BG4_DARK = diagonal("#2E1858", "#100A1C")  # abajo, negro con algo de morado: sobre #0B0A10 el
+                                           # cristal de abajo salía apagado (66,42,105)
 BG4_LIGHT = diagonal("#FFFFFF", "#E4D6FF")
 
 APPROVED = {}

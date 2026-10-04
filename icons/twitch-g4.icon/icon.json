@@ -6,7 +6,7 @@
   "fill": {
     "linear-gradient": [
       "extended-srgb:0.18039,0.09412,0.34510,1.00000",
-      "extended-srgb:0.04314,0.03922,0.06275,1.00000"
+      "extended-srgb:0.06275,0.03922,0.10980,1.00000"
     ],
     "orientation": {
       "start": {
@@ -54,8 +54,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.08
+        "strength": 0.3,
+        "depth": 0.06
       },
       "blend-mode": "plus-lighter"
     },

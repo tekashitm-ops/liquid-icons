@@ -27,8 +27,8 @@
       "specular-highlight-placement": "automatic",
       "blur-material": 0.0,
       "shadow": {
-        "kind": "none",
-        "opacity": 0.0
+        "kind": "layer-color",
+        "opacity": 0.35
       },
       "translucency": {
         "enabled": true,
@@ -40,7 +40,7 @@
           "image-name": "g5-fantasma-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.35000"
+            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.50000"
           }
         },
         {
