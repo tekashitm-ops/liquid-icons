@@ -1,0 +1,45 @@
+name: Render icons
+
+on:
+  push:
+    paths: ["icons/**", ".github/workflows/render.yml"]
+  workflow_dispatch:
+
+jobs:
+  render:
+    # Imagen oficial de GitHub con Xcode 27 (incluye Icon Composer 2 y su motor ictool)
+    runs-on: xcode-27
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Localizar ictool
+        run: |
+          xcodebuild -version
+          ICTOOL="$(dirname "$(xcode-select -p)")/Applications/Icon Composer.app/Contents/Executables/ictool"
+          if [ ! -x "$ICTOOL" ]; then
+            ICTOOL="$(ls -d /Applications/Xcode*.app/Contents/Applications/Icon\ Composer.app/Contents/Executables/ictool | sort -r | head -1)"
+          fi
+          echo "ICTOOL=$ICTOOL" >> "$GITHUB_ENV"
+          "$ICTOOL" --version
+
+      - name: Renderizar con Icon Composer (generación 27)
+        run: |
+          mkdir -p renders
+          for icon in icons/*.icon; do
+            name="$(basename "$icon" .icon)"
+            for r in Default Dark TintedLight TintedDark ClearLight ClearDark; do
+              if "$ICTOOL" "$icon" --export-image --output-file "renders/$name-$r.png" \
+                   --platform iOS --rendition "$r" --width 1024 --height 1024 --scale 1 \
+                   --design-generation 27; then
+                echo "ok $name $r"
+              else
+                echo "::warning::fallo $name $r"
+              fi
+            done
+          done
+          ls -la renders
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: renders
+          path: renders
