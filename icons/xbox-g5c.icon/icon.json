@@ -82,7 +82,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.3
+        "value": 0.12
       },
       "layers": [
         {
@@ -90,14 +90,14 @@
           "image-name": "xvidrio-g4.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.92000"
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,1.00000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.12
+        "strength": 0.45,
+        "depth": 0.16
       }
     },
     {

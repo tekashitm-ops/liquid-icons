@@ -75,7 +75,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.12,
+      "blur-material": 0.0,
       "shadow": {
         "kind": "neutral",
         "opacity": 0.4
@@ -90,14 +90,14 @@
           "image-name": "xvidrio-g4.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.01961,0.22745,0.15686,0.82000"
+            "solid": "extended-srgb:0.00784,0.29020,0.20392,0.82000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.12
+        "strength": 0.45,
+        "depth": 0.16
       }
     },
     {
