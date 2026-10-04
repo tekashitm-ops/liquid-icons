@@ -185,9 +185,22 @@
         {
           "name": "g4-luz-cola",
           "image-name": "g4-luz-cola.svg",
-          "glass": true,
+          "glass": false,
           "fill": {
-            "solid": "extended-srgb:0.46667,0.17255,0.90980,0.60000"
+            "linear-gradient": [
+              "extended-srgb:0.46667,0.17255,0.90980,0.70000",
+              "extended-srgb:0.46667,0.17255,0.90980,0.00000"
+            ],
+            "orientation": {
+              "start": {
+                "x": 0.33,
+                "y": 0.86
+              },
+              "stop": {
+                "x": 0.52,
+                "y": 0.67
+              }
+            }
           }
         }
       ]

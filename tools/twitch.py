@@ -291,15 +291,15 @@ NOTCH_CUT = 680     # la muesca de la luz bajo la barra acaba aquí: en 698 el b
                     # punta a su borde de abajo (un punto caliente en 510-545, 765)
 LIT_LEFT = 244      # g4: la luz bajo la barra llega hasta aquí por la izquierda (si no, el borde de
                     # abajo de la barra salía blanco solo de 394 a 680, como una raya dibujada)
-LIT_LEFT_C = 358    # g4c: hasta el borde de la cara (sin hueco blanco bajo la barra: rayitas blancas)
 CHAMFER = 513.5     # x + y del chaflán de arriba a la izquierda del bocadillo
-HYPOT = 1256.8      # x + y de la hipotenusa de la cola
 STREAK = (34, 133)  # g4: raya de luz bajo el chaflán, de 24 a 94 px dentro de él (en x + y)
-SLIVER = (23, 79)   # raya de luz bajo la hipotenusa de la cola, de 16 a 56 px dentro de ella
 CORNER = 113        # g4c: esquina blanca de la cara de luz, 80 px desde su esquina (en x + y)
 INSET = 14          # px que las rayas de luz quedan dentro del borde de su pieza
-TAIL_TOP = 776      # g4: la raya de la cola empieza aquí: más arriba, el bisel del borde de arriba del
-                    # marco de abajo (712) doblaba su punta en un garabato
+# g4: resplandor bajo la banda de abajo y la cola, de abajo a la izquierda (la punta de la cola) hacia
+# arriba a la derecha, donde se apaga (en el lienzo, de 0 a 1). Una raya de luz dentro de la cola
+# (estrecha: todo es bisel) salía doblada en un garabato o en un corazón; el degradado no tiene
+# bordes dentro de la cola que doblar en manchas, y su bisel lo curva al borde
+GLOW = {"start": {"x": 0.33, "y": 0.86}, "stop": {"x": 0.52, "y": 0.67}}
 
 
 def diag_band(c0, c1):
@@ -313,14 +313,27 @@ def streak(region, c0, c1, clip=None):
     return soften(s.intersection(clip) if clip is not None else s, 8)
 
 
+def cut_tip(geom):
+    """Corta la muesca en NOTCH_CUT y redondea el corte."""
+    geom = geom.difference(box(0, NOTCH_CUT, 1024, 1024))
+    tip = box(0, NOTCH_CUT - 30, 1024, 1024)
+    return geom.difference(tip).union(soften(geom, 6).intersection(tip))
+
+
+def resplandor(name, hexcolor, alpha):
+    """Luz plana (sin cristal) con un degradado de alfa: de alpha en GLOW.start a 0 en GLOW.stop."""
+    return {"name": name, "image-name": f"{name}.svg", "glass": False,
+            "fill": {"linear-gradient": [color(hexcolor, alpha), color(hexcolor, 0.0)], "orientation": GLOW}}
+
+
 def g4_pieces(outer, inner, eyes):
     """Barra corrida (marco + cara), el logo entero debajo (la franja que pisa la barra va aparte,
     más clara: el hueco del glitch), ventanas en los ojos y la cara iluminada de detrás, corrida
     LIT_SHIFT px. Bajo la barra la luz se corre con la barra (la cara de la franja, muesca incluida)
     y llega a la izquierda hasta LIT_LEFT: por el marco de la barra se ve la franja del logo sin
     correr (el borde de la cara y la muesca, 36 px a la izquierda: la doble imagen del glitch).
-    Rayas de luz bajo el chaflán y bajo la cola: el marco y la cola tienen dos tintes y un borde
-    que su bisel dobla.
+    Una raya de luz bajo el chaflán y un resplandor bajo la banda de abajo y la cola: el marco y la
+    cola tienen dos tintes que su bisel dobla.
     Junta de la barra con el marco, a la derecha: el marco baja recto hasta 548 (sin el pico de 8 px
     de la diagonal) y la barra y la franja tienen viva la esquina de arriba a la derecha (con radio,
     la silueta hacía una V y el borde de arriba de la barra un gancho)."""
@@ -336,9 +349,7 @@ def g4_pieces(outer, inner, eyes):
     lit = lit.difference(eyes).intersection(box(0, 0, 1024, BAND[0]))
     corner = lit.intersection(diag_band(0, sum(lit.bounds[:2]) + CORNER))
     # luz bajo la barra: la cara de la franja corrida, con la punta de la muesca cortada y redonda
-    under = shift(face.intersection(band), BAR_SHIFT, 0).difference(box(0, NOTCH_CUT, 1024, 1024))
-    tip = box(0, NOTCH_CUT - 30, 1024, 1024)
-    under = under.difference(tip).union(soften(under, 6).intersection(tip))
+    under = cut_tip(shift(face.intersection(band), BAR_SHIFT, 0))
     fb = face.intersection(box(0, 0, 400, 1024)).bounds[3]  # borde de abajo de la cara (616.7)
     x0 = under.bounds[0] + 1
     return {
@@ -355,9 +366,10 @@ def g4_pieces(outer, inner, eyes):
         "g4-ventanas": soften(grow(eyes, PANE), 4),
         "g4-luz": lit,
         "g4-luz-barra": under.union(box(LIT_LEFT, BAND[0], x0, fb)),
-        "g4c-luz-barra": under.union(box(LIT_LEFT_C, BAND[0], x0, fb)),
+        # g4c: también bajo la muesca sin correr (por su cristal claro se veía el blanco, una raya)
+        "g4c-luz-barra": under.union(cut_tip(face.intersection(band))),
         "g4-luz-chaflan": streak(frame, CHAMFER + STREAK[0], CHAMFER + STREAK[1]),
-        "g4-luz-cola": streak(body, HYPOT - SLIVER[1], HYPOT - SLIVER[0], box(0, TAIL_TOP, 1024, 1024)),
+        "g4-luz-cola": body.intersection(box(0, BAND[1], 1024, 1024)).buffer(-2, join_style="mitre"),
         "g4c-luz": lit.difference(corner),
         "g4c-luz-esquina": corner,
     }
@@ -378,17 +390,17 @@ def g4(light=False):
         frame_c, frame_a, band_a, glow = TWITCH_PURPLE, 0.7, 0.42, 0.4
         bar_face, bar_face_a, win_c, win_a = LAVENDER, 0.12, "#FFFFFF", 0.14
         # cara de luz morado profundo (blanco sobre blanco no se vería) con la esquina blanca: la cara
-        # tiene dos tintes; rayas de morado profundo bajo el chaflán y la cola
+        # tiene dos tintes; raya y resplandor de morado profundo bajo el chaflán y la cola
         lights = [capa("g4c-luz-esquina", "#FFFFFF", 0.8), capa("g4c-luz", DEEP, 0.6),
                   capa("g4c-luz-barra", DEEP, 0.6), capa("g4-luz-chaflan", DEEP, 0.6),
-                  capa("g4-luz-cola", DEEP, 0.6)]
+                  resplandor("g4-luz-cola", DEEP, 0.7)]
     else:
         bar_c, bar_a, bar_mix, bar_glow = VIOLET, 0.5, "plus-lighter", 0.5
         frame_c, frame_a, band_a, glow = TWITCH_PURPLE, 0.38, 0.3, 0.65
         bar_face, bar_face_a, win_c, win_a = LAVENDER, 0.18, TWITCH_PURPLE, 0.22
         # la luz bajo la barra a 0.8: a 0.55 la cara de la barra salía gris (172,165,186)
         lights = [capa("g4-luz", "#FFFFFF", 0.9), capa("g4-luz-barra", "#FFFFFF", 0.8),
-                  capa("g4-luz-chaflan", "#FFFFFF", 0.7), capa("g4-luz-cola", "#FFFFFF", 0.6)]
+                  capa("g4-luz-chaflan", "#FFFFFF", 0.7), resplandor("g4-luz-cola", "#FFFFFF", 0.7)]
     bar = grupo("barra", [capa("g4-barra-marco", bar_c, bar_a), capa("g4-barra-cara", bar_face, bar_face_a)],
                 0.8, 0.0, (0.3, 0.04), "layer-color", bar_glow, blend=bar_mix, lighting="combined")
     face = capa("g4-cara", LAVENDER, 0.1)
@@ -406,6 +418,7 @@ def g4(light=False):
 GHOST = 32       # px: cada copia se corre 32 px en diagonal (64 px entre las dos): la franja de fondo
                  # que deja ver el fantasma es más ancha que lo que alcanza su bisel (a 40 px la
                  # plegaba en una varilla oscura)
+LIT_GROW = 6     # px que la luz de g5 pasa bajo el marco del fantasma
 
 
 def g5_pieces(outer, inner, eyes, g=GHOST):
@@ -434,7 +447,9 @@ def g5_pieces(outer, inner, eyes, g=GHOST):
         "g5-ventanas": shift(soften(grow(eyes, PANE), 4), -g, g),
         "g5-detras-marco": back.difference(hole.difference(eyes_f)),
         "g5-detras-cara": hole.difference(eyes_f),
-        "g5-luz": front_face.difference(eyes_f),
+        # la luz pasa LIT_GROW px bajo el marco del fantasma (bajo el morado de detrás apenas se ve):
+        # con su borde en el de la cara, la cara tenía una sombra gris de 15 px arriba y a la derecha
+        "g5-luz": grow(front_face, LIT_GROW).difference(eyes_f),
     }
 
 
