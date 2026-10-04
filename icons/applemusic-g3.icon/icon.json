@@ -1,0 +1,102 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:1.00000,0.24390,0.38820,1.00000",
+      "extended-srgb:1.00000,-0.11180,0.16470,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "name": "pila1",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.35
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.7
+      },
+      "layers": [
+        {
+          "name": "pila1",
+          "image-name": "pila1.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.50000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.4,
+        "depth": 0.12
+      }
+    },
+    {
+      "name": "pila2",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.2,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.35
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.6
+      },
+      "layers": [
+        {
+          "name": "pila2",
+          "image-name": "pila2.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,0.83922,0.87451,0.50000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.1
+      }
+    },
+    {
+      "name": "pila3",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.45,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.4
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.55
+      },
+      "layers": [
+        {
+          "name": "pila3",
+          "image-name": "pila3.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,0.56078,0.65098,0.45000"
+          }
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

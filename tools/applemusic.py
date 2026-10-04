@@ -4,35 +4,30 @@ Trazado: brands/applemusic.svg (simple-icons 16.34.0, tomado de las pautas de id
 Apple Music: el cuadrado redondeado con la nota calada). Solo se usa la nota (su segundo
 subtrazado), sin deformar: escala uniforme contra el icono de la App Store (Apple Music,
 id 1108187390, "musicCalistoga", 1024 px) con IoU 0.993.
-Ese icono ya es Liquid Glass hecho por Apple: una sola pieza de cristal blanco esmerilado
-sobre el degradado rojo de Apple Music (c1 lo reproduce tal cual).
-Piezas:
-  - nota: la nota entera (c1).
-  - cabezas + armazon (c2, "lentes", como la lupa de Vista Previa): las dos cabezas son
-    lentes de cristal claro delante; detrás, la barra y las plicas en rojo, y cada plica
-    entra en su cabeza, así que la lente la desvía donde la cruza.
-  - barra + corcheas (c3, "vitral", como los pétalos de Fotos): la barra es una lámina de
-    cristal de color delante y las dos corcheas (plica y cabeza) suben por debajo de ella;
-    donde se pisan se mezclan los colores y el borde inferior de la barra dobla las plicas.
-La unión de las piezas de cada concepto es exactamente la nota oficial.
-Fondos: c1 usa el degradado oficial; c2 y c3 el fondo oscuro de Apple (como los iconos de
-Apple en modo oscuro), porque sobre el rojo de marca solo el blanco casi opaco llega a 3:1
-y el cristal claro o de color desaparecería en la tecla. Las parejas claras (cNc) usan el
-fondo claro de Apple con cristal rojo de marca.
-Ronda 2: el jurado eligió c1/c1c. Cambios tras la revisión del render (detalle junto a
-nota_blanca): c1c tenía costuras rectas de 1 px de la sombra de color de ictool, que ahora es
-neutra y con capas a lienzo completo; c1 era cristal plano (sin bisel y con un anillo rojo
-oscuro fuera de la silueta) y ahora lleva un bisel hondo con brillo "inside", menos esmerilado
-y menos sombra. c4/c4c = c1/c1c con la profundidad de refracción de la ronda 1 (0.3), para
-comparar. La geometría oficial no cambia.
+
+Ronda g (la anterior, c1-c4, era el logo casi opaco y plano: rechazada). Todo es cristal de
+color translúcido que deja ver lo de detrás, y cada pieza de cristal pisa algo que doblar:
+  - g1 "lentes" (Vista Previa): las dos cabezas son cuentas gruesas de cristal rosa claro,
+    delante; detrás, la barra y las plicas en cristal rojo encendido que entran en las cabezas
+    (la lente las dobla), y al fondo un disco de cristal rosa esmerilado (la luz que refractan
+    la barra y las cabezas donde cruzan su borde). Fondo vino casi negro.
+  - g2 "ondas" (Buscar): la nota en cristal casi incoloro, como el engranaje de Discord, sobre
+    tres ondas de sonido concéntricas de cristal rosa-rojo que se apagan hacia fuera; la nota
+    tuerce las ondas en su bisel. Fondo oscuro de Apple.
+  - g3 "capas" (Cartera): tres copias de la nota apiladas en vertical, de cristal blanco
+    rosado sobre el degradado oficial; cada copia de delante dobla los bordes de la de detrás.
+Parejas claras (gNc): la misma idea sobre fondo claro, con el cristal en rojos de marca.
+Las piezas son siempre trazados de la nota oficial (partidos, copiados o desplazados) y
+formas lisas (disco, anillos); el color, el cristal, la luz y la sombra los pone Icon Composer.
 """
 import re
 
+from shapely import affinity
 from shapely.geometry import Point, Polygon, box
 from shapely.ops import unary_union
 
 from brand import place, subpath_shapes
-from liquid import ROOT, WHITE, clean, glass, write_icon
+from liquid import ROOT, WHITE, clean, color, glass, write_icon
 
 D = re.search(r' d="([^"]+)"', (ROOT / "brands" / "applemusic.svg").read_text(encoding="utf-8")).group(1)
 FIT = (42.5938, 42.5938, 11.4375, -2.3205)  # escala x, escala y, desplazamiento x, y (lienzo de 1024)
@@ -41,19 +36,29 @@ FIT = (42.5938, 42.5938, 11.4375, -2.3205)  # escala x, escala y, desplazamiento
 STEM_L = (373.4, 412.7)        # plica izquierda: borde exterior e interior (39 px)
 STEM_R = (720.4, 759.9)        # plica derecha: borde interior y exterior
 SLOPE = -0.2016                # inclinación de la barra; los bordes de arriba de las cabezas son paralelos
-BEAM_BOTTOM = (431.4, 377.7)   # punto del borde inferior de la barra
 HEAD_CUT_L = (373.4, 625.0)    # corte de la cabeza izquierda: 19 px por encima del chaflán con la plica
 HEAD_CUT_R = (720.4, 555.0)    # corte de la cabeza derecha (18 px por encima de su chaflán)
 STUB_END_L, STUB_END_R = 745.0, 680.0  # hasta dónde entra cada plica en su cabeza (≈120 px)
-RISE = 95.0                    # px que cada plica sube por debajo de la barra (c3)
 CORNER = 14                    # px: redondeo de las esquinas que deja cada corte
+CENTER = (486.8, 501.7)        # centro de la caja de la nota (213.6-759.9, 154.1-849.3)
+
+# g1: disco de luz detrás de la nota; su borde cruza la barra (a la derecha) y la cabeza izquierda
+DISC_R = 335
+# g2: ondas (radio exterior, grosor); periodo de 120 px, más que los ~50-100 px que toma el bisel
+WAVES = [(165, 48), (285, 48), (405, 48)]
+# g3: desplazamiento vertical de cada copia (delante, en medio, detrás): la pila sube hacia atrás
+STACK = (30, 0, -30)
 
 # Colores
 MUSIC_BG_TOP = (1.0, 0.2439, 0.3882)       # degradado del icono oficial, medido arriba y abajo
 MUSIC_BG_BOTTOM = (1.0, -0.1118, 0.1647)   # rojo P3, fuera de sRGB (verde negativo en sRGB extendido)
 MUSIC_RED = "#FA243C"   # color de marca (pautas de Apple Music)
 MUSIC_PINK = "#FF3E62"  # el extremo claro del degradado oficial
-MUSIC_DEEP = "#AF192A"  # el rojo de marca oscurecido: el cristal de delante sobre fondo claro
+MUSIC_DEEP = "#AF192A"  # el rojo de marca oscurecido: cristal de delante sobre fondo claro
+ROSE = "#FF8FA6"        # rosa claro: cristal casi transparente con un punto de color
+BLUSH = "#FFD6DF"       # rosa blanquecino de la pila de g3
+WINE_TOP, WINE_BOTTOM = "#3E0816", "#120207"    # fondo de g1: vino casi negro
+BLUSH_TOP, BLUSH_BOTTOM = "#FFF6F8", "#FFE2E9"  # fondo claro rosado de g1c y g3c
 
 
 def xsrgb(rgb, alpha=1.0) -> str:
@@ -62,6 +67,8 @@ def xsrgb(rgb, alpha=1.0) -> str:
 
 
 MUSIC_BG = {"linear-gradient": [xsrgb(MUSIC_BG_TOP), xsrgb(MUSIC_BG_BOTTOM)]}
+WINE_BG = {"linear-gradient": [color(WINE_TOP), color(WINE_BOTTOM)]}
+BLUSH_BG = {"linear-gradient": [color(BLUSH_TOP), color(BLUSH_BOTTOM)]}
 
 
 def below(point, slope=SLOPE):
@@ -76,12 +83,10 @@ def soften(geom, r=CORNER):
     return geom.buffer(-r, quad_segs=64).buffer(r, quad_segs=64)
 
 
-def stub(stem, end, top=0.0):
-    """Tramo de plica acabado en semicírculo: hacia abajo hasta end o, con top, hacia arriba hasta top."""
+def stub(stem, end):
+    """Tramo de plica hacia abajo hasta end, acabado en semicírculo."""
     r = (stem[1] - stem[0]) / 2
     cx = (stem[0] + stem[1]) / 2
-    if top:
-        return unary_union([box(stem[0] - 1, top + r, stem[1] + 1, end), Point(cx, top + r).buffer(r, quad_segs=64)])
     return unary_union([box(stem[0] - 1, 500, stem[1] + 1, end - r), Point(cx, end - r).buffer(r, quad_segs=64)])
 
 
@@ -90,128 +95,134 @@ def solid(geom, min_area=1.0):
     return unary_union([p for p in getattr(geom, "geoms", [geom]) if p.area >= min_area])
 
 
+def ring(r_out, width, c=CENTER):
+    return Point(c).buffer(r_out, quad_segs=128).difference(Point(c).buffer(r_out - width, quad_segs=128))
+
+
 def pieces():
     nota = place(subpath_shapes(D)[1], *FIT)
-    # c2: las cabezas como lentes; el armazón (barra y plicas) detrás, con las plicas dentro
+    # g1: las cabezas como lentes; el armazón (barra y plicas) detrás, con las plicas dentro
     raw_heads = (nota.intersection(below(HEAD_CUT_L)).intersection(box(0, 0, 470, 1024))
                  .union(nota.intersection(below(HEAD_CUT_R)).intersection(box(470, 0, 1024, 1024))))
     cabezas = soften(raw_heads)  # solo cambia las esquinas del corte, que tapan las plicas de detrás
     stubs = nota.intersection(stub(STEM_L, STUB_END_L).union(stub(STEM_R, STUB_END_R)))
     armazon = solid(nota.difference(raw_heads).union(stubs))
-    # c3: la barra de cristal delante; las corcheas suben por debajo y acaban redondas dentro de ella
-    above_beam = box(0, 0, 1024, 1024).difference(below(BEAM_BOTTOM))
-    barra = soften(nota.intersection(above_beam), r=20)
-    y_beam = lambda x: BEAM_BOTTOM[1] + SLOPE * (x - BEAM_BOTTOM[0])  # noqa: E731
-    rods = [stub(st, 1024, top=y_beam(sum(st) / 2) - RISE) for st in (STEM_L, STEM_R)]
-    corcheas = solid(nota.difference(above_beam).union(nota.intersection(unary_union(rods))))
-    return {"nota": nota, "cabezas": cabezas, "armazon": armazon, "barra": barra, "corcheas": corcheas}
+    geo = {"nota": nota, "cabezas": cabezas, "armazon": armazon,
+           "disco": Point(CENTER).buffer(DISC_R, quad_segs=128)}
+    # g2: ondas concéntricas en el centro de la nota
+    for i, (r, w) in enumerate(WAVES, 1):
+        geo[f"onda{i}"] = ring(r, w)
+    # g3: copias desplazadas en vertical (la de delante abajo, la de detrás arriba)
+    for name, dy in zip(("pila1", "pila2", "pila3"), STACK):
+        geo[name] = affinity.translate(nota, 0, dy)
+    return geo
 
 
-# --- c1: el icono de Apple tal cual -------------------------------------------------------
-# Ronda 2 (revisión del escéptico sobre el render de ictool):
-#   - c1 era una pegatina blanca plana con un filo rojo: sin bisel (G constante, 221, hasta el
-#     borde) y con un anillo de ~4 px de rojo más oscuro y saturado (230,0,34) justo fuera de la
-#     silueta. El icono de Apple tiene un bisel blanco puro de ~10 px y un filo exterior rosa.
-#     Ahora: refracción más suave y más honda (0.2, 0.6): menos fuerza deja de arrastrar el rojo
-#     saturado al filo y más profundidad ensancha el bisel; brillo especular "inside" (como el eje
-#     aprobado de Steam); esmerilado 0.2 (antes 0.5) para que el bisel se vea nítido; sombra
-#     neutra 0.25 (antes 0.5) contra el anillo oscuro; translucidez 0.2 (antes 0.25) para que el
-#     cuerpo no baje de G 221 y el mínimo siga en >= 3.19:1 (la cabeza izquierda sobre el rojo de
-#     abajo); el cuerpo más rosa de Apple solo llega a 2.88:1, así que no se copia.
-#     La profundidad 0.6 es mucho más honda que lo aprendido en el proyecto (con 0.1-0.15 el bisel
-#     ya toma lo que hay a 50-100 px) y las plicas miden 39 px. Aquí detrás solo está el degradado
-#     vertical: la refracción no puede traer piezas ajenas, y en las plicas (verticales) el
-#     desplazamiento horizontal toma el mismo rojo. Pero por si el sombreado del bisel oscurece
-#     las plicas o baja el contraste, c4 es lo mismo con la profundidad de antes (0.3): es el
-#     único parámetro que cambia.
-#   - c1c tenía costuras rectas de 1 px (columna x=767, y 189-740; fila y=857, x 220-392) justo en
-#     la caja de la nota + 7 px: el borde de la textura de la sombra de color de ictool. Ahora la
-#     sombra es neutra (0.3) y las capas ocupan todo el lienzo (write_icon(full_bounds=True)).
-#     Lleva el mismo cristal que c1 (bisel hondo, brillo "inside", esmerilado 0.2 en vez de 0.3)
-#     para que la pareja siga siendo pareja; sobre el fondo claro casi liso la refracción no
-#     cambia el color, solo se ve el brillo del bisel.
-NOTE_REFRACTION = (0.2, 0.6)   # fuerza, profundidad (c1 y c1c)
-NOTE_REFRACTION_C4 = (0.2, 0.3)  # c4/c4c: solo cambia la profundidad (la de la ronda 1)
+def solid_fill(hexcolor, alpha):
+    return {"solid": color(hexcolor, alpha)}
 
 
-def nota_blanca(refraction=NOTE_REFRACTION):
-    """Como el icono oficial: nota de cristal blanco poco esmerilado con bisel brillante.
+def grad_fill(top, bottom, alpha):
+    return {"linear-gradient": [color(top, alpha), color(bottom, alpha)]}
 
-    Translucidez baja (0.2) para seguir por encima de 3:1 sobre todo el degradado.
+
+def group(name, layers, lighting="individual", blend=None, **kw):
+    """Grupo de Liquid Glass con varias piezas [(pieza, relleno)], de delante hacia atrás.
+
+    Con las claves de Icon Composer que glass() no pone: lighting y blend-mode del grupo.
     """
-    return glass("nota", alpha=1.0, translucency=0.2, blur=0.2, refraction=refraction,
-                 shadow="neutral", shadow_opacity=0.25, specular="inside")
+    g = glass(name, **kw)
+    g["lighting"] = lighting
+    g["layers"] = [{"name": n, "image-name": f"{n}.svg", "glass": True, "fill": f} for n, f in layers]
+    if blend:
+        g["blend-mode"] = blend
+    return g
 
 
-def nota_roja(refraction=NOTE_REFRACTION):
-    """Pareja clara: la nota en cristal rojo de marca, con el mismo bisel que c1.
+# --- g1: lentes ---------------------------------------------------------------------------
+def g1(light=False):
+    """Cabezas de cristal grueso casi claro delante; armazón rojo encendido; disco de luz detrás.
 
-    Sombra neutra (no de color): la sombra de color de ictool dejaba costuras rectas de 1 px.
+    Cabezas: piezas anchas (~200 px) y redondas, así que aguantan una refracción honda (0.5, 0.25):
+    su bisel trae la plica roja que entra por su borde derecho y el borde del disco. Armazón: las
+    plicas miden 39 px, refracción baja (0.35, 0.12) para que no traigan astillas. Sombra de su
+    color bajo el rojo: el resplandor sobre el vino.
     """
-    return glass("nota", fill=MUSIC_RED, alpha=1.0, translucency=0.25, blur=0.2,
-                 refraction=refraction, shadow="neutral", shadow_opacity=0.3, specular="inside")
+    if light:
+        heads, frame, disc = (MUSIC_DEEP, 0.5), (MUSIC_RED, 0.72), (MUSIC_PINK, 0.3)
+    else:
+        heads, frame, disc = (ROSE, 0.38), (MUSIC_RED, 0.72), (MUSIC_PINK, 0.32)
+    return [
+        glass("cabezas", fill=heads[0], alpha=heads[1], translucency=0.8, blur=0.0,
+              refraction=(0.5, 0.25), shadow="layer-color", shadow_opacity=0.5),
+        glass("armazon", fill=frame[0], alpha=frame[1], translucency=0.55, blur=0.08,
+              refraction=(0.35, 0.12), shadow="layer-color", shadow_opacity=0.8, specular="inside"),
+        glass("disco", fill=disc[0], alpha=disc[1], translucency=0.5, blur=0.6,
+              shadow="layer-color", shadow_opacity=0.5),
+    ]
 
 
-# --- c2: lentes ---------------------------------------------------------------------------
-def lentes(fill=WHITE, alpha=0.8, translucency=0.5, shadow="neutral"):
-    """Cabezas de cristal sin esmerilar: lentes que desvían la plica roja que entra en ellas.
+# --- g2: ondas ----------------------------------------------------------------------------
+def g2(light=False):
+    """Nota de cristal casi incoloro (como el engranaje de Discord) sobre ondas de cristal rosa.
 
-    Sobre fondo oscuro son de cristal blanco claro; sobre fondo claro, de rojo oscuro de marca
-    (un cristal claro sobre fondo claro no llega a 3:1).
-
-    Refracción moderada: la cabeza derecha está a 150 px de la plica izquierda y no debe
-    traer trozos suyos a su borde.
+    Las ondas, de dentro afuera cada vez más tenues, en un solo grupo esmerilado y con sombra de
+    su color; la nota delante, sin esmerilar, las tuerce en el bisel. Refracción (0.35, 0.12): la
+    nota tiene plicas de 39 px; las ondas tienen periodo de 120 px, así que el bisel siempre
+    encuentra un borde que doblar.
     """
-    return glass("cabezas", fill=fill, alpha=alpha, translucency=translucency, blur=0.0,
-                 refraction=(0.4, 0.2), shadow=shadow, shadow_opacity=0.45, specular="inside")
+    alphas = (0.75, 0.5, 0.32)
+    waves = [(f"onda{i}", grad_fill(MUSIC_PINK, MUSIC_RED, a)) for i, a in enumerate(alphas, 1)]
+    note = (MUSIC_DEEP, 0.45) if light else (WHITE, 0.34)
+    return [
+        glass("nota", fill=note[0], alpha=note[1], translucency=0.85, blur=0.0,
+              refraction=(0.35, 0.12), shadow="neutral", shadow_opacity=0.3),
+        group("ondas", waves, translucency=0.45, blur=0.35, shadow="layer-color", shadow_opacity=0.6),
+    ]
 
 
-def armazon(fill=MUSIC_RED):
-    """Barra y plicas en cristal rojo de marca, casi opaco (detrás solo dobla el fondo liso)."""
-    return glass("armazon", fill=fill, alpha=1.0, translucency=0.25, blur=0.3,
-                 refraction=(0.3, 0.2), shadow="layer-color")
+# --- g3: capas ----------------------------------------------------------------------------
+def g3(light=False):
+    """Tres notas de cristal apiladas (30 px entre una y otra): la de delante, la más clara.
 
-
-# --- c3: vitral ---------------------------------------------------------------------------
-def barra(fill=MUSIC_PINK, alpha=0.95, translucency=0.35):
-    """Barra como lámina de cristal de color sin esmerilar, con sombra de su color."""
-    return glass("barra", fill=fill, alpha=alpha, translucency=translucency, blur=0.0,
-                 refraction=(0.4, 0.25), shadow="layer-color", shadow_opacity=0.6)
-
-
-def corcheas(fill=WHITE):
-    """Las dos corcheas en el cristal blanco de la nota oficial (rojo en la pareja clara)."""
-    if fill == WHITE:
-        return glass("corcheas", alpha=0.95, translucency=0.3, blur=0.4, refraction=(0.3, 0.2))
-    return glass("corcheas", fill=fill, alpha=1.0, translucency=0.25, blur=0.3,
-                 refraction=(0.3, 0.2), shadow="layer-color")
+    Cada copia dobla en su bisel los bordes de la de detrás (a 30 px, dentro de lo que toma el
+    bisel con (0.4, 0.12)). La de delante sin esmerilar; las de detrás cada vez más esmeriladas.
+    """
+    if light:
+        tints = ((MUSIC_RED, 0.55), (MUSIC_PINK, 0.5), (ROSE, 0.5))
+    else:
+        tints = ((WHITE, 0.5), (BLUSH, 0.5), (ROSE, 0.45))
+    shadow = "layer-color" if light else "neutral"
+    return [
+        glass("pila1", fill=tints[0][0], alpha=tints[0][1], translucency=0.7, blur=0.0,
+              refraction=(0.4, 0.12), shadow=shadow, shadow_opacity=0.35),
+        glass("pila2", fill=tints[1][0], alpha=tints[1][1], translucency=0.6, blur=0.2,
+              refraction=(0.35, 0.1), shadow=shadow, shadow_opacity=0.35),
+        glass("pila3", fill=tints[2][0], alpha=tints[2][1], translucency=0.55, blur=0.45,
+              shadow=shadow, shadow_opacity=0.4),
+    ]
 
 
 APPROVED = {}
 
 CONCEPTS = {
-    # c1 (fiel): el icono de iOS de Apple, nota de cristal blanco sobre su degradado rojo
-    "applemusic-c1": {"fill": MUSIC_BG, "groups": [nota_blanca()]},
-    "applemusic-c1c": {"fill": "system-light", "groups": [nota_roja()]},
-    # c4: c1 con el bisel de la ronda 1 (profundidad 0.3 en vez de 0.6); todo lo demás igual
-    "applemusic-c4": {"fill": MUSIC_BG, "groups": [nota_blanca(NOTE_REFRACTION_C4)]},
-    "applemusic-c4c": {"fill": "system-light", "groups": [nota_roja(NOTE_REFRACTION_C4)]},
-    # c2 (lentes, Vista Previa): cabezas de cristal claro sobre el armazón rojo, fondo oscuro de Apple
-    "applemusic-c2": {"fill": "system-dark", "groups": [lentes(), armazon()]},
-    "applemusic-c2c": {"fill": "system-light", "groups": [
-        lentes(fill=MUSIC_DEEP, alpha=1.0, translucency=0.35, shadow="layer-color"), armazon()]},
-    # c3 (vitral, Fotos): barra de cristal rosa sobre las corcheas blancas, fondo oscuro de Apple
-    "applemusic-c3": {"fill": "system-dark", "groups": [barra(), corcheas()]},
-    "applemusic-c3c": {"fill": "system-light", "groups": [
-        barra(fill=MUSIC_DEEP, alpha=1.0, translucency=0.3), corcheas(MUSIC_RED)]},
+    # g1 (lentes, Vista Previa): cabezas de cristal que doblan el armazón rojo; disco de luz detrás
+    "applemusic-g1": {"fill": WINE_BG, "groups": g1()},
+    "applemusic-g1c": {"fill": BLUSH_BG, "groups": g1(light=True)},
+    # g2 (ondas, Buscar): nota de cristal casi incoloro sobre ondas de sonido de cristal rosa
+    "applemusic-g2": {"fill": "system-dark", "groups": g2()},
+    "applemusic-g2c": {"fill": "system-light", "groups": g2(light=True)},
+    # g3 (capas, Cartera): tres notas de cristal apiladas
+    "applemusic-g3": {"fill": MUSIC_BG, "groups": g3()},
+    "applemusic-g3c": {"fill": BLUSH_BG, "groups": g3(light=True)},
 }
 
 
 def main(names=None):
     """Escribe los aprobados; con nombres de concepto, escribe esos para renderizarlos.
 
-    Capas a lienzo completo (full_bounds): ictool recortaba la sombra de cada capa a una caja
-    de ~7-12 px alrededor de la nota y dejaba costuras rectas de 1 px (c1c, ronda 1).
+    Capas a lienzo completo (full_bounds): ictool recorta la sombra de cada capa a la caja de
+    su contenido y deja costuras rectas de 1 px.
     """
     geo = pieces()
     clean("applemusic")

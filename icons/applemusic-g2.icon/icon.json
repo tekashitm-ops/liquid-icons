@@ -1,0 +1,92 @@
+{
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill": "system-dark",
+  "groups": [
+    {
+      "name": "nota",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.0,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.3
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.85
+      },
+      "layers": [
+        {
+          "name": "nota",
+          "image-name": "nota.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.34000"
+          }
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.12
+      }
+    },
+    {
+      "name": "ondas",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "automatic",
+      "blur-material": 0.35,
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.6
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.45
+      },
+      "layers": [
+        {
+          "name": "onda1",
+          "image-name": "onda1.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.24314,0.38431,0.75000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.75000"
+            ]
+          }
+        },
+        {
+          "name": "onda2",
+          "image-name": "onda2.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.24314,0.38431,0.50000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.50000"
+            ]
+          }
+        },
+        {
+          "name": "onda3",
+          "image-name": "onda3.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.24314,0.38431,0.32000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.32000"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
