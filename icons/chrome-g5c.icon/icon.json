@@ -17,7 +17,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.65
+        "value": 0.6
       },
       "layers": [
         {
@@ -25,14 +25,14 @@
           "image-name": "azul.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.18039,0.54510,1.00000,0.62000"
+            "solid": "extended-srgb:0.10196,0.49804,1.00000,0.72000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.85,
-        "depth": 0.6
+        "strength": 0.7,
+        "depth": 0.5
       }
     },
     {
@@ -112,26 +112,42 @@
       }
     },
     {
-      "name": "placa",
+      "name": "fondo",
       "lighting": "individual",
-      "specular": true,
+      "specular": false,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.6,
+      "blur-material": 0.0,
       "shadow": {
-        "kind": "neutral",
-        "opacity": 0.35
+        "kind": "none",
+        "opacity": 0.0
       },
       "translucency": {
-        "enabled": true,
-        "value": 0.5
+        "enabled": false,
+        "value": 0.0
       },
       "layers": [
         {
-          "name": "placa",
-          "image-name": "placa.svg",
-          "glass": true,
+          "name": "rojo",
+          "image-name": "fondo5-rojo.svg",
+          "glass": false,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.55000"
+            "solid": "extended-srgb:0.78431,0.06275,0.18039,1.00000"
+          }
+        },
+        {
+          "name": "amarillo",
+          "image-name": "fondo5-amarillo.svg",
+          "glass": false,
+          "fill": {
+            "solid": "extended-srgb:0.96078,0.61961,0.00000,1.00000"
+          }
+        },
+        {
+          "name": "verde",
+          "image-name": "fondo5-verde.svg",
+          "glass": false,
+          "fill": {
+            "solid": "extended-srgb:0.00000,0.52941,0.23529,1.00000"
           }
         }
       ]

@@ -17,7 +17,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.65
+        "value": 0.6
       },
       "layers": [
         {
@@ -25,14 +25,14 @@
           "image-name": "azul.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.18039,0.54510,1.00000,0.62000"
+            "solid": "extended-srgb:0.10196,0.49804,1.00000,0.72000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.85,
-        "depth": 0.6
+        "strength": 0.7,
+        "depth": 0.5
       }
     },
     {
@@ -126,6 +126,14 @@
         "value": 0.0
       },
       "layers": [
+        {
+          "name": "ambar",
+          "image-name": "fondo5-amarillo.svg",
+          "glass": false,
+          "fill": {
+            "solid": "extended-srgb:0.78039,0.47059,0.00000,1.00000"
+          }
+        },
         {
           "name": "luz",
           "image-name": "luz5.svg",
