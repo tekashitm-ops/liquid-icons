@@ -38,14 +38,14 @@
           "image-name": "franja-cara.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.12000"
+            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.16000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.3,
-        "depth": 0.1
+        "strength": 0.4,
+        "depth": 0.15
       },
       "blend-mode": "multiply"
     },
@@ -77,7 +77,7 @@
           "image-name": "resto-cara.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.08000"
+            "solid": "extended-srgb:0.74902,0.58039,1.00000,0.10000"
           }
         }
       ],

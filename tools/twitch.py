@@ -8,17 +8,20 @@ y 0.978 en la cara blanca (los ojos se dejan como en el logo de marca).
 Conceptos g (Liquid Glass al máximo: todas las piezas son cristal de color translúcido y cada
 cristal tiene algo detrás que refractar). gN = oscuro (negro de Twitch, para la tecla);
 gNc = su pareja clara (cristal morado sobre blanco, para un futuro modo día/noche).
-- g1 «glitch doble»: dos copias del logo desplazadas como un glitch. Delante, el glitch
-  (marco + ojos) de cristal lila transparente; detrás, el bocadillo entero de cristal morado
-  profundo, 36 px abajo a la derecha. Por la cara hueca se ve la copia de detrás, y el bisel
-  del marco de delante dobla los bordes de la de detrás donde los pisa.
+- g1 «glitch doble»: dos copias del logo desplazadas 40 px en diagonal, como un glitch.
+  Delante, el glitch (marco + ojos) de cristal lila transparente que se suma como luz
+  (plus-lighter); detrás, el bocadillo entero de cristal morado profundo, que asoma arriba a la
+  derecha y es lo que se ve por la cara hueca. En claro: cristal morado que se multiplica sobre
+  una copia violeta.
 - g2 «cara de luz»: el bocadillo es una losa de cristal violeta con los ojos huecos; detrás,
-  la cara de cristal blanco esmerilado brilla a través del violeta. Los ojos son ventanas de
-  cristal claro al fondo, y su bisel dobla el borde de la cara. En claro, la cara de detrás
-  es morado profundo (blanco sobre blanco no se vería).
-- g3 «bloque de cristal»: el glitch de cristal morado encendido dentro de un bloque de cristal
-  transparente con la forma del bocadillo (Vista Previa / engranaje de Discord): el bisel del
-  bloque aumenta y dobla el marco morado que tiene debajo.
+  la cara de cristal blanco esmerilado brilla a través del violeta y el bisel de la losa la
+  dobla hacia su borde (línea lila arriba, a la derecha y en la diagonal). Los ojos son
+  ventanas de cristal claro al fondo, y su bisel dobla el borde de la cara. En claro, la cara
+  de detrás es morado profundo (blanco sobre blanco no se vería).
+- g3 «glitch en franjas»: el glitch morado sobre cristal casi transparente (como el logo en
+  tema oscuro, la cara deja ver el fondo), cortado en tres franjas: la del medio, delante y
+  corrida 36 px a la derecha, es una barra de cristal que dobla con su bisel los bordes de las
+  franjas que pisa y deja a la izquierda el hueco del glitch.
 Los conceptos c (logo casi opaco, rechazados: «no tiene Liquid Glass») siguen en el historial.
 """
 import re
@@ -40,14 +43,13 @@ LAVENDER = "#BF94FF"
 LILAC = "#D1B3FF"
 VIOLET = "#A970FF"
 DEEP = "#772CE8"
-DEEPER = "#5C16C5"
 DEEPEST = "#451093"
 
 MITRE = 1.5        # las esquinas rectas se quedan vivas; la punta de 45° de la cola se chaflana
 TIP_R = 3          # px: radio con el que se redondea solo la punta de 45° de la cola
 TIP_ZONE = 30      # px alrededor de la punta en los que se aplica (el resto queda intacto)
 FILLET = 12        # px: redondea las esquinas cóncavas (la refracción no se pliega en ellas)
-GLITCH = 16        # px: cada copia de g1 se desplaza 16 px en diagonal (32 px entre las dos)
+GLITCH = 20        # px: cada copia de g1 se desplaza 20 px en diagonal (40 px entre las dos)
 BACK_FILLET = 12   # px: rincones cóncavos de la copia de detrás de g1
 PANE = 8           # px que la ventana de cada ojo de g2 pisa la losa alrededor del hueco
 CUT_TOP = 560      # g3: cortes de la franja central, por debajo de los ojos (acaban en 476: el
@@ -91,7 +93,6 @@ def pieces():
     face = fillet_concave(inner.difference(eyes), 8)  # cara con los ojos huecos
     return {
         **glitch_pair(mark, slab),
-        **glitch_pair(mark, slab, 20, "-20"),
         # g2: losa con los ojos huecos, cara con los ojos huecos detrás y una ventana por ojo
         "losa": fillet_concave(round_tip(outer).difference(eyes)),
         "cara": face,
@@ -101,27 +102,37 @@ def pieces():
     }
 
 
-def glitch_pair(mark, slab, g=GLITCH, suffix=""):
+def glitch_pair(mark, slab, g=GLITCH):
     """g1: el glitch delante, abajo a la izquierda; el bocadillo detrás, arriba a la derecha.
     Desplazados a lo largo de las diagonales del logo (las diagonales de detrás caen sobre las
-    de delante). Así los bordes de la copia de detrás que quedan bajo el cristal de delante son
-    el izquierdo y el de abajo, bajo las bandas gruesas del marco (154 px): bajo las finas
-    (51 px, arriba y a la derecha) su bisel se veía como una banda gris. La cola de detrás se
-    corta por su base: quedaba entera bajo la cola de delante y su borde, dentro del bisel
-    estrecho de la cola, salía como una gota."""
+    de delante). Así el único borde de la copia de detrás que queda bajo el cristal de delante
+    es el izquierdo, bajo la banda gruesa del marco (154 px): bajo las finas (51 px, arriba y a
+    la derecha) su bisel se veía como una banda gris.
+    Bajo la banda de abajo y la cola de delante la copia de detrás se rellena hasta los bordes
+    de delante (no se ve desde fuera): con su propia cola, el borde caía dentro del bisel
+    estrecho de la cola y salía como una gota; sin cola, la de delante quedaba sobre el negro
+    del fondo y se veía gris."""
     base = 19.714 * FIT[1] + FIT[3]  # base de la cola en el lienzo (y = 19.714 en el SVG)
+    front = shift(slab, -g, g)
+    under = front.intersection(box(slab.bounds[0] + g, base - g, 1024, 1024))
+    back = shift(slab.intersection(box(0, 0, 1024, base)), g, -g).union(under)
     return {
-        f"glitch-delante{suffix}": shift(mark, -g, g),
-        f"glitch-detras{suffix}": shift(slab.intersection(box(0, 0, 1024, base)), g, -g),
+        "glitch-delante": shift(mark, -g, g),
+        "glitch-detras": fillet_concave(back),
     }
 
 
 def slices(mark, face):
     """Franja central corrida SLICE_SHIFT px, y el resto (arriba y abajo). Cada franja es
     un cuerpo de cristal entero (la cara también, casi transparente) con el glitch tintado.
-    La franja pisa OVERLAP px de cada vecina: ahí su bisel dobla los bordes de la de detrás."""
-    mid = box(0, CUT_TOP - OVERLAP / 2, 1024, CUT_BOTTOM + OVERLAP / 2)
-    rest = box(0, 0, 1024, CUT_TOP + OVERLAP / 2).union(box(0, CUT_BOTTOM - OVERLAP / 2, 1024, 1024))
+    La franja pisa OVERLAP px de cada vecina: ahí su bisel dobla los bordes de la de detrás.
+    Lo que pisa se recorta a lo que la franja tapa: a la izquierda (donde la franja se ha
+    ido) asomaban dos pestañas; ahí queda el hueco del glitch."""
+    top, bottom = CUT_TOP - OVERLAP / 2, CUT_BOTTOM + OVERLAP / 2
+    mid = box(0, top, 1024, bottom)
+    left = mark.bounds[0] + SLICE_SHIFT  # borde izquierdo de la franja ya corrida
+    under = box(left, top, 1024, top + OVERLAP).union(box(left, bottom - OVERLAP, 1024, bottom))
+    rest = box(0, 0, 1024, top).union(box(0, bottom, 1024, 1024)).union(under)
     return {
         "franja-marco": shift(mark.intersection(mid), SLICE_SHIFT, 0),
         "franja-cara": shift(face.intersection(mid), SLICE_SHIFT, 0),
@@ -131,21 +142,18 @@ def slices(mark, face):
 
 
 def vidrio(name, fill, alpha, translucency, blur, refraction=None, shadow="neutral",
-           shadow_opacity=0.5, specular="automatic", blend=None, fill_to=None):
-    """glass() con dos palancas más: modo de fusión del grupo y relleno en degradado (de
-    fill arriba a fill_to abajo, con el mismo alfa)."""
+           shadow_opacity=0.5, specular="automatic", blend=None):
+    """glass() con una palanca más: el modo de fusión del grupo (blend-mode)."""
     g = glass(name, fill=fill, alpha=alpha, translucency=translucency, blur=blur,
               refraction=refraction, shadow=shadow, shadow_opacity=shadow_opacity, specular=specular)
     if blend:
         g["blend-mode"] = blend
-    if fill_to:
-        g["layers"][0]["fill"] = {"linear-gradient": [color(fill, alpha), color(fill_to, alpha)]}
     return g
 
 
 # --- g1: glitch doble ---
 
-def g1(light=False, suffix=""):
+def g1(light=False):
     """Delante el glitch de cristal claro sin esmerilar, que se suma como luz a lo de detrás
     (plus-lighter; en claro, multiply: se mezcla como dos cristales tintados); detrás el
     bocadillo de cristal de color, que es lo que se ve por la cara hueca y lo que el marco de
@@ -162,8 +170,6 @@ def g1(light=False, suffix=""):
                        shadow="none", shadow_opacity=0.0, blend="plus-lighter")
         back = vidrio("glitch-detras", DEEP, 0.9, 0.4, 0.25, None,
                       shadow="layer-color", shadow_opacity=0.75)
-    for g in (front, back):
-        g["layers"][0]["image-name"] = f"{g['name']}{suffix}.svg"
     return [front, back]
 
 
@@ -203,18 +209,20 @@ def slab_group(name, frame, alpha, face, face_alpha, translucency, blur, refract
     return g
 
 
-def g3(light=False, refraction=(0.3, 0.1)):
+def g3(light=False, refraction=(0.4, 0.15)):
     """El glitch morado sobre cristal transparente (el logo de Twitch en tema oscuro: la cara
     deja ver el fondo), cortado en tres franjas. La del medio, delante y corrida, se suma como
     luz a lo que pisa (en claro se multiplica); sin sombra, para no ensuciar lo de detrás.
-    Cara casi sin tinte: tintada de lila sobre negro se veía gris."""
+    Cara de cristal casi transparente, con un tinte lila mínimo: con lila al 0.72 se veía gris
+    sobre el negro y con blanco al 0.12, la franja era una mancha gris. Refracción de la franja
+    0.4/0.15 (bisel ancho): dobla el borde de la cara de detrás, 36 px a la izquierda."""
     if light:
-        frame, alpha, face, mix, glow = TWITCH_PURPLE, 0.8, LAVENDER, "multiply", 0.4
+        frame, alpha, mix, glow = TWITCH_PURPLE, 0.8, "multiply", 0.4
     else:
-        frame, alpha, face, mix, glow = VIOLET, 0.75, "#FFFFFF", "plus-lighter", 0.65
-    front = slab_group("franja", frame, alpha, face, 0.12, 0.6, 0.0, refraction, "none", 0.0,
+        frame, alpha, mix, glow = VIOLET, 0.75, "plus-lighter", 0.65
+    front = slab_group("franja", frame, alpha, LAVENDER, 0.16, 0.6, 0.0, refraction, "none", 0.0,
                        blend=mix)
-    rest = slab_group("resto", frame, alpha, face, 0.08, 0.55, 0.05, (0.25, 0.08),
+    rest = slab_group("resto", frame, alpha, LAVENDER, 0.1, 0.55, 0.05, (0.25, 0.08),
                       "layer-color", glow)
     return [front, rest]
 
@@ -232,9 +240,6 @@ CONCEPTS = {
     "twitch-g2c": {"fill": BG_LIGHT, "groups": g2(light=True)},
     "twitch-g3": {"fill": BG_DARK, "groups": g3()},
     "twitch-g3c": {"fill": BG_LIGHT, "groups": g3(light=True)},
-    # Pruebas de la ronda 4 (se borran solas al escribir sin ellas)
-    "twitch-v1": {"fill": BG_DARK, "groups": g1(suffix="-20")},
-    "twitch-v2": {"fill": BG_DARK, "groups": g3(refraction=(0.4, 0.15))},
 }
 
 
