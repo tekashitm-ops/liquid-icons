@@ -11,44 +11,14 @@
   },
   "groups": [
     {
-      "name": "ventanas",
-      "lighting": "individual",
+      "name": "franja",
+      "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
       "blur-material": 0.0,
       "shadow": {
-        "kind": "neutral",
-        "opacity": 0.3
-      },
-      "translucency": {
-        "enabled": true,
-        "value": 0.9
-      },
-      "layers": [
-        {
-          "name": "ventanas",
-          "image-name": "ventanas.svg",
-          "glass": true,
-          "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.14000"
-          }
-        }
-      ],
-      "refractivity": {
-        "enabled": true,
-        "strength": 0.25,
-        "depth": 0.08
-      }
-    },
-    {
-      "name": "losa",
-      "lighting": "individual",
-      "specular": true,
-      "specular-highlight-placement": "automatic",
-      "blur-material": 0.0,
-      "shadow": {
-        "kind": "layer-color",
-        "opacity": 0.65
+        "kind": "none",
+        "opacity": 0.0
       },
       "translucency": {
         "enabled": true,
@@ -56,48 +26,65 @@
       },
       "layers": [
         {
-          "name": "losa",
-          "image-name": "losa.svg",
+          "name": "franja-marco",
+          "image-name": "franja-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:0.56863,0.27451,1.00000,0.55000"
+            "solid": "extended-srgb:0.66275,0.43922,1.00000,0.75000"
+          }
+        },
+        {
+          "name": "franja-cara",
+          "image-name": "franja-cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.12000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.22,
-        "depth": 0.06
-      }
+        "strength": 0.4,
+        "depth": 0.15
+      },
+      "blend-mode": "plus-lighter"
     },
     {
-      "name": "cara",
-      "lighting": "individual",
+      "name": "resto",
+      "lighting": "combined",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.5,
+      "blur-material": 0.05,
       "shadow": {
-        "kind": "neutral",
-        "opacity": 0.3
+        "kind": "layer-color",
+        "opacity": 0.65
       },
       "translucency": {
         "enabled": true,
-        "value": 0.25
+        "value": 0.55
       },
       "layers": [
         {
-          "name": "cara",
-          "image-name": "cara.svg",
+          "name": "resto-marco",
+          "image-name": "resto-marco.svg",
           "glass": true,
           "fill": {
-            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.95000"
+            "solid": "extended-srgb:0.66275,0.43922,1.00000,0.75000"
+          }
+        },
+        {
+          "name": "resto-cara",
+          "image-name": "resto-cara.svg",
+          "glass": true,
+          "fill": {
+            "solid": "extended-srgb:1.00000,1.00000,1.00000,0.08000"
           }
         }
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.2,
-        "depth": 0.06
+        "strength": 0.25,
+        "depth": 0.08
       }
     }
   ],
