@@ -95,14 +95,14 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.05,
+      "blur-material": 0.2,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.6
+        "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.4
+        "value": 0.35
       },
       "layers": [
         {
@@ -149,7 +149,12 @@
             ]
           }
         }
-      ]
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.35,
+        "depth": 0.3
+      }
     },
     {
       "name": "disco",

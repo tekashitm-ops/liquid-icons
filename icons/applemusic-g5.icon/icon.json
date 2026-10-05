@@ -22,7 +22,7 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.65
+        "value": 0.75
       },
       "layers": [
         {
@@ -32,7 +32,7 @@
           "fill-specializations": [
             {
               "value": {
-                "solid": "extended-srgb:1.00000,0.23922,0.54510,0.65000"
+                "solid": "extended-srgb:1.00000,0.23922,0.54510,0.50000"
               }
             },
             {
@@ -72,7 +72,7 @@
           "fill-specializations": [
             {
               "value": {
-                "solid": "extended-srgb:0.98039,0.14118,0.23529,0.60000"
+                "solid": "extended-srgb:0.98039,0.14118,0.23529,0.52000"
               }
             },
             {
