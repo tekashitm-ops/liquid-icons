@@ -11,7 +11,7 @@
   },
   "groups": [
     {
-      "name": "barra",
+      "name": "barra2",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
@@ -26,8 +26,8 @@
       },
       "layers": [
         {
-          "name": "barra",
-          "image-name": "barra.svg",
+          "name": "barra2",
+          "image-name": "barra2.svg",
           "glass": true,
           "fill-specializations": [
             {
@@ -51,7 +51,7 @@
       }
     },
     {
-      "name": "corcheas2",
+      "name": "corcheas3",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "inside",
@@ -66,13 +66,13 @@
       },
       "layers": [
         {
-          "name": "corcheas2",
-          "image-name": "corcheas2.svg",
+          "name": "corcheas3",
+          "image-name": "corcheas3.svg",
           "glass": true,
           "fill-specializations": [
             {
               "value": {
-                "solid": "extended-srgb:0.98039,0.14118,0.23529,0.58000"
+                "solid": "extended-srgb:0.98039,0.14118,0.23529,0.60000"
               }
             },
             {
@@ -111,9 +111,19 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.85000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.85000"
-            ]
+              "extended-srgb:0.98039,0.14118,0.23529,1.00000",
+              "extended-srgb:1.00000,0.56078,0.65098,0.45000"
+            ],
+            "orientation": {
+              "start": {
+                "x": 0.85,
+                "y": 0.1
+              },
+              "stop": {
+                "x": 0.2,
+                "y": 0.9
+              }
+            }
           }
         }
       ],
@@ -128,27 +138,55 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.6,
+      "blur-material": 0.3,
       "shadow": {
-        "kind": "neutral",
-        "opacity": 0.5
+        "kind": "layer-color",
+        "opacity": 0.4
       },
       "translucency": {
         "enabled": true,
-        "value": 0.4
+        "value": 0.15
       },
       "layers": [
         {
-          "name": "orbe",
-          "image-name": "orbe.svg",
+          "name": "nucleo",
+          "image-name": "nucleo.svg",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "value": {
+                "solid": "extended-srgb:1.00000,1.00000,1.00000,1.00000"
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "solid": "extended-srgb:1.00000,1.00000,1.00000,0.30000"
+              }
+            }
+          ]
+        },
+        {
+          "name": "orbe2",
+          "image-name": "orbe2.svg",
           "glass": true,
           "fill-specializations": [
             {
               "value": {
                 "linear-gradient": [
-                  "extended-srgb:1.00000,1.00000,1.00000,0.92000",
-                  "extended-srgb:1.00000,0.78824,0.83529,0.92000"
-                ]
+                  "extended-srgb:1.00000,0.90980,0.93333,1.00000",
+                  "extended-srgb:1.00000,0.56078,0.65098,1.00000"
+                ],
+                "orientation": {
+                  "start": {
+                    "x": 0.5,
+                    "y": 0.12
+                  },
+                  "stop": {
+                    "x": 0.5,
+                    "y": 0.88
+                  }
+                }
               }
             },
             {

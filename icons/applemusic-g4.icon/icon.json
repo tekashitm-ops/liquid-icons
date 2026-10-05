@@ -72,7 +72,7 @@
           "fill-specializations": [
             {
               "value": {
-                "solid": "extended-srgb:1.00000,0.56078,0.65098,0.46000"
+                "solid": "extended-srgb:1.00000,0.78824,0.83529,0.42000"
               }
             },
             {
@@ -98,7 +98,7 @@
       "blur-material": 0.1,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.8
+        "opacity": 0.6
       },
       "translucency": {
         "enabled": true,
@@ -111,8 +111,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,1.00000",
-              "extended-srgb:0.98039,0.14118,0.23529,1.00000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.90000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.90000"
             ]
           }
         },
@@ -122,8 +122,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.88000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.88000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.76000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.76000"
             ]
           }
         },
@@ -133,8 +133,19 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.72000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.72000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.62000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.62000"
+            ]
+          }
+        },
+        {
+          "name": "aro4",
+          "image-name": "aro4.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.56078,0.65098,0.50000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.50000"
             ]
           }
         }
@@ -145,14 +156,14 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.6,
+      "blur-material": 0.25,
       "shadow": {
         "kind": "layer-color",
         "opacity": 0.5
       },
       "translucency": {
         "enabled": true,
-        "value": 0.4
+        "value": 0.15
       },
       "layers": [
         {
@@ -161,9 +172,19 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,1.00000,1.00000,0.85000",
-              "extended-srgb:1.00000,0.83922,0.87451,0.85000"
-            ]
+              "extended-srgb:1.00000,1.00000,1.00000,1.00000",
+              "extended-srgb:1.00000,0.78824,0.83529,1.00000"
+            ],
+            "orientation": {
+              "start": {
+                "x": 0.5,
+                "y": 0.6
+              },
+              "stop": {
+                "x": 0.5,
+                "y": 0.92
+              }
+            }
           }
         }
       ]

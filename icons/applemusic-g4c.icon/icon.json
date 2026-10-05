@@ -98,7 +98,7 @@
       "blur-material": 0.05,
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.45
+        "opacity": 0.6
       },
       "translucency": {
         "enabled": true,
@@ -111,8 +111,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.85000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.85000"
+              "extended-srgb:1.00000,0.56078,0.65098,1.00000",
+              "extended-srgb:0.98039,0.14118,0.23529,1.00000"
             ]
           }
         },
@@ -122,8 +122,8 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.62000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.62000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.88000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.88000"
             ]
           }
         },
@@ -133,8 +133,19 @@
           "glass": true,
           "fill": {
             "linear-gradient": [
-              "extended-srgb:1.00000,0.56078,0.65098,0.42000",
-              "extended-srgb:0.98039,0.14118,0.23529,0.42000"
+              "extended-srgb:1.00000,0.56078,0.65098,0.76000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.76000"
+            ]
+          }
+        },
+        {
+          "name": "aro4",
+          "image-name": "aro4.svg",
+          "glass": true,
+          "fill": {
+            "linear-gradient": [
+              "extended-srgb:1.00000,0.56078,0.65098,0.64000",
+              "extended-srgb:0.98039,0.14118,0.23529,0.64000"
             ]
           }
         }
@@ -147,8 +158,8 @@
       "specular-highlight-placement": "automatic",
       "blur-material": 0.5,
       "shadow": {
-        "kind": "neutral",
-        "opacity": 0.35
+        "kind": "layer-color",
+        "opacity": 0.3
       },
       "translucency": {
         "enabled": true,
