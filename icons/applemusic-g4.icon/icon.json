@@ -55,7 +55,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.0,
+      "blur-material": 0.04,
       "shadow": {
         "kind": "layer-color",
         "opacity": 0.5
@@ -86,8 +86,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.09
+        "strength": 0.28,
+        "depth": 0.07
       }
     },
     {

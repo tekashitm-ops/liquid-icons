@@ -147,6 +147,7 @@ BLUSH = "#FFD6DF"       # rosa blanquecino: el cristal casi transparente de g2 y
 WINE_TOP, WINE_BOTTOM = "#3E0816", "#120207"    # fondo de g1: vino casi negro
 BLUSH_TOP, BLUSH_BOTTOM = "#FFF6F8", "#FFE2E9"  # fondo claro rosado de g1c y g3c
 PEARL = "#FFC9D5"       # g5c: abajo del orbe; uno blanco liso no se veía sobre el fondo rosado
+ORB_LOW = "#FF6F8A"     # g5 (h7): abajo del orbe, entre ROSE y MUSIC_PINK: la plica derecha baja de claro a rosa
 
 
 def xsrgb(rgb, alpha=1.0) -> str:
@@ -359,6 +360,11 @@ def g4(light=False):
     # rosas tenían el mismo tono y brillo que las ondas y se perdían en la tecla: corcheas nácar y
     # ondas algo más apagadas. En claro, las ondas al 0.42-0.85 dejaban bordes grises y la de fuera
     # casi no se veía: más color (0.64-1.0), brillo de su color y sombra del disco de su color.
+    # h7: con (0.35, 0.09) las plicas (39 px) estiraban cada onda que cruzan en vetas oscuras largas,
+    # como gotas: (0.28, 0.07) y una pizca de esmerilado (0.04); las cabezas siguen doblando el disco.
+    # En claro, el fondo pasa a system-light: sobre un degradado propio ictool deja fuera de cada
+    # borde una línea gris malva de 4 px (también en g1c y g3c); sobre system-light, como en g2c y
+    # discord-claro, es de 1-2 px y de su color. El disco, nácar abajo para no perderse en él.
     disc_span = ((0.5, 0.6), (0.5, 0.92))   # el degradado del disco ocupa el disco, no el lienzo
     if light:
         bar, note = (HOT_PINK, 0.6), (MUSIC_RED, 0.58)
@@ -366,8 +372,8 @@ def g4(light=False):
         # borde una línea gris malva de 3-4 px (#c4929b): ahora el cristal de Clyde en discord-claro
         # (aprobado, borde de su color): translucidez 0.35, esmerilado 0.2, refracción (0.35, 0.3)
         wave, alphas, wave_glass = (ROSE, MUSIC_RED), (1.0, 0.88, 0.76, 0.64), (0.35, 0.2, 0.5)
-        disc = group("disco", [("disco", grad_fill(WHITE, WHITE, 0.95))], translucency=0.3, blur=0.5,
-                     shadow="layer-color", shadow_opacity=0.3)
+        disc = group("disco", [("disco", grad_dir(*disc_span, (WHITE, 0.95), (PEARL, 0.95)))],
+                     translucency=0.3, blur=0.5, shadow="layer-color", shadow_opacity=0.3)
         shadow = 0.4
     else:
         bar, note = (HOT_PINK, 0.5), (PEARL, 0.42)
@@ -379,7 +385,7 @@ def g4(light=False):
     return [
         solo("barra2", *bar, tinted=TINT_NOTE, translucency=0.6, blur=0.0, refraction=(0.4, 0.12),
              shadow="layer-color", shadow_opacity=0.8),
-        solo("corcheas3", *note, tinted=TINT_NOTE, translucency=0.75, blur=0.0, refraction=(0.35, 0.09),
+        solo("corcheas3", *note, tinted=TINT_NOTE, translucency=0.75, blur=0.04, refraction=(0.28, 0.07),
              shadow="layer-color", shadow_opacity=shadow),
         group("aros", waves, translucency=wave_glass[0], blur=wave_glass[1], shadow="layer-color",
               shadow_opacity=wave_glass[2], refraction=(0.35, 0.3) if light else None),
@@ -407,16 +413,17 @@ def g5(light=False):
     # punta plana de 10 px, barra con esquinas de 8): el borde del núcleo no puede tocar puntas
     # redondas. Corcheas al 0.52 (con 0.45 el vino de fuera del aro se veía como un agujero en la
     # cabeza izquierda; h6: con 0.6, y la barra al 0.65, el núcleo apenas se veía a través: 6 L).
-    # En claro, el aro con el cristal de Clyde (ver g4c) contra la línea gris de su borde. En claro, el aro se apaga hacia abajo a la izquierda (sin el aire de señal
+    # En claro, el aro con el cristal de Clyde y fondo system-light (ver g4c) contra la línea gris de
+    # su borde. h7: el orbe baja a ORB_LOW (con ROSE la plica derecha era de un solo tono). En claro, el aro se apaga hacia abajo a la izquierda (sin el aire de señal
     # de prohibido de un aro rojo uniforme con una barra cruzada).
     span = ((0.5, 0.12), (0.5, 0.88))   # el degradado ocupa el orbe, no el lienzo
     if light:
         bar, note, shadow = (HOT_PINK, 0.45), (MUSIC_RED, 0.52), "layer-color"
-        orb = grad_dir(*span, ("#FFE8EE", 1.0), (ROSE, 1.0))
+        orb = grad_dir(*span, (BLUSH, 1.0), (ORB_LOW, 1.0))
         halo = grad_dir((0.85, 0.1), (0.2, 0.9), (MUSIC_RED, 1.0), (ROSE, 0.45))
     else:
         bar, note, shadow = (HOT_PINK, 0.5), (MUSIC_RED, 0.52), "layer-color"
-        orb = grad_dir(*span, (BLUSH, 1.0), (ROSE, 1.0))
+        orb = grad_dir(*span, (BLUSH, 1.0), (ORB_LOW, 1.0))
         halo = grad_fill(ROSE, MUSIC_RED, 0.9)
     return [
         solo("barra2", *bar, tinted=TINT_NOTE, translucency=0.75, blur=0.0, refraction=(0.4, 0.12),
@@ -444,10 +451,10 @@ CONCEPTS = {
     "applemusic-g3c": {"fill": BLUSH_BG, "groups": g3(light=True)},
     # g4 (ondas 2): barra fucsia y corcheas rosas de cristal sobre ondas encendidas y un disco de luz
     "applemusic-g4": {"fill": WINE_BG, "groups": g4()},
-    "applemusic-g4c": {"fill": BLUSH_BG, "groups": g4(light=True)},
+    "applemusic-g4c": {"fill": "system-light", "groups": g4(light=True)},
     # g5 (vitral 2): la nota de cristal de color, transparente de verdad, ante el orbe de luz
     "applemusic-g5": {"fill": WINE_BG, "groups": g5()},
-    "applemusic-g5c": {"fill": BLUSH_BG, "groups": g5(light=True)},
+    "applemusic-g5c": {"fill": "system-light", "groups": g5(light=True)},
 }
 
 

@@ -3,12 +3,7 @@
     "refractivity",
     "specular-location"
   ],
-  "fill": {
-    "linear-gradient": [
-      "extended-srgb:1.00000,0.96471,0.97255,1.00000",
-      "extended-srgb:1.00000,0.88627,0.91373,1.00000"
-    ]
-  },
+  "fill": "system-light",
   "groups": [
     {
       "name": "barra2",
@@ -55,7 +50,7 @@
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "automatic",
-      "blur-material": 0.0,
+      "blur-material": 0.04,
       "shadow": {
         "kind": "layer-color",
         "opacity": 0.4
@@ -86,8 +81,8 @@
       ],
       "refractivity": {
         "enabled": true,
-        "strength": 0.35,
-        "depth": 0.09
+        "strength": 0.28,
+        "depth": 0.07
       }
     },
     {
@@ -178,8 +173,18 @@
           "fill": {
             "linear-gradient": [
               "extended-srgb:1.00000,1.00000,1.00000,0.95000",
-              "extended-srgb:1.00000,1.00000,1.00000,0.95000"
-            ]
+              "extended-srgb:1.00000,0.78824,0.83529,0.95000"
+            ],
+            "orientation": {
+              "start": {
+                "x": 0.5,
+                "y": 0.6
+              },
+              "stop": {
+                "x": 0.5,
+                "y": 0.92
+              }
+            }
           }
         }
       ]

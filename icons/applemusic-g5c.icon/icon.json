@@ -3,12 +3,7 @@
     "refractivity",
     "specular-location"
   ],
-  "fill": {
-    "linear-gradient": [
-      "extended-srgb:1.00000,0.96471,0.97255,1.00000",
-      "extended-srgb:1.00000,0.88627,0.91373,1.00000"
-    ]
-  },
+  "fill": "system-light",
   "groups": [
     {
       "name": "barra2",
@@ -174,8 +169,8 @@
             {
               "value": {
                 "linear-gradient": [
-                  "extended-srgb:1.00000,0.90980,0.93333,1.00000",
-                  "extended-srgb:1.00000,0.56078,0.65098,1.00000"
+                  "extended-srgb:1.00000,0.83922,0.87451,1.00000",
+                  "extended-srgb:1.00000,0.43529,0.54118,1.00000"
                 ],
                 "orientation": {
                   "start": {
