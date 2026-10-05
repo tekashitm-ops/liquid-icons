@@ -55,6 +55,14 @@ Ronda h (el juez eligió g2 y pidió más; g1-g3 se quedan tal cual para compara
   claras más limpias (sin esmerilar) en g4c; el orbe de g5 en tintado tapaba la nota. h4: la
   esquina de la barra encerraba el vino de fuera de las ondas en un óvalo oscuro (un punto en la
   tecla): ondas recolocadas (ver RING_C4); notas de las parejas claras algo más rojas.
+  h5-h8 (un crítico refutó los cuatro): g4: las ondas, centradas cerca de la nota, bajaban
+  verticales por dentro de las plicas (rayas como gotas), corrían paralelas a la barra dentro de su
+  bisel (cáustica de puntos) y pegadas a su borde de arriba (astilla); el disco se veía gris y la
+  nota tenía el tono y el brillo de las ondas. Ahora las ondas salen de las cabezas (ver RING_C4),
+  medidas con un barrido; disco de luz casi opaco; corcheas nácar; plicas con refracción más suave.
+  g5: el orbe se veía gris y la barra plana: orbe de luz rosa casi opaco, núcleo blanco bajo la
+  barra, aro sin tramos paralelos a la nota. Parejas claras: sobre un degradado propio ictool deja
+  una línea gris de 4 px fuera de cada borde; sobre system-light, de 1 px y de su color.
 """
 import re
 
@@ -396,13 +404,12 @@ def g4(light=False):
 def g5(light=False):
     """Vitral, segunda versión: la nota de cristal de color ante el orbe con su aro (iTunes 12).
 
-    Las corcheas bajan de 0.75 a 0.45 de color y suben a 0.75 de translucidez, sin esmerilar.
-    Las plicas suben solo 30 px bajo la barra: su punta ya no cae en la esquina de arriba a la
-    derecha (la mancha) ni se estira por el bisel de los lados (las gotas). Detrás del orbe
-    esmerilado, un aro de cristal rojo claro que pisa su borde (como el icono de iTunes 12): la
-    esquina de la barra y la cabeza izquierda salen del orbe por encima del aro, así que dentro de
-    ellas se ven tres cosas (luz, aro, vino) y el bisel dobla los dos bordes. En claro, el mismo
-    orbe blanco y el mismo aro sobre el fondo rosado: el cristal rojo tiene por fin algo que doblar.
+    Corcheas de cristal rojo al 0.52 y 0.75 de translucidez, sin esmerilar, con las plicas de
+    punta plana de g4. Detrás, el orbe de luz rosa (claro arriba) con un núcleo blanco y, sobre su
+    borde, un aro de cristal rojo claro (como el icono de iTunes 12): la esquina de la barra y la
+    cabeza izquierda salen del orbe por encima del aro, así que dentro de ellas se ven tres cosas
+    (luz, aro, vino) y el bisel dobla los dos bordes; la barra dobla el borde del núcleo por dentro.
+    En claro, lo mismo sobre system-light.
     """
     # h5: el orbe blanco esmerilado al 0.85 dejaba pasar el vino y se veía gris malva (#cfb8be), las
     # plicas encima eran de un solo tono y la barra no tenía nada que doblar por dentro. Ahora el
@@ -416,7 +423,9 @@ def g5(light=False):
     # En claro, el aro con el cristal de Clyde y fondo system-light (ver g4c) contra la línea gris de
     # su borde. h7: el orbe baja a ORB_LOW (con ROSE la plica derecha era de un solo tono). En claro, el aro se apaga hacia abajo a la izquierda (sin el aire de señal
     # de prohibido de un aro rojo uniforme con una barra cruzada).
-    span = ((0.5, 0.12), (0.5, 0.88))   # el degradado ocupa el orbe, no el lienzo
+    # h8: el degradado va de claro a rosa entre y 307 y 614, justo lo que mide la plica derecha
+    # (con todo el orbe de recorrido, la plica derecha seguía de un solo tono: #f05f72 de arriba abajo)
+    span = ((0.5, 0.3), (0.5, 0.6))
     if light:
         bar, note, shadow = (HOT_PINK, 0.45), (MUSIC_RED, 0.52), "layer-color"
         orb = grad_dir(*span, (BLUSH, 1.0), (ORB_LOW, 1.0))
