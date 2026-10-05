@@ -48,6 +48,8 @@ Lo aprendido en g4/g5 (sobre los píxeles de ictool):
   canto: con (0.5, 0.14) la punta de abajo quedaba en una gota y las copas en pie fino.
 - El nivel por debajo de 520 encoge las copas de las laterales; por encima, la punta oscura de
   la de abajo se queda en una mota.
+- Una X de cristal sin esmerilar y honda (0.45, 0.16) detrás de las piezas dobla bien el nivel,
+  pero saca astillas claras en sus brazos de arriba (ronda 10).
 """
 import re
 
@@ -361,7 +363,10 @@ PIECE4_REFRACTION = (0.3, 0.07)    # el bisel amplía el interior de la pieza y 
                                    # laterales (copas con pie) y la punta oscura de la de abajo
                                    # quedaba en una gota; con (0.35, 0.10), en un ojo con borde lima
 X4_REFRACTION = (0.45, 0.16)       # la X de cristal, sin esmerilar, dobla el nivel en sus brazos
-                                   # (con (0.35, 0.12) y esmerilado 0.12 era un bulto borroso)
+                                   # (con (0.35, 0.12) y esmerilado 0.12 era un bulto borroso). Pero
+                                   # deja astillas claras en los brazos de arriba, junto al canto
+                                   # interior de las laterales (g4c lima, g4 tenues); con (0.35,
+                                   # 0.12) no había. La X esmerilada de g5 las tapa
 
 
 def marble4(tint, alpha, shadow_opacity):
